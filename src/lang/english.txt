@@ -6285,19 +6285,27 @@ CM_STR_NETWORK_COMPANY_LIST_SPECTATE                            :Spectate
 
 CM_STR_RAIL_TOOLBAR_TOOLTIP_BLUEPRINT                           :{BLACK}Rail blueprint tool (copy-paste)
 
-CM_STR_CONFIG_SETTING_ORDER_MOD_CTRL                            :Ctrl+click: {STRING2}
-CM_STR_CONFIG_SETTING_ORDER_MOD_SHIFT                           :Shift+click: {STRING2}
-CM_STR_CONFIG_SETTING_ORDER_MOD_CTRL_SHIFT                      :Ctrl+Shift+lick: {STRING2}
-CM_STR_CONFIG_SETTING_ORDER_MOD_ALT                             :Alt+Click: {STRING2}
-CM_STR_CONFIG_SETTING_ORDER_MOD_ALT_SHIFT                       :Alt+Shift+click: {STRING2}
-CM_STR_CONFIG_SETTING_ORDER_MOD_ALT_CTRL                        :Ctrl+Alt+click: {STRING2}
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_NONE                     :do nothing
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_FULL_LOAD_ANY            :Full load any cargo
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_TRANSFER_CARGO           :Transfer cargo
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_UNLOAD_ALL               :Force unload of all cargo
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_FEEDER_LOAD              :Feeder Load (replace first order)
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_FEEDER_UNLOAD            :Feeder Unload (replace last order)
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_NO_LOAD                  :Do not load any cargo
+CM_STR_CONFIG_SETTING_STATION_MOD_CTRL                          :Ctrl+click station: {STRING2}
+CM_STR_CONFIG_SETTING_STATION_MOD_SHIFT                         :Shift+click station: {STRING2}
+CM_STR_CONFIG_SETTING_STATION_MOD_CTRL_SHIFT                    :Ctrl+Shift+click station: {STRING2}
+CM_STR_CONFIG_SETTING_STATION_MOD_ALT                           :Alt+Click station: {STRING2}
+CM_STR_CONFIG_SETTING_STATION_MOD_ALT_SHIFT                     :Alt+Shift+click station: {STRING2}
+CM_STR_CONFIG_SETTING_STATION_MOD_ALT_CTRL                      :Ctrl+Alt+click station: {STRING2}
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_NONE                   :Do nothing
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_FULL_LOAD_ANY          :Full load any cargo
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_TRANSFER_CARGO         :Transfer cargo
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_UNLOAD_ALL             :Force unload of all cargo
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_FEEDER_LOAD            :Feeder Load (replace first order)
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_FEEDER_UNLOAD          :Feeder Unload (replace last order)
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_NO_LOAD                :Do not load any cargo
+
+CM_STR_CONFIG_SETTING_DEPOT_MOD_CTRL                            :Ctrl+click depot: {STRING2}
+CM_STR_CONFIG_SETTING_DEPOT_MOD_SHIFT                           :Shift+click depot: {STRING2}
+CM_STR_CONFIG_SETTING_DEPOT_MOD_CTRL_SHIFT                      :Ctrl+Shift+click depot: {STRING2}
+CM_STR_CONFIG_SETTING_DEPOT_MOD_ACTION_NONE                     :Do nothing
+CM_STR_CONFIG_SETTING_DEPOT_MOD_ACTION_SERVICE                  :Service if needed
+CM_STR_CONFIG_SETTING_DEPOT_MOD_ACTION_STOP                     :Stop
+CM_STR_CONFIG_SETTING_DEPOT_MOD_ACTION_UNBUNCH                  :Unbunch
 
 CM_STR_CONFIG_SETTING_PERSISTENT_DEPOTTOOLS                     :Keep depot building tools active after usage: {STRING2}
 CM_STR_CONFIG_SETTING_PERSISTENT_DEPOTTOOLS_HELPTEXT            :Keep the building tools for road, train and ship depots (reversible by placing with Ctrl).

@@ -246,8 +246,6 @@ void CommandHelperBase::InternalPostResult(CommandCost &res, TileIndex tile, boo
 	int x = TileX(tile) * TILE_SIZE;
 	int y = TileY(tile) * TILE_SIZE;
 
-	// FIXME if (!(cmd & CMD_NO_ESTIMATE) && my_cmd) citymania::CountEffectiveAction();
-
 	if (res.Failed()) {
 		/* Only show the error when it's for us. */
 		if (estimate_only || (IsLocalCompany() && err_message != 0 && my_cmd)) {

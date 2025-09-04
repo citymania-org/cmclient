@@ -3201,7 +3201,7 @@ struct IndustryCargoesWindow : public Window {
 				Dimension d = GetLargestCargoIconSize();
 				for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
 					std::string cargo_str;
-					if (_settings_client.gui.developer >= 1)
+					if (!_settings_client.gui.newgrf_developer_tools)
 						cargo_str = GetString(CM_STR_CARGO_WITH_ID, cs->name, cs->Index());
 					else
 						cargo_str = GetString(cs->name);
@@ -3222,7 +3222,7 @@ struct IndustryCargoesWindow : public Window {
 					if (!indsp->enabled) continue;
 
 					std::string indsp_str;
-					if (_settings_client.gui.developer >= 1)
+					if (!_settings_client.gui.newgrf_developer_tools)
 						indsp_str = GetString(CM_STR_INDUSTRY_TYPE_WITH_ID, indsp->name, ind);
 					else
 						indsp_str = GetString(indsp->name);

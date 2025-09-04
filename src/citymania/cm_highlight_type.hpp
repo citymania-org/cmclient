@@ -28,9 +28,6 @@
 
 namespace citymania {
 
-typedef std::function<up<Command>(TileIndex start_tile, TileIndex end_tile)> HighlightGenerator;
-
-
 enum ZoningBorder: uint8 {
     NONE = 0,
     TOP_LEFT = 1,
@@ -75,19 +72,6 @@ public:
     }
 };
 
-
-class TileIndexWrapper {
-public:
-    TileIndex tile;
-    TileIndexWrapper() {}
-    TileIndexWrapper(TileIndex tile)
-        :tile{tile} {}
-
-    inline operator TileIndex () const
-    {
-        return this->tile;
-    }
-};
 
 class ObjectTileHighlight {
 public:
@@ -405,24 +389,10 @@ public:
     void DrawOverlay(DrawPixelInfo *dpi);
     void AddStationOverlayData(int w, int h, int rad,  StationCoverageType sct);
     void UpdateTiles();
-    void UpdateOverlay();
     void MarkDirty();
 };
 
 typedef std::tuple<HighlightMap, BuildInfoOverlayData, CommandCost> ToolGUIInfo;
-
-class Preview {
-public:
-    virtual ~Preview() {}
-    virtual void Update(Point pt, TileIndex tile) = 0;
-    virtual void HandleMouseMove() {};
-    virtual bool HandleMousePress() { return false; };
-    virtual void HandleMouseRelease() {};
-    virtual bool HandleMouseClick(Viewport* /* vp */, Point /* pt */, TileIndex /* tile */, bool /* double_click */) { return false; };
-    virtual std::pair<HighlightMap, BuildInfoOverlayData> GetGUIInfo() = 0;
-    virtual CursorID GetCursor() = 0;
-    virtual void OnStationRemoved(const Station* /* station */) {};
-};
 
 class Action {
 public:

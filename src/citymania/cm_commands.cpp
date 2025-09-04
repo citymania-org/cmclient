@@ -20,6 +20,7 @@ std::map<size_t, std::pair<uint32, std::vector<CommandCallback>>> _command_callb
 std::queue<std::pair<size_t, uint32>> _command_sent;
 CommandCallback _current_callback = nullptr;
 bool _no_estimate_command = false;
+bool _automatic_command = false;
 
 template <typename T, int MaxLen>
 class SumLast {

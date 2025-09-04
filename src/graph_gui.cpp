@@ -63,7 +63,6 @@ namespace citymania {
 void ChangeGraphBackgroundColour(NWidgetPart *nwid_begin, NWidgetPart *nwid_end) {
 	for (auto w = nwid_begin; w != nwid_end; w++) {
 		switch (w->type) {
-			case WWT_TEXT:
 			case WWT_RESIZEBOX:
 			case WWT_MATRIX:
 			case NWID_VSCROLLBAR:

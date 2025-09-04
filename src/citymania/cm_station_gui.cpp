@@ -29,6 +29,7 @@
 #include "../town.h"
 #include "../viewport_func.h"
 #include "../viewport_kdtree.h"
+#include "../window_func.h"  // SetWindowDirty
 #include "../window_gui.h"
 #include "../zoom_type.h"
 #include "../zoom_func.h"
@@ -36,10 +37,12 @@
 #include "generated/cm_gen_commands.hpp"
 
 #include <cassert>
+#include <complex>
 #include <cstdio>
 #include <optional>
 #include <sstream>
 #include <unordered_set>
+#include <variant>
 
 bool _remove_button_clicked;  // replace vanilla static vars
 
@@ -77,12 +80,19 @@ extern uint8_t _selected_airport_layout;          ///< selected airport layout n
 
 namespace citymania {
 
-const Station *_highlight_station_to_join = nullptr;
-TileArea _highlight_join_area;
-
 bool UseImprovedStationJoin() {
     return _settings_client.gui.cm_use_improved_station_join && _settings_game.station.distant_join_stations;
 }
+
+namespace StationAction {
+    struct Create {};
+    struct Join { StationID station; };
+    struct Picker {};
+
+    using Mode = std::variant<Create, Join, Picker>;
+};
+
+StationAction::Mode _station_action = StationAction::Create{};
 
 static const int MAX_TILE_EXTENT_LEFT   = ZOOM_BASE * TILE_PIXELS;                     ///< Maximum left   extent of tile relative to north corner.
 static const int MAX_TILE_EXTENT_RIGHT  = ZOOM_BASE * TILE_PIXELS;                     ///< Maximum right  extent of tile relative to north corner.
@@ -105,30 +115,9 @@ void MarkTileAreaDirty(const TileArea &ta) {
             p2.y + MAX_TILE_EXTENT_BOTTOM);
 }
 
-static void UpdateHiglightJoinArea(const Station *station) {
-    if (!station) {
-        MarkTileAreaDirty(_highlight_join_area);
-        _highlight_join_area.tile = INVALID_TILE;
-        return;
-    }
-    // auto &r = _station_to_join->rect;
-    // auto d = (int)_settings_game.station.station_spread - 1;
-    // TileArea ta(
-    //     TileXY(std::max<int>(r.right - d, 0),
-    //            std::max<int>(r.bottom - d, 0)),
-    //     TileXY(std::min<int>(r.left + d, Map::SizeX() - 1),
-    //            std::min<int>(r.top + d, Map::SizeY() - 1))
-    // );
-    // if (_highlight_join_area.tile == ta.tile &&
-    //     _highlight_join_area.w == ta.w &&
-    //     _highlight_join_area.h == ta.h) return;
-    // _highlight_join_area = ta;
-    MarkTileAreaDirty(_highlight_join_area);
-}
-
-static void MarkCoverageAreaDirty(const Station *station) {
-    MarkTileAreaDirty(station->catchment_tiles);
-}
+// static void MarkCoverageAreaDirty(const Station *station) {
+//     MarkTileAreaDirty(station->catchment_tiles);
+// }
 
 void MarkCoverageHighlightDirty() {
     MarkCatchmentTilesDirty();
@@ -568,29 +557,75 @@ extern DiagDirection AddAutodetectionRotation(DiagDirection ddir);  // cm_highli
 //     if (this->station_to_join == station->index) this->station_to_join = StationID::Invalid();
 // }
 
+// Non-tool station highlight management (coverage area and picker selection)
+
+enum class StationHighlightMode {
+    None,
+    Picker,
+    Coverage
+};
+
+std::optional<ObjectHighlight> _active_highlight_object = std::nullopt;
+StationID _selected_station = StationID::Invalid();
+StationHighlightMode _station_highlight_mode = StationHighlightMode::None;
+
 void SetSelectedStationToJoin(StationID station_id) {
-    StationBuildTool::current_selected_station = station_id;
+    _selected_station = station_id;
     UpdateActiveTool();
 }
 
-void ResetJoinStationHighlight() {
-    StationBuildTool::active_highlight = std::nullopt;
-    SetSelectedStationToJoin(StationID::Invalid());
+void ResetSelectedStationToJoin() {
+    _station_highlight_mode = StationHighlightMode::None;
+    UpdateActiveTool();
 }
 
+void SetHighlightCoverageStation(Station *station, bool sel) {
+    if (_station_highlight_mode == StationHighlightMode::Picker) return;
+    SetWindowDirty(WC_STATION_VIEW, _selected_station);
+    if (station == nullptr || !sel) {
+        _station_highlight_mode = StationHighlightMode::None;
+    } else {
+        _selected_station = station->index;
+        _station_highlight_mode = StationHighlightMode::Coverage;
+    }
+    SetWindowDirty(WC_STATION_VIEW, _selected_station);
+    UpdateActiveTool();
+}
+
+static void ResetHighlightCoverageStation() {
+    SetHighlightCoverageStation(nullptr, false);
+}
+
+bool IsHighlightCoverageStation(const Station *station) {
+    if (_station_highlight_mode != StationHighlightMode::Coverage) return false;
+    if (station == nullptr) return false;
+    return station->index == _selected_station;
+}
 
 void OnStationRemoved(const Station *station) {
     // if (_last_built_station == station) _last_built_station = nullptr;
-    if (StationBuildTool::station_to_join == station->index) {
-        StationBuildTool::station_to_join = StationID::Invalid();
+    if (auto mode = std::get_if<StationAction::Join>(&_station_action); mode && mode->station == station->index) {
+        _station_action = StationAction::Create{};
         UpdateActiveTool();
     }
-    if (StationBuildTool::current_selected_station == station->index) {
-        StationBuildTool::current_selected_station = StationID::Invalid();
+    if (_selected_station == station->index) {
+        _selected_station = StationID::Invalid();
+        if (_station_highlight_mode == StationHighlightMode::Coverage) {
+            _station_highlight_mode = StationHighlightMode::None;
+            SetWindowDirty(WC_STATION_VIEW, _selected_station);
+        }
         UpdateActiveTool();
     }
     // TODO?
     // if (GetActiveTool() != nullptr) GetActiveTool()->OnStationRemoved(station);
+}
+
+static void SetActiveHighlightObject(std::optional<ObjectHighlight> &ohl) {
+    _active_highlight_object = ohl;
+    if (_active_highlight_object.has_value()) _active_highlight_object->UpdateTiles();
+    if (_station_highlight_mode == StationHighlightMode::Coverage)
+        SetWindowDirty(WC_STATION_VIEW, _selected_station);
+    _station_highlight_mode = StationHighlightMode::Picker;
 }
 
 void AbortStationPlacement() {
@@ -598,6 +633,79 @@ void AbortStationPlacement() {
     // SetHighlightStationToJoin(station=nullptr, with_area=false);
 }
 
+bool HasSelectedStationHighlight() {
+    return _station_highlight_mode != StationHighlightMode::None;
+}
+
+static HighlightMap PrepareHighilightMap(Station *st_join, std::optional<ObjectHighlight> ohl, SpriteID pal, bool show_join_area, bool show_coverage, uint rad) {
+    bool add_current = true;  // FIXME
+
+    auto hlmap = ohl.has_value() ? ohl->GetHighlightMap(pal) : HighlightMap{};
+    TileArea join_area;
+    std::set<TileIndex> coverage_area;
+
+    if (show_join_area && st_join != nullptr) {
+        join_area = GetStationJoinArea(st_join->index);
+        hlmap.AddTileArea(join_area, CM_PALETTE_TINT_CYAN);
+    }
+
+    if (show_coverage && st_join != nullptr) {
+        // Add joining station coverage
+        for (auto t : st_join->catchment_tiles) {
+            auto pal = join_area.Contains(t) ? CM_PALETTE_TINT_CYAN_WHITE : CM_PALETTE_TINT_WHITE;
+            hlmap.Add(t, ObjectTileHighlight::make_tint(pal));
+            coverage_area.insert(t);
+        }
+    }
+
+    auto area = ohl.has_value() ? ohl->GetArea() : std::nullopt;
+    if (!_settings_game.station.modified_catchment) rad = CA_UNMODIFIED;
+    std::optional<TileArea> rad_area = std::nullopt;
+    if (area.has_value()) {
+        auto xarea = area.value();
+        xarea.Expand(rad);
+        xarea.ClampToMap();
+        rad_area = xarea;
+    }
+    if (show_coverage && add_current && rad_area.has_value()) {
+        // Add current station coverage
+        for (auto t : rad_area.value()) {
+            auto pal = join_area.Contains(t) ? CM_PALETTE_TINT_CYAN_WHITE : CM_PALETTE_TINT_WHITE;
+            hlmap.Add(t, ObjectTileHighlight::make_tint(pal));
+            coverage_area.insert(t);
+        }
+    }
+
+    if (show_coverage) {
+        hlmap.AddTilesBorder(coverage_area, CM_PALETTE_TINT_WHITE);
+    }
+
+    if (st_join != nullptr) {
+        // Highlight joining station blue
+        TileArea ta(TileXY(st_join->rect.left, st_join->rect.top), TileXY(st_join->rect.right, st_join->rect.bottom));
+        for (TileIndex t : ta) {
+            if (!IsTileType(t, MP_STATION) || GetStationIndex(t) != st_join->index) continue;
+            hlmap.Add(t, ObjectTileHighlight::make_struct_tint(CM_PALETTE_TINT_BLUE));
+        }
+    }
+
+    return hlmap;
+}
+
+ToolGUIInfo GetSelectedStationGUIInfo() {
+    if (_station_highlight_mode == StationHighlightMode::None) return {};
+    auto st = Station::GetIfValid(_selected_station);
+
+    auto hlmap = PrepareHighilightMap(
+        st,
+        _station_highlight_mode == StationHighlightMode::Picker ? _active_highlight_object : std::nullopt,
+        CM_PALETTE_TINT_WHITE,
+        false,
+        _station_highlight_mode == StationHighlightMode::Coverage,
+        0
+    );
+    return {hlmap, {}, {}};
+}
 
 // --- Action base class ---
 void Action::OnStationRemoved(const Station *) {}
@@ -647,90 +755,43 @@ ToolGUIInfo RemoveAction<Handler>::GetGUIInfo() {
 template <ImplementsRemoveHandler Handler>
 void RemoveAction<Handler>::OnStationRemoved(const Station *) {}
 
-static HighlightMap PrepareHighilighMap(Station *st_join, ObjectHighlight &ohl, SpriteID pal, bool show_join_area, StationCoverageType sct, uint rad) {
-    bool add_current = true;  // FIXME
-    bool show_coverage = (rad > 0);
-
-    auto hlmap = ohl.GetHighlightMap(pal);
-    TileArea join_area;
-    std::set<TileIndex> coverage_area;
-
-    if (show_join_area && st_join != nullptr) {
-        join_area = GetStationJoinArea(st_join->index);
-        hlmap.AddTileArea(join_area, CM_PALETTE_TINT_CYAN);
-    }
-
-    if (show_coverage && st_join != nullptr) {
-        // Add joining station coverage
-        for (auto t : st_join->catchment_tiles) {
-            auto pal = join_area.Contains(t) ? CM_PALETTE_TINT_CYAN_WHITE : CM_PALETTE_TINT_WHITE;
-            hlmap.Add(t, ObjectTileHighlight::make_tint(pal));
-            coverage_area.insert(t);
-        }
-    }
-
-    auto area = ohl.GetArea();
-    if (!_settings_game.station.modified_catchment) rad = CA_UNMODIFIED;
-    std::optional<TileArea> rad_area = std::nullopt;
-    if (area.has_value()) {
-        auto xarea = area.value();
-        xarea.Expand(rad);
-        xarea.ClampToMap();
-        rad_area = xarea;
-    }
-    if (show_coverage && add_current && rad_area.has_value()) {
-        // Add current station coverage
-        for (auto t : rad_area.value()) {
-            auto pal = join_area.Contains(t) ? CM_PALETTE_TINT_CYAN_WHITE : CM_PALETTE_TINT_WHITE;
-            hlmap.Add(t, ObjectTileHighlight::make_tint(pal));
-            coverage_area.insert(t);
-        }
-    }
-
-    if (show_coverage) {
-        hlmap.AddTilesBorder(coverage_area, CM_PALETTE_TINT_WHITE);
-    }
-
-    if (st_join != nullptr) {
-        // Highlight joining station blue
-        TileArea ta(TileXY(st_join->rect.left, st_join->rect.top), TileXY(st_join->rect.right, st_join->rect.bottom));
-        for (TileIndex t : ta) {
-            if (!IsTileType(t, MP_STATION) || GetStationIndex(t) != st_join->index) continue;
-            hlmap.Add(t, ObjectTileHighlight::make_struct_tint(CM_PALETTE_TINT_BLUE));
-        }
-    }
-
-    return hlmap;
-}
-
 ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, up<Command> cmd, StationCoverageType sct, uint rad) {
     if (!cmd || !ohl.has_value()) return {};
     ohl.value().UpdateTiles();
+    auto palette = CM_PALETTE_TINT_WHITE;
+    auto area = ohl.value().GetArea();
 
     auto cost = cmd->test();
+    if (std::holds_alternative<StationAction::Picker>(_station_action)) {
+        palette = CM_PALETTE_TINT_YELLOW;
+    } else {
+        palette = cost.Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP;
+    }
 
     bool show_coverage = _settings_client.gui.station_show_coverage;
 
-    auto hlmap = PrepareHighilighMap(
-        Station::GetIfValid(StationBuildTool::station_to_join),
+    Station *to_join = nullptr;
+    if (auto mode = std::get_if<StationAction::Join>(&_station_action))
+        to_join = Station::GetIfValid(mode->station);
+    auto hlmap = PrepareHighilightMap(
+        to_join,
         ohl.value(),
-        cost.Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP,
+        palette,
         true,
-        sct,
-        show_coverage ? rad : 0
+        show_coverage,
+        rad
     );
 
     // Prepare build overlay
 
     BuildInfoOverlayData data;
 
-    if (StationBuildTool::station_to_join != StationID::Invalid()) {
-        data.emplace_back(0, PAL_NONE, GetString(CM_STR_BULID_INFO_OVERLAY_JOIN_STATION, StationBuildTool::station_to_join));
+    if (auto mode = std::get_if<StationAction::Join>(&_station_action)) {
+        data.emplace_back(0, PAL_NONE, GetString(CM_STR_BULID_INFO_OVERLAY_JOIN_STATION, mode->station));
     } else {
         data.emplace_back(0, PAL_NONE, GetString(CM_STR_BULID_INFO_OVERLAY_NEW_STATION));
     }
 
-    auto area = ohl.value().GetArea();
     if (area.has_value()) {
         // Add supplied cargo information
         // TODO can we use rad_area since we already have it?
@@ -825,26 +886,61 @@ ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, 
     return {hlmap, data, cost};
 }
 
-ToolGUIInfo GetSelectedStationGUIInfo() {
-    if (!StationBuildTool::active_highlight.has_value()) return {};
-    auto &ohl = StationBuildTool::active_highlight.value();
-    // TODO maybe update or none at all?
-    ohl.UpdateTiles();
-    auto hlmap = PrepareHighilighMap(
-        Station::GetIfValid(StationBuildTool::current_selected_station),
-        ohl,
-        CM_PALETTE_TINT_WHITE,
-        false,
-        SCT_ALL,
-        0
-    );
-    return {hlmap, {}, {}};
-}
-
 // --- SizedPlacementAction ---
 template <ImplementsSizedPlacementHandler Handler>
 void SizedPlacementAction<Handler>::Update(Point, TileIndex tile) {
     this->cur_tile = tile;
+    if (UseImprovedStationJoin()) return;
+
+    _station_action = StationAction::Create{};
+
+    auto area = this->GetArea();
+    if (!area.has_value()) return;
+    auto cmdptr = this->handler.GetCommand(tile, StationID::Invalid());
+    auto cmd = dynamic_cast<cmd::BuildRailStation *>(cmdptr.get());
+    if (cmd == nullptr) return;
+
+    if (!_settings_game.station.distant_join_stations && _fn_mod) return;
+
+    area->Expand(1);
+    area->ClampToMap();
+    StationID to_join = StationID::Invalid();
+    bool ambigous_join = false;
+    for (auto tile : area.value()) {
+        if (IsTileType(tile, MP_STATION) && GetTileOwner(tile) == _local_company) {
+            Station *st = Station::GetByTile(tile);
+            if (st == nullptr || st->index == to_join) continue;
+            if (to_join != StationID::Invalid()) {
+                to_join = StationID::Invalid();
+                if (_settings_game.station.distant_join_stations)
+                    ambigous_join = true;
+                break;
+            }
+            to_join = st->index;
+            // TODO check for command to return multiple? but also check each to
+            // see if they can be built
+            // if (this->GetCommand(true, st->index)->test().Succeeded()) {
+            //     if (this->station_to_join != INVALID_STATION) {
+            //         this->station_to_join = INVALID_STATION;
+            //         this->palette = CM_PALETTE_TINT_YELLOW;
+            //         break;
+            //     } else this->station_to_join = st->index;
+            // }
+        }
+    }
+
+    if (!_settings_game.station.distant_join_stations) return;
+
+    if (ambigous_join) _station_action = StationAction::Picker{};
+    else if (to_join != StationID::Invalid()) _station_action = StationAction::Join{to_join};
+    else _station_action = StationAction::Create{};
+
+    // cmd->station_to_join = NEW_STATION;
+    // cmd->adjacent = true;
+
+    // if (StationBuildTool::station_to_join == INVALID_STATION && !cmd->test().Succeeded()) {
+    //     StationBuildTool::ambigous_join = false;
+    // }
 }
 
 template <ImplementsSizedPlacementHandler Handler>
@@ -931,12 +1027,11 @@ template <ImplementsStationSelectHandler Handler>
 void StationSelectAction<Handler>::HandleMouseRelease() {
     // TODO station sign click
     if (!IsValidTile(this->cur_tile)) return;
-    this->selected_station = StationID::Invalid();
+    _station_action = StationAction::Create{};
     if (IsTileType(this->cur_tile, MP_STATION)) {
         auto st = Station::GetByTile(this->cur_tile);
-        if (st) this->selected_station = st->index;
+        if (st) _station_action = StationAction::Join{st->index};
     }
-    this->handler.SelectStationToJoin(this->selected_station);
 }
 
 template <ImplementsStationSelectHandler Handler>
@@ -956,14 +1051,10 @@ ToolGUIInfo StationSelectAction<Handler>::GetGUIInfo() {
 
 template <ImplementsStationSelectHandler Handler>
 void StationSelectAction<Handler>::OnStationRemoved(const Station *station) {
-    if (this->selected_station == station->index) this->selected_station = StationID::Invalid();
+    // if (this->selected_station == station->index) this->selected_station = INVALID_STATION;
 }
 
 // --- StationBuildTool ---
-
-StationID StationBuildTool::station_to_join = StationID::Invalid();
-StationID StationBuildTool::current_selected_station = StationID::Invalid();
-std::optional<ObjectHighlight> StationBuildTool::active_highlight = std::nullopt;
 
 TileArea GetCommandArea(const up<Command> &cmd) {
     if (auto rail_cmd = dynamic_cast<cmd::BuildRailStation *>(cmd.get())) {
@@ -979,23 +1070,27 @@ TileArea GetCommandArea(const up<Command> &cmd) {
         return {dock_cmd->tile, tile_to};
     } else if (auto airport_cmd = dynamic_cast<cmd::BuildAirport *>(cmd.get())) {
         const AirportSpec *as = AirportSpec::Get(airport_cmd->airport_type);
+        if (as == nullptr) return {};
         return {airport_cmd->tile, as->size_x, as->size_y};
     }
     NOT_REACHED();
 }
 
+
+StationBuildTool::StationBuildTool() {
+    ResetHighlightCoverageStation();
+}
+
 template<typename Thandler, typename Tcallback, typename Targ>
 bool StationBuildTool::ExecuteBuildCommand(Thandler *handler, Tcallback callback, Targ arg) {
-    if (UseImprovedStationJoin()) {
-        auto cmd = handler->GetCommand(arg, StationBuildTool::station_to_join);
-        StationBuildTool::active_highlight = std::nullopt;
+    if (auto mode = std::get_if<StationAction::Join>(&_station_action)) {
+        auto cmd = handler->GetCommand(arg, mode->station);
         return cmd ? cmd->post(callback) : false;
     }
 
     // Vanilla joining behaviour
     auto cmd = handler->GetCommand(arg, StationID::Invalid());
     auto proc = [cmd=sp<Command>{std::move(cmd)}, callback](bool test, StationID to_join) -> bool {
-        StationBuildTool::station_to_join = to_join;
         if (!cmd) return false;
         auto station_cmd = dynamic_cast<StationBuildCommand *>(cmd.get());
         if (station_cmd == nullptr) return false;
@@ -1003,16 +1098,16 @@ bool StationBuildTool::ExecuteBuildCommand(Thandler *handler, Tcallback callback
         if (test) {
             return cmd->test().Succeeded();
         } else {
-            StationBuildTool::active_highlight = std::nullopt;
+            ResetSelectedStationToJoin();
             return cmd->post(callback);
         }
     };
 
     auto ohl = handler->GetObjectHighlight(arg);
     if (!ohl.has_value()) return false;
-    StationBuildTool::active_highlight = ohl;
     auto area = ohl->GetArea();
     if (!area.has_value()) return false;
+    SetActiveHighlightObject(ohl);
     ShowSelectStationIfNeeded(area.value(), proc);
     return true;
 }
@@ -1035,6 +1130,14 @@ bool RailStationBuildTool::RemoveHandler::Execute(TileArea area) {
     return cmd->post(&CcPlaySound_CONSTRUCTION_RAIL);
 }
 
+std::optional<TileArea> RailStationBuildTool::SizedPlacementHandler::GetArea(TileIndex tile) const {
+    if (!IsValidTile(tile)) return std::nullopt;
+    auto w = _settings_client.gui.station_numtracks;
+    auto h = _settings_client.gui.station_platlength;
+    if (_station_gui.axis == AXIS_X) std::swap(w, h);
+    return TileArea{tile, w, h};
+}
+
 up<Command> RailStationBuildTool::SizedPlacementHandler::GetCommand(TileIndex tile, StationID to_join) {
     // TODO mostly same as DragNDropPlacement
     auto cmd = make_up<cmd::BuildRailStation>(
@@ -1046,7 +1149,7 @@ up<Command> RailStationBuildTool::SizedPlacementHandler::GetCommand(TileIndex ti
         _station_gui.sel_class,
         _station_gui.sel_type,
         to_join,
-        true
+        _fn_mod
     );
     cmd->with_error(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION);
     return cmd;
@@ -1071,7 +1174,7 @@ up<Command> RailStationBuildTool::DragNDropPlacementHandler::GetCommand(TileArea
         _station_gui.sel_class,
         _station_gui.sel_type,
         to_join,
-        true
+        _fn_mod
     );
     cmd->with_error(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION);
     return cmd;
@@ -1179,7 +1282,7 @@ up<Command> RoadStopBuildTool::DragNDropPlacementHandler::GetCommand(TileArea ar
         _roadstop_gui.sel_class,
         _roadstop_gui.sel_type,
         to_join,
-        true
+        _fn_mod
     );
 
     return res;
@@ -1275,13 +1378,22 @@ bool DockBuildTool::RemoveHandler::Execute(TileArea area) {
 }
 
 // SizedPlacementHandler
+
+std::optional<TileArea> DockBuildTool::SizedPlacementHandler::GetArea(TileIndex tile) const {
+    if (!IsValidTile(tile)) return std::nullopt;
+    DiagDirection dir = GetInclinedSlopeDirection(GetTileSlope(tile));
+    TileIndex tile_to = (dir != INVALID_DIAGDIR ? TileAddByDiagDir(tile, ReverseDiagDir(dir)) : tile);
+    return TileArea{tile, tile_to};
+}
+
 up<Command> DockBuildTool::SizedPlacementHandler::GetCommand(TileIndex tile, StationID to_join) {
     return make_up<cmd::BuildDock>(
         tile,
         to_join,
-        true
+        _fn_mod
     );
 }
+
 
 bool DockBuildTool::SizedPlacementHandler::Execute(TileIndex tile) {
     return this->tool.ExecuteBuildCommand(this, &CcBuildDocks, tile);
@@ -1349,17 +1461,28 @@ bool AirportBuildTool::RemoveHandler::Execute(TileArea area) {
 }
 
 // SizedPlacementHandler
+
+std::optional<TileArea> AirportBuildTool::SizedPlacementHandler::GetArea(TileIndex tile) const {
+    if (!IsValidTile(tile)) return std::nullopt;
+    auto as = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index);
+    if (as == nullptr) return std::nullopt;
+    return TileArea{tile, as->size_x, as->size_y};
+}
+
 up<Command> AirportBuildTool::SizedPlacementHandler::GetCommand(TileIndex tile, StationID to_join) {
-    // STR_ERROR_CAN_T_BUILD_AIRPORT_HERE,
-    auto airport_type = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index)->GetIndex();
+    auto as = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index);
+    if (as == nullptr) return nullptr;
+    auto airport_type = as->GetIndex();
     auto layout = _selected_airport_layout;
-    return make_up<cmd::BuildAirport>(
+    auto cmd = make_up<cmd::BuildAirport>(
         tile,
         airport_type,
         layout,
-        StationBuildTool::station_to_join,
-        true
+        to_join,
+        _fn_mod
     );
+    cmd->with_error(STR_ERROR_CAN_T_BUILD_AIRPORT_HERE);
+    return cmd;
 }
 
 bool AirportBuildTool::SizedPlacementHandler::Execute(TileIndex tile) {
@@ -1428,6 +1551,5 @@ template class DragNDropPlacementAction<RoadStopBuildTool::DragNDropPlacementHan
 
 template class RemoveAction<DockBuildTool::RemoveHandler>;
 template class SizedPlacementAction<DockBuildTool::SizedPlacementHandler>;
-
 
 } // namespace citymania

@@ -7,6 +7,7 @@
 
 /** @file order_gui.cpp GUI related to orders. */
 
+#include "gfx_func.h"
 #include "stdafx.h"
 #include "command_func.h"
 #include "viewport_func.h"
@@ -473,7 +474,22 @@ static std::pair<Order, FeederOrderMod> GetOrderCmdFromTile(const Vehicle *v, Ti
 				ODTFB_PART_OF_ORDERS,
 				(_settings_client.gui.new_nonstop && v->IsGroundVehicle()) ? ONSF_NO_STOP_AT_INTERMEDIATE_STATIONS : ONSF_STOP_EVERYWHERE);
 
-		if (citymania::_fn_mod) {
+		uint8 os = 0;
+		if (_ctrl_pressed) {
+			if (_shift_pressed) os = _settings_client.gui.cm_ctrl_shift_depot_mod;
+			else os = _settings_client.gui.cm_ctrl_depot_mod;
+		} else if (_shift_pressed) {
+			os = _settings_client.gui.cm_shift_depot_mod;
+		}
+
+		switch (os) {
+			case 1: order.SetDepotOrderType((OrderDepotTypeFlags)(order.GetDepotOrderType() | ODTFB_SERVICE)); break;
+			case 2: order.SetDepotActionType(ODATFB_HALT); break;
+			case 3: order.SetDepotActionType(ODATFB_UNBUNCH); break;
+			default: break;
+		}
+
+		if (order.GetDepotActionType() & ODATFB_UNBUNCH) {
 			/* Check to see if we are allowed to make this an unbunching order. */
 			bool failed = false;
 			if (v->HasFullLoadOrder()) {
@@ -497,7 +513,7 @@ static std::pair<Order, FeederOrderMod> GetOrderCmdFromTile(const Vehicle *v, Ti
 			}
 
 			/* Now we are allowed to set the action type. */
-			order.SetDepotActionType(ODATFB_UNBUNCH);
+			// order.SetDepotActionType(ODATFB_UNBUNCH);
 		}
 
 		return {order, FeederOrderMod::NONE};
@@ -552,20 +568,20 @@ static std::pair<Order, FeederOrderMod> GetOrderCmdFromTile(const Vehicle *v, Ti
 				uint8 os = 0xff;
 				if (_ctrl_pressed) {
 					if (_shift_pressed)
-						os = _settings_client.gui.cm_ctrl_shift_order_mod;
+						os = _settings_client.gui.cm_ctrl_shift_station_mod;
 					else if (_alt_pressed)
-						os = _settings_client.gui.cm_alt_ctrl_order_mod;
+						os = _settings_client.gui.cm_alt_ctrl_station_mod;
 					else
-						os = _settings_client.gui.cm_ctrl_order_mod;
+						os = _settings_client.gui.cm_ctrl_station_mod;
 				}
 				else if (_shift_pressed) {
 					if (_alt_pressed)
-						os = _settings_client.gui.cm_alt_shift_order_mod;
+						os = _settings_client.gui.cm_alt_shift_station_mod;
 					else
-						os = _settings_client.gui.cm_shift_order_mod;
+						os = _settings_client.gui.cm_shift_station_mod;
 				}
 				else if (_alt_pressed)
-					os = _settings_client.gui.cm_alt_order_mod;
+					os = _settings_client.gui.cm_alt_station_mod;
 
 				auto feeder_mod = FeederOrderMod::NONE;
 				if (os != 0xff) {
@@ -1628,7 +1644,7 @@ public:
 				if (feeder_mod == FeederOrderMod::LOAD) {
 					if (citymania::cmd::InsertOrder(this->vehicle->tile, this->vehicle->index, 1, cmd)
 							.with_error(STR_ERROR_CAN_T_INSERT_NEW_ORDER)
-							.no_estimate()
+							.set_auto()
 							.post()) {
 						citymania::cmd::DeleteOrder(this->vehicle->tile, this->vehicle->index, 0)
 							.with_error(STR_ERROR_CAN_T_DELETE_THIS_ORDER)
@@ -1639,7 +1655,7 @@ public:
 				} else if (feeder_mod == FeederOrderMod::UNLOAD) { // still flushes the whole order table
 					if (citymania::cmd::InsertOrder(this->vehicle->tile, this->vehicle->index, this->vehicle->GetNumOrders(), cmd)
 							.with_error(STR_ERROR_CAN_T_INSERT_NEW_ORDER)
-							.no_estimate()
+							.set_auto()
 							.post()) {
 						citymania::cmd::DeleteOrder(this->vehicle->tile, this->vehicle->index, this->vehicle->GetNumOrders() + (int)_networking - 2)
 							.with_error(STR_ERROR_CAN_T_DELETE_THIS_ORDER)

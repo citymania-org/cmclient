@@ -246,12 +246,17 @@ struct GUISettings {
 	uint32 cm_powerfund_money;                  ///< minimum amount of money for powerfund to work
 	uint16 cm_powerfund_houses;                 ///< powerfunding maximum houses limit
 
-	uint8  cm_ctrl_order_mod;       ///< goto action shortcut CTRL+LEFT-CLICK
-	uint8  cm_shift_order_mod;      ///< goto action shortcut SHIFT+LEFT-CLICK
-	uint8  cm_ctrl_shift_order_mod;  ///< goto action shortcut CTRL+SHIFT+LEFT-CLICK
-	uint8  cm_alt_order_mod;        ///< goto action shortcut ALT+LEFT-CLICK
-	uint8  cm_alt_shift_order_mod;   ///< goto action shortcut ALT+SHIFT+LEFT-CLICK
-	uint8  cm_alt_ctrl_order_mod;    ///< goto action shortcut ALT+CTRL+LEFT-CLICK
+	uint8  cm_ctrl_station_mod;       ///< station action shortcut on CTRL+LEFT-CLICK
+	uint8  cm_shift_station_mod;      ///< station action shortcut on SHIFT+LEFT-CLICK
+	uint8  cm_ctrl_shift_station_mod;  ///< station action shortcut on CTRL+SHIFT+LEFT-CLICK
+	uint8  cm_alt_station_mod;        ///< station action shortcut on ALT+LEFT-CLICK
+	uint8  cm_alt_shift_station_mod;   ///< station action shortcut on ALT+SHIFT+LEFT-CLICK
+	uint8  cm_alt_ctrl_station_mod;    ///< station action shortcut on ALT+CTRL+LEFT-CLICK
+
+	uint8  cm_ctrl_depot_mod;       ///< depot action shortcut on CTRL+LEFT-CLICK
+	uint8  cm_shift_depot_mod;      ///< depot action shortcut on SHIFT+LEFT-CLICK
+	uint8  cm_ctrl_shift_depot_mod;  ///< depot action shortcut on CTRL+SHIFT+LEFT-CLICK
+
 	bool   cm_no_loading_on_transfer_order;          ///< automatically set no-loading when ordering to transfer all cargo
 	bool   cm_no_loading_on_unload_order;         ///< automatically set no-loading when ordering to unload all cargo
 

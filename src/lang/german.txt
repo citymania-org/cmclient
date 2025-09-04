@@ -6228,19 +6228,19 @@ CM_STR_NETWORK_COMPANY_LIST_SPECTATE                            :Zuschauen
 
 CM_STR_RAIL_TOOLBAR_TOOLTIP_BLUEPRINT                           :{BLACK}Schienen-Blaupausen-Tool (kopieren-einfügen)
 
-CM_STR_CONFIG_SETTING_ORDER_MOD_CTRL                            :Strg+Linksklick: {STRING}
-CM_STR_CONFIG_SETTING_ORDER_MOD_SHIFT                           :Umschalt+Linksklick: {STRING}
-CM_STR_CONFIG_SETTING_ORDER_MOD_CTRL_SHIFT                      :Strg+Umschalt+Linksklick: {STRING}
-CM_STR_CONFIG_SETTING_ORDER_MOD_ALT                             :Alt+Linksklick: {STRING}
-CM_STR_CONFIG_SETTING_ORDER_MOD_ALT_SHIFT                       :Alt+Umschalt+Linksklick: {STRING}
-CM_STR_CONFIG_SETTING_ORDER_MOD_ALT_CTRL                        :Strg+Alt+Linksklick: {STRING}
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_NONE                     :Nichts machen
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_FULL_LOAD_ANY            :Mit beliebiger Fracht voll beladen
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_TRANSFER_CARGO           :Fracht umladen
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_UNLOAD_ALL               :Entladen jeder Fracht erzwingen
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_FEEDER_LOAD              :Zulieferer-Beladung (ersten Auftrag ersetzen)
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_FEEDER_UNLOAD            :Zulieferer-Entladung (letzten Auftrag ersetzen)
-CM_STR_CONFIG_SETTING_ORDER_MOD_ACTION_NO_LOAD                  :Mit keiner Fracht beladen
+CM_STR_CONFIG_SETTING_STATION_MOD_CTRL                            :Strg+Linksklick station: {STRING}
+CM_STR_CONFIG_SETTING_STATION_MOD_SHIFT                           :Umschalt+Linksklick station: {STRING}
+CM_STR_CONFIG_SETTING_STATION_MOD_CTRL_SHIFT                      :Strg+Umschalt+Linksklick station: {STRING}
+CM_STR_CONFIG_SETTING_STATION_MOD_ALT                             :Alt+Linksklick station: {STRING}
+CM_STR_CONFIG_SETTING_STATION_MOD_ALT_SHIFT                       :Alt+Umschalt+Linksklick station: {STRING}
+CM_STR_CONFIG_SETTING_STATION_MOD_ALT_CTRL                        :Strg+Alt+Linksklick station: {STRING}
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_NONE                     :Nichts machen
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_FULL_LOAD_ANY            :Mit beliebiger Fracht voll beladen
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_TRANSFER_CARGO           :Fracht umladen
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_UNLOAD_ALL               :Entladen jeder Fracht erzwingen
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_FEEDER_LOAD              :Zulieferer-Beladung (ersten Auftrag ersetzen)
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_FEEDER_UNLOAD            :Zulieferer-Entladung (letzten Auftrag ersetzen)
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_NO_LOAD                  :Mit keiner Fracht beladen
 
 CM_STR_CONFIG_SETTING_PERSISTENT_DEPOTTOOLS                     :Die Depot-Bauwerkzeuge nach Benutzung weiter aktiviert lassen: {STRING}
 CM_STR_CONFIG_SETTING_PERSISTENT_DEPOTTOOLS_HELPTEXT            :Die Bauwerkzeuge für Fahrzeug- und Zugdepot sowie Werft behalten (umkehrbar durch platzieren mit Strg).

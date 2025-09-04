@@ -29,6 +29,7 @@
 
 #include <bitset>
 
+#include "cm_colour.hpp"
 #include "cm_hotkeys.hpp"
 #include "cm_minimap.hpp"
 
@@ -249,11 +250,7 @@ bool is_cached_industry(const Industry *ind) {
 MinimapIndustryKdtreeEntry get_industry_entry(const Industry *ind) {
 	auto x = TileX(ind->location.tile) * TILE_SIZE + ind->location.w * TILE_SIZE / 2;
 	auto y = TileY(ind->location.tile) * TILE_SIZE + ind->location.h * TILE_SIZE / 2;
-	uint num_outputs = 0;
-	for (auto i = 0; i < INDUSTRY_NUM_OUTPUTS; i++)
-		if (ind->produced[i].cargo != INVALID_CARGO)
-			num_outputs++;
-	_max_industry_outputs = std::max(_max_industry_outputs, num_outputs);
+	_max_industry_outputs = std::max<uint>(_max_industry_outputs, ind->produced.size());
 	return {(int16)((y - x) / 8), (int16)((y + x) / 8), ind->index};
 }
 
@@ -854,10 +851,11 @@ inline uint32 SmallMapWindow::GetTileColours(const TileArea &ta) const
 					 * This has the highest priority above any value in _tiletype_importance. */
 					IndustryType type = Industry::GetByTile(ti)->type;
 					if (_legend_from_industries[_industry_to_list_pos[type]].show_on_map) {
-						if (type == _smallmap_industry_highlight) {
-							if (_smallmap_industry_highlight_state) return MKCOLOUR_XXXX(PC_WHITE);
+						auto map_colour = GetIndustrySpec(type)->map_colour;
+						if (type == _smallmap_industry_highlight && _smallmap_industry_highlight_state) {
+							return MKCOLOUR_XXXX(GetBlinkColour(map_colour));
 						} else {
-							return GetIndustrySpec(type)->map_colour * 0x01010101;
+							return map_colour * 0x01010101;
 						}
 					}
 					/* Otherwise make it disappear */
@@ -1034,18 +1032,16 @@ void SmallMapWindow::DrawIndustryProduction(const DrawPixelInfo *dpi) const
 			);
 
 			IconTextSizeHelper its{SPR_CARGO_COAL, WidgetDimensions::scaled.framerect};
-			for (auto i = 0; i < INDUSTRY_NUM_OUTPUTS; i++) {
-				if (ind->produced[i].cargo == INVALID_CARGO) continue;
-				its.add(GetString(STR_JUST_INT, ind->produced[i].history[LAST_MONTH].production), FS_SMALL);
+			for (auto &pc : ind->produced) {
+				its.add(GetString(STR_JUST_INT, pc.history[LAST_MONTH].production), FS_SMALL);
 			}
 			its.calculate();
 			this->industry_max_sign = maxdim(this->industry_max_sign, its.size);
 			auto [r, ir] = its.make_rects(pt.x, pt.y);
 	        GfxFillRect(r, PALETTE_TO_TRANSPARENT, FILLRECT_RECOLOUR);
-			for (auto i = 0; i < INDUSTRY_NUM_OUTPUTS; i++) {
-				if (ind->produced[i].cargo == INVALID_CARGO) continue;
-				DrawSprite(CargoSpec::Get(ind->produced[i].cargo)->GetCargoIcon(), PAL_NONE, ir.left, ir.top + its.icon_ofs_y);
-				auto str = GetString(STR_JUST_INT, ind->produced[i].history[LAST_MONTH].production);
+			for (auto &pc : ind->produced) {
+				DrawSprite(CargoSpec::Get(pc.cargo)->GetCargoIcon(), PAL_NONE, ir.left, ir.top + its.icon_ofs_y);
+				auto str = GetString(STR_JUST_INT, pc.history[LAST_MONTH].production);
 				DrawString(ir.left + its.text_ofs_x, ir.right, ir.top + its.text_ofs_y, str, TC_WHITE, SA_LEFT, false, FS_SMALL);
 				ir.top += its.line_height;
 			}
@@ -1440,7 +1436,8 @@ std::string SmallMapWindow::GetWidgetString(WidgetID widget, StringID stringid) 
 						params[0] = tbl->legend;
 						params[1] = Industry::GetIndustryTypeCount(tbl->type);
 						if (tbl->show_on_map && tbl->type == _smallmap_industry_highlight) {
-							legend_colour = _smallmap_industry_highlight_state ? PC_WHITE : PC_BLACK;
+							auto mc = GetIndustrySpec(tbl->type)->map_colour;
+							legend_colour = _smallmap_industry_highlight_state ? GetBlinkColour(mc) : mc;
 						}
 						[[fallthrough]];
 

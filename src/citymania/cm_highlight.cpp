@@ -184,9 +184,6 @@ struct TileZoning {
 static std::unique_ptr<TileZoning[]> _mz = nullptr;
 static IndustryType _industry_forbidden_tiles = IT_INVALID;
 
-extern const Station *_station_to_join;
-extern const Station *_highlight_station_to_join;
-extern TileArea _highlight_join_area;
 extern bool _fn_mod;
 
 std::set<std::pair<uint32, const Town*>, std::greater<std::pair<uint32, const Town*>>> _town_cache;
@@ -545,31 +542,6 @@ void ObjectHighlight::AddTile(TileIndex tile, ObjectTileHighlight &&oh) {
     this->tiles.insert(std::make_pair(tile, std::move(oh)));
 }
 
-void ObjectHighlight::AddStationOverlayData(int w, int h, int rad, StationCoverageType sct) {
-    if (!_settings_game.station.modified_catchment) rad = CA_UNMODIFIED;
-    auto production = citymania::GetProductionAroundTiles(this->tile, w, h, rad);
-    bool has_header = false;
-    for (CargoType i = 0; i < NUM_CARGO; i++) {
-        if (production[i] == 0) continue;
-
-        switch (sct) {
-            case SCT_PASSENGERS_ONLY: if (!IsCargoInClass(i, CargoClass::Passengers)) continue; break;
-            case SCT_NON_PASSENGERS_ONLY: if (IsCargoInClass(i, CargoClass::Passengers)) continue; break;
-            case SCT_ALL: break;
-            default: NOT_REACHED();
-        }
-
-        const CargoSpec *cs = CargoSpec::Get(i);
-        if (cs == nullptr) continue;
-
-        if (!has_header) {
-            this->overlay_data.emplace_back(0, PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_STATION_SUPPLIES));
-            has_header = true;
-        }
-        this->overlay_data.emplace_back(1, cs->GetCargoIcon(), GetString(CM_STR_BUILD_INFO_OVERLAY_STATION_CARGO, i, production[i] >> 8));
-    }
-}
-
 void ObjectHighlight::UpdateTiles() {
     this->tiles.clear();
     this->sprites.clear();
@@ -633,7 +605,6 @@ void ObjectHighlight::UpdateTiles() {
                 tile_track += tile_delta ^ TileDiffXY(1, 1); // perpendicular to tile_delta
             } while (--numtracks);
 
-            this->AddStationOverlayData(ta.w, ta.h, CA_TRAIN, SCT_ALL);
             break;
         }
         case Type::ROAD_STOP: {
@@ -655,9 +626,6 @@ void ObjectHighlight::UpdateTiles() {
             for (TileIndex tile : ta) {
                 this->AddTile(tile, ObjectTileHighlight::make_road_stop(palette, this->roadtype, this->ddir, this->is_truck, this->road_stop_spec_class, this->road_stop_spec_index));
             }
-            auto sct = (this->is_truck ? SCT_NON_PASSENGERS_ONLY : SCT_PASSENGERS_ONLY);
-            auto rad = (this->is_truck ? CA_BUS : CA_TRUCK);
-            this->AddStationOverlayData(ta.w, ta.h, rad, sct);
             break;
         }
 
@@ -689,7 +657,6 @@ void ObjectHighlight::UpdateTiles() {
             for (AirportTileTableIterator iter(as->layouts[this->airport_layout].tiles.data(), this->tile); iter != INVALID_TILE; ++iter) {
                 this->AddTile(iter, ObjectTileHighlight::make_airport_tile(palette, iter.GetStationGfx()));
             }
-            this->AddStationOverlayData(as->size_x, as->size_y, as->catchment, SCT_ALL);
             break;
         }
         case Type::BLUEPRINT:
@@ -817,43 +784,6 @@ void ObjectHighlight::UpdateTiles() {
         default:
             NOT_REACHED();
     }
-}
-
-void ObjectHighlight::UpdateOverlay() {
-    HideBuildInfoOverlay();
-    auto w = FindWindowFromPt(_cursor.pos.x, _cursor.pos.y);
-    if (w == nullptr) return;
-    auto vp = IsPtInWindowViewport(w, _cursor.pos.x, _cursor.pos.y);
-    if (vp == nullptr) return;
-
-    if (this->tile == INVALID_TILE) {
-        HideBuildInfoOverlay();
-        return;
-    }
-
-    auto err = this->cost.GetErrorMessage();
-    // auto extra_err = this->cost.GetExtraErrorMessage();
-    bool no_money = (err == STR_ERROR_NOT_ENOUGH_CASH_REQUIRES_CURRENCY);
-    this->overlay_data.emplace_back(0, PAL_NONE, GetString(no_money ? CM_STR_BUILD_INFO_OVERLAY_COST_NO_MONEY : CM_STR_BUILD_INFO_OVERLAY_COST_OK, this->cost.GetCost()));
-    // if (this->cost.Failed() && err != STR_ERROR_NOT_ENOUGH_CASH_REQUIRES_CURRENCY) {
-    //     if (err == INVALID_STRING_ID) {
-    //         this->overlay_data.emplace_back(PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_ERROR_UNKNOWN));
-    //     } else {
-    //         SetDParam(0, err);
-    //         this->overlay_data.emplace_back(PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_ERROR));
-    //     }
-    //     if (extra_err != INVALID_STRING_ID) {
-    //         SetDParam(0, extra_err);
-    //         this->overlay_data.emplace_back(PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_ERROR));
-    //     }
-    // }
-
-    // Point pt = RemapCoords2(TileX(this->tile) * TILE_SIZE + TILE_SIZE / 2, TileY(this->tile) * TILE_SIZE + TILE_SIZE / 2);
-    Point pt = RemapCoords2(TileX(this->tile) * TILE_SIZE, TileY(this->tile) * TILE_SIZE);
-    pt.x = UnScaleByZoom(pt.x - vp->virtual_left, vp->zoom) + vp->left;
-    pt.y = UnScaleByZoom(pt.y - vp->virtual_top, vp->zoom) + vp->top;
-    // this->overlay_pos = pt;
-    ShowBuildInfoOverlay(pt.x, pt.y, this->overlay_data);
 }
 
 void ObjectHighlight::MarkDirty() {
@@ -1834,8 +1764,6 @@ static void SetStationSelectionHighlight(const TileInfo *ti, TileHighlight &th) 
     bool draw_selection = ((_thd.drawstyle & HT_DRAG_MASK) == HT_RECT && _thd.outersize.x > 0);
     const Station *highlight_station = _viewport_highlight_station;
 
-    if (_highlight_station_to_join) highlight_station = _highlight_station_to_join;
-
     if (draw_selection) {
         // const SpriteID pal[] = {SPR_PALETTE_ZONING_RED, SPR_PALETTE_ZONING_YELLOW, SPR_PALETTE_ZONING_LIGHT_BLUE, SPR_PALETTE_ZONING_GREEN};
         // auto color = pal[(int)_station_building_status];
@@ -1877,20 +1805,6 @@ static void SetStationSelectionHighlight(const TileInfo *ti, TileHighlight &th) 
         th.add_border(b.first, pal[b.second]);
         const SpriteID pal2[] = {PAL_NONE, CM_PALETTE_TINT_WHITE, CM_PALETTE_TINT_BLUE};
         th.ground_pal = th.structure_pal = pal2[b.second];
-    }
-
-    if (_highlight_join_area.tile != INVALID_TILE) {
-        auto b = CalcTileBorders(ti->tile, [](TileIndex t) {
-            return _highlight_join_area.Contains(t) ? 1 : 0;
-        });
-        th.add_border(b.first, CM_SPR_PALETTE_ZONING_LIGHT_BLUE);
-        if (b.second) {
-            switch (th.ground_pal) {
-                case CM_PALETTE_TINT_WHITE: th.ground_pal = th.structure_pal = CM_PALETTE_TINT_CYAN_WHITE; break;
-                case CM_PALETTE_TINT_BLUE: break;
-                default: th.ground_pal = th.structure_pal = CM_PALETTE_TINT_CYAN; break;
-            }
-        }
     }
 }
 
@@ -2247,7 +2161,6 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
         _thd.cm.MarkDirty();
         _thd.cm = _thd.cm_new;
         _thd.cm.UpdateTiles();
-        _thd.cm.UpdateOverlay();
         _thd.cm.MarkDirty();
     }
     return new_drawstyle;
@@ -2423,7 +2336,6 @@ PaletteID GetTreeShadePal(TileIndex tile) {
 
 ActiveTool _at;
 
-
 static void ResetVanillaHighlight() {
     if (_thd.window_class != WC_INVALID) {
         /* Undo clicking on button and drag & drop */
@@ -2472,7 +2384,7 @@ void UpdateActiveTool() {
     auto tile = pt.x == -1 ? INVALID_TILE : TileVirtXY(pt.x, pt.y);
 
     ToolGUIInfo info;
-    if (citymania::StationBuildTool::active_highlight.has_value()) {
+    if (citymania::HasSelectedStationHighlight()) {
         info = GetSelectedStationGUIInfo();
     } else if (_at.tool != nullptr) {
         _at.tool->Update(pt, tile);
