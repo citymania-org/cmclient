@@ -31,8 +31,6 @@ enum RailToolbarWidgets : WidgetID {
 	WID_RAT_REMOVE,         ///< Bulldozer to remove rail.
 	WID_RAT_CONVERT_RAIL,   ///< Convert other rail to this type.
 	CM_WID_RAT_BLUEPRINT_PLACE, ///< CityMania rail blueprint tool placement (fake widget).
-
-	INVALID_WID_RAT = -1,	
 };
 
 /** Widgets of the #BuildRailStationWindow class. */
