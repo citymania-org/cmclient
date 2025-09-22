@@ -171,7 +171,7 @@ bool ConResetTownGrowth(std::span<std::string_view> argv) {
     if (argv.size() > 1) return false;
 
     for (Town *town : Town::Iterate()) {
-        ClrBit(town->flags, TOWN_CUSTOM_GROWTH);
+        town->flags.Reset(TownFlag::CustomGrowth);
         UpdateTownGrowthRate(town);
     }
     return true;

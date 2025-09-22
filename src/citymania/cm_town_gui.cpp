@@ -53,10 +53,10 @@ void DrawExtraTownInfo (Rect &r, const Town *town, uint line, bool show_house_st
 	DrawString(r, GetString(
 		CM_STR_TOWN_VIEW_GROWTH,
 		town->growth_rate,
-		HasBit(town->flags, TOWN_CUSTOM_GROWTH) ? CM_STR_TOWN_VIEW_GROWTH_RATE_CUSTOM : STR_EMPTY,
+		town->flags.Test(TownFlag::CustomGrowth) ? CM_STR_TOWN_VIEW_GROWTH_RATE_CUSTOM : STR_EMPTY,
 		town->grow_counter,
 		town->time_until_rebuild,
-		HasBit(town->flags, TOWN_IS_GROWING) ? 1 : 0,
+		town->flags.Test(TownFlag::IsGrowing) ? 1 : 0,
 		town->fund_buildings_months
 	));
 	r.top += line;
