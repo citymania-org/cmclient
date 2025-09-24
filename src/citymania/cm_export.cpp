@@ -310,7 +310,7 @@ void WriteEngineInfo(JsonWriter &j) {
             j.end_dict();
         }
         {
-            const RailVehicleInfo *rvi = &e->u.rail;
+            const RailVehicleInfo *rvi = &e->VehInfo<RailVehicleInfo>();
             j.begin_dict_with_key("rail");
             JKV(j, rvi->image_index);
             JKV(j, rvi->railveh_type);
