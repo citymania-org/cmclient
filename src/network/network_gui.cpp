@@ -1383,7 +1383,7 @@ public:
 		colour(colour),
 		disabled(disabled)
 	{
-		Dimension d = GetSpriteSize(sprite);
+		Dimension d = GetScaledSpriteSize(sprite);
 		this->height = d.height + WidgetDimensions::scaled.framerect.Vertical();
 		this->width = d.width + WidgetDimensions::scaled.framerect.Horizontal();
 	}
@@ -1507,7 +1507,7 @@ public:
 		bool rtl = _current_text_dir == TD_RTL;
 		r = this->DrawButtons(r);
 
-		Dimension d = GetSpriteSize(CM_SPR_COMPANY_ICON);
+		Dimension d = GetScaledSpriteSize(CM_SPR_COMPANY_ICON);
 		PaletteID pal = Company::IsValidID(this->company_id) ? GetCompanyPalette(this->company_id) : PALETTE_TO_GREY;
 		DrawSpriteIgnorePadding(CM_SPR_COMPANY_ICON, pal, r.WithWidth(d.width, rtl), SA_CENTER);
 
@@ -1547,7 +1547,7 @@ public:
 		}
 
 		if (player_icon != 0) {
-			Dimension d = GetSpriteSize(player_icon);
+			Dimension d = GetScaledSpriteSize(player_icon);
 			DrawSpriteIgnorePadding(player_icon, PALETTE_TO_GREY, r.WithWidth(d.width, rtl), SA_CENTER);
 			tr = tr.Indent(d.width + WidgetDimensions::scaled.hsep_normal, rtl);
 		}
@@ -1558,7 +1558,7 @@ public:
 	std::optional<EncodedString> GetTooltip(Rect r, const Point &pt) const override
 	{
 		bool rtl = _current_text_dir == TD_RTL;
-		Dimension d = GetSpriteSize(SPR_PLAYER_SELF);
+		Dimension d = GetScaledSpriteSize(SPR_PLAYER_SELF);
 
 		if (r.WithWidth(d.width, rtl).Contains(pt)) {
 			const NetworkClientInfo *ci = NetworkClientInfo::GetIfValid(this->client_pool_id);
@@ -1822,7 +1822,7 @@ public:
 				break;
 
 			case WID_CL_MATRIX: {
-				uint height = std::max({GetSpriteSize(CM_SPR_COMPANY_ICON).height, GetSpriteSize(SPR_JOIN).height, GetSpriteSize(SPR_ADMIN).height, GetSpriteSize(SPR_CHAT).height});
+				uint height = std::max({GetScaledSpriteSize(CM_SPR_COMPANY_ICON).height, GetScaledSpriteSize(SPR_JOIN).height, GetScaledSpriteSize(SPR_ADMIN).height, GetScaledSpriteSize(SPR_CHAT).height});
 				height += WidgetDimensions::scaled.framerect.Vertical();
 				this->line_height = std::max(height, (uint)GetCharacterHeight(FS_NORMAL)) + padding.height;
 
