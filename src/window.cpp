@@ -2125,7 +2125,7 @@ static EventState HandleWindowDragging()
 				break;
 			}
 
-			if (w->flags.Test(WindowFlag::CMDragDirtied)) {
+			if (!w->flags.Test(WindowFlag::CMDragDirtied)) {
 				w->flags.Set(WindowFlag::CMDragDirtied);
 				w->SetDirtyAsBlocks();
 			}
