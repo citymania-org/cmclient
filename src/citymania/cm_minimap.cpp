@@ -1431,6 +1431,7 @@ std::string SmallMapWindow::GetWidgetString(WidgetID widget, StringID stringid) 
 				std::array<StringParameter, 2> params{};
 
 				switch (this->map_type) {
+					case SMT_INDUSTRY:
 						/* Industry name must be formatted, since it's not in tiny font in the specs.
 						 * So, draw with a parameter and use the STR_SMALLMAP_INDUSTRY string, which is tiny font */
 						params[0] = tbl->legend;
@@ -1464,9 +1465,9 @@ std::string SmallMapWindow::GetWidgetString(WidgetID widget, StringID stringid) 
 						/* Anything that is not an industry or a company is using normal process */
 						GfxFillRect(icon, PC_BLACK);
 						if (this->map_type == SMT_CONTOUR) {
-							DrawString(text, GetString(tbl->legend, tbl->height * TILE_HEIGHT_STEP));
+							DrawString(text, GetString(tbl->legend, tbl->height * TILE_HEIGHT_STEP), TC_BLACK);
 						} else {
-							DrawString(text, tbl->legend);
+							DrawString(text, tbl->legend, TC_BLACK);
 						}
 						break;
 				}
