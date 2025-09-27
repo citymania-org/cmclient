@@ -33,6 +33,7 @@
 #include "ai/ai_gui.hpp"
 #include "game/game_gui.hpp"
 #include "industry.h"
+#include "core/string_consumer.hpp"
 
 #include "widgets/genworld_widget.h"
 
@@ -322,7 +323,7 @@ static void StartGeneratingLandscape(GenerateLandscapeWindowMode mode)
 	MakeNewgameSettingsLive();
 	ResetGRFConfig(true);
 
-	if (_settings_client.sound.confirm) SndPlayFx(SND_15_BEEP);
+	SndConfirmBeep();
 	switch (mode) {
 		case GLWM_GENERATE:  _switch_mode = (_game_mode == GM_EDITOR) ? SM_GENRANDLAND    : SM_NEWGAME;         break;
 		case GLWM_HEIGHTMAP: _switch_mode = (_game_mode == GM_EDITOR) ? SM_LOAD_HEIGHTMAP : SM_START_HEIGHTMAP; break;
@@ -390,7 +391,7 @@ struct GenerateLandscapeWindow : public Window {
 	WidgetID widget_id{};
 	uint x = 0;
 	uint y = 0;
-	std::string name{};
+	EncodedString name{};
 	GenerateLandscapeWindowMode mode{};
 
 	GenerateLandscapeWindow(WindowDesc &desc, WindowNumber number = 0) : Window(desc)
@@ -466,7 +467,7 @@ struct GenerateLandscapeWindow : public Window {
 				}
 				return GetString(_sea_lakes[_settings_newgame.difficulty.quantity_sea_lakes]);
 
-			case WID_GL_HEIGHTMAP_NAME_TEXT: return this->name;
+			case WID_GL_HEIGHTMAP_NAME_TEXT: return this->name.GetDecodedString();
 			case WID_GL_RIVER_PULLDOWN:      return GetString(_rivers[_settings_newgame.game_creation.amount_of_rivers]);
 			case WID_GL_SMOOTHNESS_PULLDOWN: return GetString(_smoothness[_settings_newgame.game_creation.tgen_smoothness]);
 			case WID_GL_VARIETY_PULLDOWN:    return GetString(_variety[_settings_newgame.game_creation.variety]);
@@ -653,6 +654,7 @@ struct GenerateLandscapeWindow : public Window {
 			case WID_GL_TROPICAL:
 			case WID_GL_TOYLAND:
 				SetNewLandscapeType(LandscapeType(widget - WID_GL_TEMPERATE));
+				SndClickBeep();
 				break;
 
 			case WID_GL_MAPSIZE_X_PULLDOWN: // Mapsize X
@@ -717,6 +719,7 @@ struct GenerateLandscapeWindow : public Window {
 			case WID_GL_HEIGHTMAP_HEIGHT_TEXT: // Height level text
 				this->widget_id = WID_GL_HEIGHTMAP_HEIGHT_TEXT;
 				ShowQueryString(GetString(STR_JUST_INT, _settings_newgame.game_creation.heightmap_height), STR_MAPGEN_HEIGHTMAP_HEIGHT_QUERY_CAPT, 4, this, CS_NUMERAL, QueryStringFlag::EnableDefault);
+				SndClickBeep();
 				break;
 
 
@@ -752,6 +755,7 @@ struct GenerateLandscapeWindow : public Window {
 			case WID_GL_SNOW_COVERAGE_TEXT: // Snow coverage text
 				this->widget_id = WID_GL_SNOW_COVERAGE_TEXT;
 				ShowQueryString(GetString(STR_JUST_INT, _settings_newgame.game_creation.snow_coverage), STR_MAPGEN_SNOW_COVERAGE_QUERY_CAPT, 4, this, CS_NUMERAL, QueryStringFlag::EnableDefault);
+				SndClickBeep();
 				break;
 
 			case WID_GL_DESERT_COVERAGE_DOWN:
@@ -769,6 +773,7 @@ struct GenerateLandscapeWindow : public Window {
 			case WID_GL_DESERT_COVERAGE_TEXT: // Desert line text
 				this->widget_id = WID_GL_DESERT_COVERAGE_TEXT;
 				ShowQueryString(GetString(STR_JUST_INT, _settings_newgame.game_creation.desert_coverage), STR_MAPGEN_DESERT_COVERAGE_QUERY_CAPT, 4, this, CS_NUMERAL, QueryStringFlag::EnableDefault);
+				SndClickBeep();
 				break;
 
 			case WID_GL_HEIGHTMAP_ROTATION_PULLDOWN: // Heightmap rotation
@@ -805,26 +810,35 @@ struct GenerateLandscapeWindow : public Window {
 			/* Freetype map borders */
 			case WID_GL_WATER_NW:
 				_settings_newgame.game_creation.water_borders.Flip(BorderFlag::NorthWest);
+				SndClickBeep();
 				this->InvalidateData();
 				break;
 
 			case WID_GL_WATER_NE:
 				_settings_newgame.game_creation.water_borders.Flip(BorderFlag::NorthEast);
+				SndClickBeep();
 				this->InvalidateData();
 				break;
 
 			case WID_GL_WATER_SE:
 				_settings_newgame.game_creation.water_borders.Flip(BorderFlag::SouthEast);
+				SndClickBeep();
 				this->InvalidateData();
 				break;
 
 			case WID_GL_WATER_SW:
 				_settings_newgame.game_creation.water_borders.Flip(BorderFlag::SouthWest);
+				SndClickBeep();
 				this->InvalidateData();
 				break;
 
 			case WID_GL_BORDERS_RANDOM:
-				_settings_newgame.game_creation.water_borders = (_settings_newgame.game_creation.water_borders == BorderFlag::Random) ? BorderFlag{} : BorderFlag::Random;
+				if (_settings_newgame.game_creation.water_borders == BorderFlag::Random) {
+					_settings_newgame.game_creation.water_borders.Reset();
+				} else {
+					_settings_newgame.game_creation.water_borders = BorderFlag::Random;
+				}
+				SndClickBeep();
 				this->InvalidateData();
 				break;
 
@@ -851,7 +865,7 @@ struct GenerateLandscapeWindow : public Window {
 		}
 	}
 
-	void OnDropdownSelect(WidgetID widget, int index) override
+	void OnDropdownSelect(WidgetID widget, int index, int) override
 	{
 		switch (widget) {
 			case WID_GL_MAPSIZE_X_PULLDOWN:     _settings_newgame.game_creation.map_x = index; break;
@@ -913,7 +927,9 @@ struct GenerateLandscapeWindow : public Window {
 
 		int32_t value;
 		if (!str->empty()) {
-			value = atoi(str->c_str());
+			auto val = ParseInteger<int32_t>(*str, 10, true);
+			if (!val.has_value()) return;
+			value = *val;
 		} else {
 			/* An empty string means revert to the default */
 			switch (this->widget_id) {
@@ -972,14 +988,14 @@ struct GenerateLandscapeWindow : public Window {
 };
 
 static WindowDesc _generate_landscape_desc(
-	WDP_CENTER, nullptr, 0, 0,
+	WDP_CENTER, {}, 0, 0,
 	WC_GENERATE_LANDSCAPE, WC_NONE,
 	{},
 	_nested_generate_landscape_widgets
 );
 
 static WindowDesc _heightmap_load_desc(
-	WDP_CENTER, nullptr, 0, 0,
+	WDP_CENTER, {}, 0, 0,
 	WC_GENERATE_LANDSCAPE, WC_NONE,
 	{},
 	_nested_heightmap_load_widgets
@@ -997,7 +1013,7 @@ static void _ShowGenerateLandscape(GenerateLandscapeWindowMode mode)
 
 	if (mode == GLWM_HEIGHTMAP) {
 		/* If the function returns negative, it means there was a problem loading the heightmap */
-		if (!GetHeightmapDimensions(_file_to_saveload.detail_ftype, _file_to_saveload.name.c_str(), &x, &y)) return;
+		if (!GetHeightmapDimensions(_file_to_saveload.ftype.detailed, _file_to_saveload.name, &x, &y)) return;
 	}
 
 	WindowDesc &desc = (mode == GLWM_HEIGHTMAP) ? _heightmap_load_desc : _generate_landscape_desc;
@@ -1187,7 +1203,7 @@ struct CreateScenarioWindow : public Window
 		this->RaiseWidgetsWhenLowered(WID_CS_START_DATE_DOWN, WID_CS_START_DATE_UP, WID_CS_FLAT_LAND_HEIGHT_DOWN, WID_CS_FLAT_LAND_HEIGHT_UP);
 	}
 
-	void OnDropdownSelect(WidgetID widget, int index) override
+	void OnDropdownSelect(WidgetID widget, int index, int) override
 	{
 		switch (widget) {
 			case WID_CS_MAPSIZE_X_PULLDOWN: _settings_newgame.game_creation.map_x = index; break;
@@ -1198,19 +1214,20 @@ struct CreateScenarioWindow : public Window
 
 	void OnQueryTextFinished(std::optional<std::string> str) override
 	{
-		if (!str.has_value() || str->empty()) return;
+		if (!str.has_value()) return;
 
-		int32_t value = atoi(str->c_str());
+		auto value = ParseInteger<int32_t>(*str, 10, true);
+		if (!value.has_value()) return;
 
 		switch (this->widget_id) {
 			case WID_CS_START_DATE_TEXT:
 				this->SetWidgetDirty(WID_CS_START_DATE_TEXT);
-				_settings_newgame.game_creation.starting_year = Clamp(TimerGameCalendar::Year(value), CalendarTime::MIN_YEAR, CalendarTime::MAX_YEAR);
+				_settings_newgame.game_creation.starting_year = Clamp(TimerGameCalendar::Year(*value), CalendarTime::MIN_YEAR, CalendarTime::MAX_YEAR);
 				break;
 
 			case WID_CS_FLAT_LAND_HEIGHT_TEXT:
 				this->SetWidgetDirty(WID_CS_FLAT_LAND_HEIGHT_TEXT);
-				_settings_newgame.game_creation.se_flat_world_height = Clamp(value, 0, GetMapHeightLimit());
+				_settings_newgame.game_creation.se_flat_world_height = Clamp(*value, 0, GetMapHeightLimit());
 				break;
 		}
 
@@ -1278,7 +1295,7 @@ static constexpr NWidgetPart _nested_create_scenario_widgets[] = {
 };
 
 static WindowDesc _create_scenario_desc(
-	WDP_CENTER, nullptr, 0, 0,
+	WDP_CENTER, {}, 0, 0,
 	WC_GENERATE_LANDSCAPE, WC_NONE,
 	{},
 	_nested_create_scenario_widgets
@@ -1304,7 +1321,7 @@ static constexpr NWidgetPart _nested_generate_progress_widgets[] = {
 
 
 static WindowDesc _generate_progress_desc(
-	WDP_CENTER, nullptr, 0, 0,
+	WDP_CENTER, {}, 0, 0,
 	WC_MODAL_PROGRESS, WC_NONE,
 	WindowDefaultFlag::NoClose,
 	_nested_generate_progress_widgets
@@ -1393,7 +1410,7 @@ struct GenerateProgressWindow : public Window {
 				DrawFrameRect(r, COLOUR_GREY, {FrameFlag::BorderOnly, FrameFlag::Lowered});
 				Rect br = r.Shrink(WidgetDimensions::scaled.bevel);
 				DrawFrameRect(br.WithWidth(br.Width() * GenWorldStatus::percent / 100, _current_text_dir == TD_RTL), COLOUR_MAUVE, {});
-				DrawString(br.left, br.right, CenterBounds(br.top, br.bottom, GetCharacterHeight(FS_NORMAL)),
+				DrawString(br.left, br.right, CentreBounds(br.top, br.bottom, GetCharacterHeight(FS_NORMAL)),
 					GetString(STR_GENERATION_PROGRESS, GenWorldStatus::percent), TC_FROMSTRING, SA_HOR_CENTER);
 				break;
 			}

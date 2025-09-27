@@ -304,7 +304,7 @@ public:
 					switch(widget) {
 						case WID_CB_CARGO_NAME: {
 							// FIXME scaling
-							GfxFillRect(tr.left, tr.top + 1, tr.left + 8, tr.top + 6, 0);
+							GfxFillRect(tr.left, tr.top + 1, tr.left + 8, tr.top + 6, PC_BLACK);
 							GfxFillRect(tr.left + 1, tr.top + 2, tr.left + 7, tr.top + 5, cargos->legend_colour);
 
 							DrawString(tr.Shrink(ScaleGUITrad(14), 0, 0, 0), GetString(CM_STR_TOWN_CB_CARGO_NAME, cargos->name));
@@ -412,7 +412,7 @@ public:
 	static inline HotkeyList hotkeys{"cm_town_cb_view", {
 		Hotkey((uint16)0, "location", WID_TV_CENTER_VIEW),
 		Hotkey((uint16)0, "local_authority", WID_TV_SHOW_AUTHORITY),
-		Hotkey((uint16)0, "cb_window", WID_TV_CB),
+		Hotkey((uint16)0, "cb_window", CM_WID_TV_CB),
 		Hotkey(WKC_CTRL | 'S', "build_statue", HK_STATUE + 0x80),
 	}};
 };

@@ -401,6 +401,14 @@ enum SaveLoadVersion : uint16_t {
 	SLV_ENCODED_STRING_FORMAT,              ///< 350  PR#13499 Encoded String format changed.
 	SLV_PROTECT_PLACED_HOUSES,              ///< 351  PR#13270 Houses individually placed by players can be protected from town/AI removal.
 	SLV_SCRIPT_SAVE_INSTANCES,              ///< 352  PR#13556 Scripts are allowed to save instances.
+	SLV_FIX_SCC_ENCODED_NEGATIVE,           ///< 353  PR#14049 Fix encoding of negative parameters.
+	SLV_ORDERS_OWNED_BY_ORDERLIST,          ///< 354  PR#13948 Orders stored in OrderList, pool removed.
+
+	SLV_FACE_STYLES,                        ///< 355  PR#14319 Addition of face styles, replacing gender and ethnicity.
+	SLV_INDUSTRY_NUM_VALID_HISTORY,         ///< 356  PR#14416 Store number of valid history records for industries.
+	SLV_INDUSTRY_ACCEPTED_HISTORY,          ///< 357  PR#14321 Add per-industry history of cargo delivered and waiting.
+	SLV_TOWN_SUPPLY_HISTORY,                ///< 358  PR#14461 Town supply history.
+	SLV_STATIONS_UNDER_BRIDGES,             ///< 359  PR#14477 Allow stations under bridges.
 
 	SL_MAX_VERSION,                         ///< Highest possible saveload version
 };
@@ -415,13 +423,11 @@ enum SaveOrLoadResult : uint8_t {
 /** Deals with the type of the savegame, independent of extension */
 struct FileToSaveLoad {
 	SaveLoadOperation file_op;       ///< File operation to perform.
-	DetailedFileType detail_ftype;   ///< Concrete file type (PNG, BMP, old save, etc).
-	AbstractFileType abstract_ftype; ///< Abstract type of file (scenario, heightmap, etc).
+	FiosType ftype;                  ///< File type.
 	std::string name;                ///< Name of the file.
-	std::string title;               ///< Internal name of the game.
+	EncodedString title;             ///< Internal name of the game.
 
-	void SetMode(FiosType ft);
-	void SetMode(SaveLoadOperation fop, AbstractFileType aft, DetailedFileType dft);
+	void SetMode(const FiosType &ft, SaveLoadOperation fop = SLO_LOAD);
 	void Set(const FiosItem &item);
 };
 
@@ -448,7 +454,7 @@ enum class CompressionMethod : uint8_t {
 /** The format for a reader/writer type of a savegame */
 struct SaveLoadFormat {
 	uint8_t id;                             ///< unique integer id of this savegame format (olny used for networkking so is not guaranteed to be preserved between versions)
-	const char *name;                     ///< name of the compressor/decompressor (debug-only)
+	std::string_view name; ///< name of the compressor/decompressor (debug-only)
 	uint32_t tag;                           ///< the 4-letter tag by which it is identified in the savegame
 
 	std::shared_ptr<LoadFilter> (*init_load)(std::shared_ptr<LoadFilter> chain); ///< Constructor for the load filter.
@@ -477,7 +483,7 @@ std::string GenerateDefaultSaveName();
 void SetSaveLoadError(StringID str);
 EncodedString GetSaveLoadErrorType();
 EncodedString GetSaveLoadErrorMessage();
-SaveOrLoadResult SaveOrLoad(const std::string &filename, SaveLoadOperation fop, DetailedFileType dft, Subdirectory sb, bool threaded = true);
+SaveOrLoadResult SaveOrLoad(std::string_view filename, SaveLoadOperation fop, DetailedFileType dft, Subdirectory sb, bool threaded = true);
 void WaitTillSaved();
 void ProcessAsyncSaveFinish();
 void DoExitSave();
@@ -640,7 +646,6 @@ public:
 
 /** Type of reference (#SLE_REF, #SLE_CONDREF). */
 enum SLRefType : uint8_t {
-	REF_ORDER          =  0, ///< Load/save a reference to an order.
 	REF_VEHICLE        =  1, ///< Load/save a reference to a vehicle.
 	REF_STATION        =  2, ///< Load/save a reference to a station.
 	REF_TOWN           =  3, ///< Load/save a reference to a town.
@@ -695,7 +700,7 @@ enum VarTypes : uint16_t {
 	SLE_VAR_NULL  =  9 << 4, ///< useful to write zeros in savegame.
 	SLE_VAR_STR   = 12 << 4, ///< string pointer
 	SLE_VAR_STRQ  = 13 << 4, ///< string pointer enclosed in quotes
-	SLE_VAR_NAME  = 14 << 4, ///< old custom name to be converted to a char pointer
+	SLE_VAR_NAME  = 14 << 4, ///< old custom name to be converted to a string pointer
 	/* 1 more possible memory-primitives */
 
 	/* Shortcut values */
@@ -729,6 +734,7 @@ enum VarTypes : uint16_t {
 	 * Flags directing saving/loading of a variable */
 	SLF_ALLOW_CONTROL   = 1 << 8, ///< Allow control codes in the strings.
 	SLF_ALLOW_NEWLINE   = 1 << 9, ///< Allow new lines in the strings.
+	SLF_REPLACE_TABCRLF = 1 << 10, ///< Replace tabs, cr and lf in the string with spaces.
 };
 
 typedef uint32_t VarType;

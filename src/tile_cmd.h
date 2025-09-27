@@ -10,6 +10,7 @@
 #ifndef TILE_CMD_H
 #define TILE_CMD_H
 
+#include "core/geometry_type.hpp"
 #include "command_type.h"
 #include "vehicle_type.h"
 #include "cargo_type.h"
@@ -17,35 +18,18 @@
 #include "tile_map.h"
 #include "timer/timer_game_calendar.h"
 
-/** The returned bits of VehicleEnterTile. */
-enum VehicleEnterTileStatus : uint32_t {
-	VETS_ENTERED_STATION  = 1, ///< The vehicle entered a station
-	VETS_ENTERED_WORMHOLE = 2, ///< The vehicle either entered a bridge, tunnel or depot tile (this includes the last tile of the bridge/tunnel)
-	VETS_CANNOT_ENTER     = 3, ///< The vehicle cannot enter the tile
-
-	/**
-	 * Shift the VehicleEnterTileStatus this many bits
-	 * to the right to get the station ID when
-	 * VETS_ENTERED_STATION is set
-	 */
-	VETS_STATION_ID_OFFSET = 8,
-	VETS_STATION_MASK      = 0xFFFF << VETS_STATION_ID_OFFSET,
-
-	/** Bit sets of the above specified bits */
-	VETSB_CONTINUE         = 0,                          ///< The vehicle can continue normally
-	VETSB_ENTERED_STATION  = 1 << VETS_ENTERED_STATION,  ///< The vehicle entered a station
-	VETSB_ENTERED_WORMHOLE = 1 << VETS_ENTERED_WORMHOLE, ///< The vehicle either entered a bridge, tunnel or depot tile (this includes the last tile of the bridge/tunnel)
-	VETSB_CANNOT_ENTER     = 1 << VETS_CANNOT_ENTER,     ///< The vehicle cannot enter the tile
+enum class VehicleEnterTileState : uint8_t {
+	EnteredStation, ///< The vehicle entered a station
+	EnteredWormhole, ///< The vehicle either entered a bridge, tunnel or depot tile (this includes the last tile of the bridge/tunnel)
+	CannotEnter, ///< The vehicle cannot enter the tile
 };
-DECLARE_ENUM_AS_BIT_SET(VehicleEnterTileStatus)
+
+using VehicleEnterTileStates = EnumBitSet<VehicleEnterTileState, uint8_t>;
 
 /** Tile information, used while rendering the tile */
-struct TileInfo {
-	int x;          ///< X position of the tile in unit coordinates
-	int y;          ///< Y position of the tile in unit coordinates
+struct TileInfo : Coord3D<int> {
 	Slope tileh;    ///< Slope of the tile
 	TileIndex tile; ///< Tile index
-	int z;          ///< Height
 };
 
 /** Tile description for the 'land area information' tool */
@@ -132,8 +116,7 @@ typedef void AnimateTileProc(TileIndex tile);
 typedef void TileLoopProc(TileIndex tile);
 typedef void ChangeTileOwnerProc(TileIndex tile, Owner old_owner, Owner new_owner);
 
-/** @see VehicleEnterTileStatus to see what the return values mean */
-typedef VehicleEnterTileStatus VehicleEnterTileProc(Vehicle *v, TileIndex tile, int x, int y);
+typedef VehicleEnterTileStates VehicleEnterTileProc(Vehicle *v, TileIndex tile, int x, int y);
 typedef Foundation GetFoundationProc(TileIndex tile, Slope tileh);
 
 /**
@@ -154,6 +137,16 @@ typedef Foundation GetFoundationProc(TileIndex tile, Slope tileh);
 typedef CommandCost TerraformTileProc(TileIndex tile, DoCommandFlags flags, int z_new, Slope tileh_new);
 
 /**
+ * Tile callback function signature to test if a bridge can be built above a tile.
+ * @param tile The involved tile.
+ * @param flags Command flags passed to the build command.
+ * @param axis Axis of bridge being built.
+ * @param height Absolute height of bridge platform.
+ * @return Error code or extra cost for building bridge above the tile.
+ */
+using CheckBuildAboveProc = CommandCost(TileIndex tile, DoCommandFlags flags, Axis axis, int height);
+
+/**
  * Set of callback functions for performing tile operations of a given tile type.
  * @see TileType
  */
@@ -172,12 +165,13 @@ struct TileTypeProcs {
 	VehicleEnterTileProc *vehicle_enter_tile_proc; ///< Called when a vehicle enters a tile
 	GetFoundationProc *get_foundation_proc;
 	TerraformTileProc *terraform_tile_proc;        ///< Called when a terraforming operation is about to take place
+	CheckBuildAboveProc *check_build_above_proc;
 };
 
 extern const TileTypeProcs * const _tile_type_procs[16];
 
 TrackStatus GetTileTrackStatus(TileIndex tile, TransportType mode, uint sub_mode, DiagDirection side = INVALID_DIAGDIR);
-VehicleEnterTileStatus VehicleEnterTile(Vehicle *v, TileIndex tile, int x, int y);
+VehicleEnterTileStates VehicleEnterTile(Vehicle *v, TileIndex tile, int x, int y);
 void ChangeTileOwner(TileIndex tile, Owner old_owner, Owner new_owner);
 void GetTileDesc(TileIndex tile, TileDesc &td);
 

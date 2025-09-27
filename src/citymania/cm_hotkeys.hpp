@@ -27,7 +27,6 @@ ToolRemoveMode RoadToolbar_GetRemoveMode(int widget);
 void RoadToolbar_UpdateOptionWidgetStatus(Window *w, int widget, bool remove_active, bool is_road);
 bool RoadToolbar_RemoveModChanged(Window *w, bool remove_active, bool button_clicked, bool is_road);
 
-void CountEffectiveAction();
 void ResetEffectiveActionCounter();
 std::pair<uint32, uint32> GetEPM();
 bool ChooseSignalDragBehaviour();

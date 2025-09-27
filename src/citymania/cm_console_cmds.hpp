@@ -10,17 +10,18 @@ void SetReplaySaveInterval(uint32 interval);
 void CheckIntervalSave();
 bool IsReplayingCommands();
 
-bool ConGameSpeed(uint8_t argc, char *argv[]);
-bool ConStep(uint8_t argc, char *argv[]);
-bool ConExport(uint8_t argc, char *argv[]);
-bool ConTreeMap(uint8_t argc, char *argv[]);
-bool ConResetTownGrowth(uint8_t argc, char *argv[]);
-bool ConLoadCommands(uint8_t argc, char *argv[]);
+bool ConGameSpeed(std::span<std::string_view> argv);
+bool ConStep(std::span<std::string_view> argv);
+bool ConExport(std::span<std::string_view> argv);
+bool ConTreeMap(std::span<std::string_view> argv);
+bool ConResetTownGrowth(std::span<std::string_view> argv);
+bool ConLoadCommands(std::span<std::string_view> argv);
 void ExecuteFakeCommands(TimerGameTick::TickCounter counter);
 
-bool ConStartRecord(uint8_t argc, char *argv[]);
-bool ConStopRecord(uint8_t argc, char *argv[]);
-bool ConGameStats(uint8_t argc, char *argv[]);
+bool ConStartRecord(std::span<std::string_view> argv);
+bool ConStopRecord(std::span<std::string_view> argv);
+bool ConGameStats(std::span<std::string_view> argv);
+bool ConGfxDebug(std::span<std::string_view> argv);
 
 } // namespace citymania
 

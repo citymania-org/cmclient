@@ -44,7 +44,7 @@ enum Currencies : uint8_t {
 	CURRENCY_NLG,       ///< Dutch Gulden
 	CURRENCY_NOK,       ///< Norwegian Krone
 	CURRENCY_PLN,       ///< Polish Zloty
-	CURRENCY_RON,       ///< Romenian Leu
+	CURRENCY_RON,       ///< Romanian Leu
 	CURRENCY_RUR,       ///< Russian Rouble
 	CURRENCY_SIT,       ///< Slovenian Tolar
 	CURRENCY_SEK,       ///< Swedish Krona
@@ -69,6 +69,7 @@ enum Currencies : uint8_t {
 	CURRENCY_LVL,       ///< Latvian Lats
 	CURRENCY_PTE,       ///< Portuguese Escudo
 	CURRENCY_UAH,       ///< Ukrainian Hryvnia
+	CURRENCY_VND,       ///< Vietnamese Dong
 	CURRENCY_END,       ///< always the last item
 };
 
@@ -94,7 +95,7 @@ struct CurrencySpec {
 
 	CurrencySpec() = default;
 
-	CurrencySpec(uint16_t rate, const char *separator, TimerGameCalendar::Year to_euro, const char *prefix, const char *suffix, const char *code, uint8_t symbol_pos, StringID name) :
+	CurrencySpec(uint16_t rate, std::string_view separator, TimerGameCalendar::Year to_euro, std::string_view prefix, std::string_view suffix, std::string_view code, uint8_t symbol_pos, StringID name) :
 		rate(rate), separator(separator), to_euro(to_euro), prefix(prefix), suffix(suffix), code(code), symbol_pos(symbol_pos), name(name)
 	{
 	}

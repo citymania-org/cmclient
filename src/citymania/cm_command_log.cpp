@@ -97,10 +97,10 @@ void ExecuteFakeCommands(TimerGameTick::TickCounter counter) {
 }
 
 
-void load_replay_commands(const std::string &filename, std::function<void(const std::string &)> error_func) {
+void load_replay_commands(std::string_view filename, std::function<void(const std::string &)> error_func) {
     _fake_commands = {};
 
-    FILE *f = fopen(filename.c_str(), "rb");
+    FILE *f = fopen(std::string(filename).c_str(), "rb");
 
     if (f == nullptr) {
         error_func(fmt::format("Cannot open file `{}`: {}", filename, std::strerror(errno)));

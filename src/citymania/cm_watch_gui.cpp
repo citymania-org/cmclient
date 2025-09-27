@@ -273,7 +273,7 @@ WatchCompany::WatchCompany(WindowDesc &desc, int window_number, CompanyID compan
 	}
 	/* Init the viewport area */
 	NWidgetViewport *nvp = this->GetWidget<NWidgetViewport>(EWW_WATCH);
-	nvp->InitializeViewport(this, (TileIndex)0, ScaleZoomGUI(ZOOM_LVL_NORMAL));
+	nvp->InitializeViewport(this, (TileIndex)0, ScaleZoomGUI(ZoomLevel::Normal));
 
 	Point pt;
 	/* the main window with the main view */
@@ -338,7 +338,7 @@ void WatchCompany::DrawWidget(const Rect &r, int widget) const
 		    int offset = (cid == this->watched_company) ? 1 : 0;
 			auto icon = (company_activity[cid] > 0 ? CM_SPR_COMPANY_ICON : CM_SPR_COMPANY_ICON_AFK);
 		    Dimension sprite_size = GetSpriteSize(icon);
-			DrawSprite(icon, COMPANY_SPRITE_COLOUR(cid), (r.left + r.right - sprite_size.width) / 2 + offset, (r.top + r.bottom - sprite_size.height) / 2 + offset);
+			DrawSprite(icon, GetCompanyPalette(cid), (r.left + r.right - sprite_size.width) / 2 + offset, (r.top + r.bottom - sprite_size.height) / 2 + offset);
 		}
 		return;
 	}
@@ -375,8 +375,9 @@ void WatchCompany::OnScroll(Point delta)
 	this->viewport->dest_scrollpos_y = this->viewport->scrollpos_y;
 }
 
-void WatchCompany::OnMouseWheel( int wheel )
+void WatchCompany::OnMouseWheel(int wheel, WidgetID widget)
 {
+	if (widget != EWW_WATCH) return;
 	ZoomInOrOutToCursorWindow(wheel < 0, this);
 }
 

@@ -29,6 +29,7 @@
 #include "../town.h"
 #include "../viewport_func.h"
 #include "../viewport_kdtree.h"
+#include "../vehicle_base.h"
 #include "../window_func.h"  // SetWindowDirty
 #include "../window_gui.h"
 #include "../zoom_type.h"
@@ -79,6 +80,29 @@ extern int _selected_airport_index;            ///< the index of the selected ai
 extern uint8_t _selected_airport_layout;          ///< selected airport layout number.
 
 namespace citymania {
+
+// Copy of GetOrderDistance but returning both squared dist and manhattan
+std::pair<uint, uint> GetOrderDistances(VehicleOrderID prev, VehicleOrderID cur, const Vehicle *v, int conditional_depth)
+{
+    assert(v->orders != nullptr);
+    const OrderList &orderlist = *v->orders;
+    auto orders = orderlist.GetOrders();
+
+    if (orders[cur].IsType(OT_CONDITIONAL)) {
+        if (conditional_depth > v->GetNumOrders()) return {0, 0};
+
+        conditional_depth++;
+
+        auto dist1 = GetOrderDistances(prev, orders[cur].GetConditionSkipToOrder(), v, conditional_depth);
+        auto dist2 = GetOrderDistances(prev, orderlist.GetNext(cur), v, conditional_depth);
+        return {std::max(dist1.first, dist2.first), std::max(dist1.second, dist2.second)};
+    }
+
+    TileIndex prev_tile = orders[prev].GetLocation(v, true);
+    TileIndex cur_tile = orders[cur].GetLocation(v, true);
+    if (prev_tile == INVALID_TILE || cur_tile == INVALID_TILE) return {0, 0};
+    return {DistanceSquare(prev_tile, cur_tile), DistanceManhattan(prev_tile, cur_tile)};
+}
 
 bool UseImprovedStationJoin() {
     return _settings_client.gui.cm_use_improved_station_join && _settings_game.station.distant_join_stations;

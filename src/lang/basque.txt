@@ -381,7 +381,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :Irten
 
 # Settings menu
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Jokoaren aukerak
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Ezarpenak
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :NewGRF ezarpenak
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Transparentzia ezarpenak
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :Herri izenak erakutsita
@@ -544,6 +543,8 @@ STR_GRAPH_COMPANY_PERFORMANCE_RATINGS_CAPTION                   :{WHITE}Konpania
 STR_GRAPH_COMPANY_VALUES_CAPTION                                :{WHITE}Konpania balioak
 
 
+
+
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE}Zama Salneurriak
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}Ordainketa 10 unitate entregatzeagatik (edo 10,000 litro) 20 karratuko distatziako karga bategatik
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}Dena gaitu
@@ -552,6 +553,7 @@ STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Zama guz
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Ez ikusi zamarik zama salneurriaren grafikoan
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}Aukeratu zama mota on/off grafikoan
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}Erakutsi performantzia balorazioak xehetasunekin
@@ -842,11 +844,12 @@ STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Jokoaren
 
 
 
-STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Diru unitateak
-STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Diru unitatearen aukeraketa
+
+STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :Diru unitateak
+STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :Diru unitatearen aukeraketa
 
 
-###length 45
+###length 46
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Libra
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Dolar Amerikarrak
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Euroa
@@ -882,21 +885,21 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Pertsonalizatua
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Lari Georgiarra
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Rial Iraniarra
 
-STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Auto-gordea
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Aukeratu jokoa automatikoki gordetzeko denbora
+STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :Auto-gordea
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :Aukeratu jokoa automatikoki gordetzeko denbora
 
 # Autosave dropdown
 ###length 5
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :Ez
 
-STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Hizkuntza
-STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Aukeratu interfazean erabiltzeko hizkuntza
+STR_GAME_OPTIONS_LANGUAGE                                       :Hizkuntza
+STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :Aukeratu interfazean erabiltzeko hizkuntza
 
-STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Pantaila osoa
-STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Markatu kaxa hau OpenTTD pantaila osoko moduan jolasteko
+STR_GAME_OPTIONS_FULLSCREEN                                     :Pantaila osoa
+STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :Markatu kaxa hau OpenTTD pantaila osoko moduan jolasteko
 
-STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Pantailaren resoluzioa
-STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Pantailaren resulozioa aukeratu
+STR_GAME_OPTIONS_RESOLUTION                                     :Pantailaren resoluzioa
+STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :Pantailaren resulozioa aukeratu
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :besteak
 
 
@@ -909,17 +912,18 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :besteak
 
 
 
-STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Grafiko basea markatu
-STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Aukeratu erabili beharreko grafiko paketea
-STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}Markatutako grafiko basearen informazio gehiago
 
-STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}Base musika paketea
-STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :{BLACK}Aukeratu erabili beharreko soinu paketea
-STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Soinu paketearen informazio gehiago
+STR_GAME_OPTIONS_BASE_GRF                                       :Grafiko basea markatu
+STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :Aukeratu erabili beharreko grafiko paketea
+STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :Markatutako grafiko basearen informazio gehiago
 
-STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Base musika konfiguratu
-STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Aukeratu erabili beharreko musika paketea
-STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Musika paketearen informazio gehiago
+STR_GAME_OPTIONS_BASE_SFX                                       :Base musika paketea
+STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :Aukeratu erabili beharreko soinu paketea
+STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :Soinu paketearen informazio gehiago
+
+STR_GAME_OPTIONS_BASE_MUSIC                                     :Base musika konfiguratu
+STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :Aukeratu erabili beharreko musika paketea
+STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :Musika paketearen informazio gehiago
 
 
 
@@ -1021,11 +1025,10 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :Jasankorra
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Ez dago IA egokirik aukeratzeko..{}IA asko jaitsi ditzakezu 'Online edukiera' sistemaren bidez
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Ezarpenak
-STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Lokarri iragazkia:
-STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Guztia haunditu
-STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Guztia kolapsatu
+# Settings tree in the Game Options window
+STR_CONFIG_SETTING_FILTER_TITLE                                 :Lokarri iragazkia:
+STR_CONFIG_SETTING_EXPAND_ALL                                   :Guztia haunditu
+STR_CONFIG_SETTING_COLLAPSE_ALL                                 :Guztia kolapsatu
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(Ez dago azalpen erabilgarririk)
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Balio lehenetsia: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Mota ezarpena: {ORANGE}{STRING}
@@ -1035,9 +1038,9 @@ STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Joko ezarpenak 
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Konpainia ezarpenak (Gorden bilduta; bakarrik joko berriei eragingo die)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Konpainia ezarpenak (Gorden bilduta; bakarrik uneko konpainiari eragiten dio)
 
-STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategoria:
-STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Mota:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Beheko zerrenda laburtu bakarrik aldatutako ezarpenak erakutsiz
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :Kategoria:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :Mota:
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :Beheko zerrenda laburtu bakarrik aldatutako ezarpenak erakutsiz
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Oinarrizkoa (ezarpen garrantzitsuak bakarrik erakutsi)
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Aurreratua (ezarpen gehienak erakutsi)
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Aditua (ezarpen guztiak erakutsi, arraroak barne)
@@ -1082,6 +1085,7 @@ STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :Maileguen inter
 
 STR_CONFIG_SETTING_RUNNING_COSTS                                :Mantenimendu kostea: {STRING}
 STR_CONFIG_SETTING_RUNNING_COSTS_HELPTEXT                       :Ibilgailu eta azpigiturak mantentzea kostatuko duena ezarri
+###length 3
 
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED                           :Eraikitzeko abiadura: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED_HELPTEXT                  :IA-en eraikuntza ekintza kopurua mugatu
@@ -1098,6 +1102,7 @@ STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER_HELPTEXT                  :Subsidio garrai
 
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS                           :Eraikuntza kosteak: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :Erosketa eta eraikuntza kostuak ezarri
+###length 3
 
 STR_CONFIG_SETTING_RECESSIONS                                   :Atzerapen ekonomikoak: {STRING}
 STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Gaitua dagoenean, atzeratze ekonomikoa urte gutxika gertatuko da. Atzeratze ekonomikoan, ekoizpen orokorra dexente gutxituko da (Aurreko balioetara bueltatuko da atzerapena amaitzerakoan)
@@ -1375,6 +1380,7 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Bioleta
 
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Mapan zehar mugitzerakoan, abiadura moteltzea: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Kontrolatu nola mugituko den ikuspegia lehio nagusitik zehar, puntu jakin batera joateko mapa txikian sakatzen denean edo objektu zehatz batera joateko agintzen denean
+
 
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Eraikitze tresna ezberdinak erabiltzerakoan neurtresna erakutsi: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :Erakutsi lauki kopuruak eta garaiera ezberdintasunak eraikuntza ekintzetan sagua arrastatzerakoan
@@ -1775,12 +1781,10 @@ STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :{WHITE}... Gord
 STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND                :{WHITE}... jaramonik ez egiten Grafiko baseari '{STRING}': ez da aurkitu
 STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND                  :{WHITE}... jaramonik ez egiten Soinu Paketeari '{STRING}': ez da aurkitu
 STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE}... jaramonik ez egiten musika paketeari'{STRING}': ez da aurkitu
-STR_CONFIG_ERROR_OUT_OF_MEMORY                                  :{WHITE}Memoriaz kanpo
 
 # Video initalization errors
 
 # Intro window
-STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
 
 STR_INTRO_NEW_GAME                                              :{BLACK}Joko berria
 STR_INTRO_LOAD_GAME                                             :{BLACK}Kargatu joko bat
@@ -1791,10 +1795,7 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Multijok
 
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Jokoaren Aukerak
 STR_INTRO_HIGHSCORE                                             :{BLACK}Puntuazio taula
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Ezarpenak
-STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}NewGRF-ren Ezarpenak
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Edukiak Online Kontsultatu
-STR_INTRO_AI_SETTINGS                                           :{BLACK}AAren ezarpenak
 STR_INTRO_QUIT                                                  :{BLACK}Irten
 
 STR_INTRO_TOOLTIP_NEW_GAME                                      :{BLACK}Joko berria hasi. Krtl+klik mapa konfigurazioa desgaitzen du
@@ -1811,8 +1812,6 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Aukeratu
 
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Jokoaren aukerak erakutsi
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Puntuazioen taula erakutsi
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Ezarpenak erakutsi
-STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}NewGRF ezarpenak erakutsi
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Bilatu eduki berria eta eguneratua deskargatzeko
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}'OpenTTD'-tik Irten
 
@@ -1881,12 +1880,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Merkantzietarak
 STR_FACE_CAPTION                                                :{WHITE}Aurpegia aukeratu
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Bertan behera utzi aurpegia aukeratu
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Aurpegi berria onartu
-STR_FACE_RANDOM                                                 :{BLACK}Ausaz egin
 
-STR_FACE_MALE_BUTTON                                            :{BLACK}Gizonezkoa
-STR_FACE_MALE_TOOLTIP                                           :{BLACK}Aukeratu gizonezko aurpegiak
-STR_FACE_FEMALE_BUTTON                                          :{BLACK}Emakumea
-STR_FACE_FEMALE_TOOLTIP                                         :{BLACK}Aukeratu emakumezko aurpegiak
 STR_FACE_NEW_FACE_BUTTON                                        :{BLACK}Aurpegi berria
 STR_FACE_NEW_FACE_TOOLTIP                                       :{BLACK}Ausazko aurpegia sortu
 STR_FACE_ADVANCED                                               :{BLACK}Aukera aurreratuak
@@ -1904,36 +1898,20 @@ STR_FACE_FACECODE_ERR                                           :{WHITE}Ezin iza
 STR_FACE_SAVE                                                   :{BLACK}Gorde
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}Aurpegia gorde
 STR_FACE_SAVE_DONE                                              :{WHITE}Aurpegia zure aurpegi gogoko bezala gorde da OpenTTDko konfigurazio artxiboan
-STR_FACE_EUROPEAN                                               :{BLACK}Europarra
-STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}Europarren aurpegiak aukeratu
-STR_FACE_AFRICAN                                                :{BLACK}Afrikarra
-STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}Afrikarren aurpegiak aukeratu
 STR_FACE_YES                                                    :Bai
 STR_FACE_NO                                                     :Ez
-STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}Gaitu biboteak eta belarritakoak
 STR_FACE_HAIR                                                   :Ilea:
-STR_FACE_HAIR_TOOLTIP                                           :{BLACK}Ilea aldatu
 STR_FACE_EYEBROWS                                               :Bekainak:
-STR_FACE_EYEBROWS_TOOLTIP                                       :{BLACK}Bekainak aldatu
 STR_FACE_EYECOLOUR                                              :Begien kolorea:
-STR_FACE_EYECOLOUR_TOOLTIP                                      :{BLACK}Begien kolorea aldatu
 STR_FACE_GLASSES                                                :Betaurrekoak:
-STR_FACE_GLASSES_TOOLTIP                                        :{BLACK}Betaurrikoak gaitu
-STR_FACE_GLASSES_TOOLTIP_2                                      :{BLACK}Betaurrekoak aldatu
 STR_FACE_NOSE                                                   :Sudurra:
-STR_FACE_NOSE_TOOLTIP                                           :{BLACK}Sudurra aldatu
 STR_FACE_LIPS                                                   :Ezpainak:
 STR_FACE_MOUSTACHE                                              :Bibotea:
-STR_FACE_LIPS_MOUSTACHE_TOOLTIP                                 :{BLACK}Aldatu ezpainak eta bibotea
 STR_FACE_CHIN                                                   :Kokotsa:
-STR_FACE_CHIN_TOOLTIP                                           :{BLACK}Kokotsa aldatu
 STR_FACE_JACKET                                                 :Jaka:
-STR_FACE_JACKET_TOOLTIP                                         :{BLACK}Jaka aldatu
 STR_FACE_COLLAR                                                 :Lepokoa:
-STR_FACE_COLLAR_TOOLTIP                                         :{BLACK}Lepokoa aldatu
 STR_FACE_TIE                                                    :Korbata:
 STR_FACE_EARRING                                                :Belarritakoak:
-STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Aldatu korbata eta belarritakoak
 
 # Matches ServerGameType
 ###length 3
@@ -2232,10 +2210,10 @@ STR_STATION_BUILD_SUPPLIES_CARGO                                :{BLACK}Hornidur
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Geltokia batu
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Geltoki bereizitua eraiki
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}Geltoki bereizitua eraiki
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Bidepuntua lotu
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Ibilbide puntu bereizitua eraiki
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}Ibilbide puntu bereizitua eraiki
 
 # Generic toolbar
 
@@ -2278,6 +2256,7 @@ STR_STATION_BUILD_PLATFORM_LENGTH                               :{BLACK}Geltokia
 STR_STATION_BUILD_PLATFORM_LENGTH_TOOLTIP                       :{BLACK}Geltokiaren luzera aukeratu
 STR_STATION_BUILD_DRAG_DROP                                     :{BLACK}Arrastratzerakoan eraiki
 STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}Geltokia eraiki arrastratzerakoan
+
 
 
 
@@ -2464,6 +2443,7 @@ STR_FOUND_TOWN_SIZE_RANDOM                                      :{BLACK}Ausazkoa
 STR_FOUND_TOWN_INITIAL_SIZE_TOOLTIP                             :{BLACK}Herriaren tamaina aukeratu
 STR_FOUND_TOWN_CITY                                             :{BLACK}Hiria
 STR_FOUND_TOWN_CITY_TOOLTIP                                     :{BLACK}Hiriak herriak baino azkarrago hazten dira{}Ezarpenen arabera sortzerakoan handiagoak izan daitezke
+
 
 STR_FOUND_TOWN_ROAD_LAYOUT                                      :{YELLOW}Herri errepideen diseinua:
 STR_FOUND_TOWN_SELECT_LAYOUT_TOOLTIP                            :{BLACK}Herriaren errepide diseinua aukeratu
@@ -2795,11 +2775,9 @@ STR_NEWGRF_SETTINGS_DISABLED                                    :{RED}Desgaitua
 STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}OpenTTD-ren bertsio honekin bateraezina
 
 # NewGRF save preset window
-STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}Ez aldatu berezko balioa
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}NewGRF parametroak aldatu
-STR_NEWGRF_PARAMETERS_CLOSE                                     :{BLACK}Itxi
 STR_NEWGRF_PARAMETERS_RESET                                     :{BLACK}Lehengoratu
 STR_NEWGRF_PARAMETERS_RESET_TOOLTIP                             :{BLACK}Parametro guztiak hasierako baloreetan jarri
 STR_NEWGRF_PARAMETERS_DEFAULT_NAME                              :{NUM} Parametroa
@@ -3833,7 +3811,6 @@ STR_TIMETABLE_TOOLTIP                                           :{BLACK}Ordutegi
 STR_TIMETABLE_NO_TRAVEL                                         :Bidaiarik ez
 STR_TIMETABLE_NOT_TIMETABLEABLE                                 :Bidaia (automatikoa)
 STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :Bidaia (ordutegirik gabe)
-STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Gehienez {2:VELOCITY}-ko abiadurara bidaiatu (ordutegirik gabe)
 STR_TIMETABLE_TRAVEL_FOR                                        :{STRING} bidaiatu
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :{STRING}-ra bidaiatu gehienez {VELOCITY}ra
 STR_TIMETABLE_STAY_FOR                                          :{STRING} gelditu
@@ -3939,13 +3916,10 @@ STR_AI_LIST_URL                                                 :{LTBLUE}URL: {O
 
 STR_AI_LIST_ACCEPT                                              :{BLACK}Onartu
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Piztutako script-a aukeratu
-STR_AI_LIST_CANCEL                                              :{BLACK}Ezeztatu
-STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Ez aldatu script-a
 
 
 # Script Parameters
 STR_AI_SETTINGS_CAPTION_AI                                      :IA
-STR_AI_SETTINGS_CLOSE                                           :{BLACK}Itxi
 STR_AI_SETTINGS_RESET                                           :{BLACK}Berrabiarazi
 STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORANGE}{STRING}
 
@@ -4060,7 +4034,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}Ezin da 
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}... geheienzko milegua {CURRENCY_LONG} da
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}Ezin da diru gehiago eskatu...
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... ez dago mailegurik ordaintzeko
+STR_ERROR_LOAN_ALREADY_REPAID                                   :{WHITE}... ez dago mailegurik ordaintzeko
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}... {CURRENCY_LONG} beharrezkoa
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}Ezin da mailegua ordaindu...
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Ezin da mailegatutako dirua eman...
@@ -4146,11 +4120,11 @@ STR_ERROR_MUST_DEMOLISH_AIRPORT_FIRST                           :{WHITE}Lehendab
 STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}Bidepuntu bat baino gehiagorekin mugatzen du
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_WAYPOINT                         :{WHITE}Beste bidepuntutik hurbilegi
 
-STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT                            :{WHITE}Ezin da tren bidepuntua hemen eraiki...
+STR_ERROR_CAN_T_BUILD_RAIL_WAYPOINT                             :{WHITE}Ezin da tren bidepuntua hemen eraiki...
 STR_ERROR_CAN_T_POSITION_BUOY_HERE                              :{WHITE}Ezin da buia hemen eraiki...
 STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}Ezin da bidepuntua berrizendatu...
 
-STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}Ezin da tren bidepuntua ezabatu...
+STR_ERROR_CAN_T_REMOVE_RAIL_WAYPOINT                            :{WHITE}Ezin da tren bidepuntua ezabatu...
 STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}Lehendabizi tren bidepuntua ezabatu
 STR_ERROR_BUOY_IN_THE_WAY                                       :{WHITE}... buia bidean
 STR_ERROR_BUOY_IS_IN_USE                                        :{WHITE}... buia beste konpainia batek erabiltzen ari du!

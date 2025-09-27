@@ -5,7 +5,7 @@
 
 namespace citymania {
 
-void load_replay_commands(const std::string &filename, std::function<void(const std::string &)>);
+void load_replay_commands(std::string_view filename, std::function<void(const std::string &)>);
 
 }; // namespace citymania
 

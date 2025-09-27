@@ -15,6 +15,8 @@
 
 namespace citymania {
 
+std::pair<uint, uint> GetOrderDistances(VehicleOrderID prev, VehicleOrderID cur, const Vehicle *v, int conditional_depth = 0);
+
 const DiagDirection DEPOTDIR_AUTO = DIAGDIR_END;
 const DiagDirection STATIONDIR_X = DIAGDIR_END;
 const DiagDirection STATIONDIR_Y = (DiagDirection)((uint)DIAGDIR_END + 1);

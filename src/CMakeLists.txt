@@ -92,6 +92,7 @@ add_files(
     bridge_gui.cpp
     bridge_map.cpp
     bridge_map.h
+    bridge_type.h
     build_vehicle_gui.cpp
     cachecheck.cpp
     cargo_type.h
@@ -188,7 +189,6 @@ add_files(
     fios_gui.cpp
     fontcache.cpp
     fontcache.h
-    fontdetection.h
     framerate_gui.cpp
     framerate_type.h
     gamelog.cpp
@@ -280,6 +280,10 @@ add_files(
     newgrf_animation_type.h
     newgrf_badge.cpp
     newgrf_badge.h
+    newgrf_badge_config.cpp
+    newgrf_badge_config.h
+    newgrf_badge_gui.cpp
+    newgrf_badge_gui.h
     newgrf_badge_type.h
     newgrf_callbacks.h
     newgrf_canal.cpp
@@ -451,6 +455,7 @@ add_files(
     spritecache.cpp
     spritecache.h
     spritecache_internal.h
+    spritecache_type.h
     station.cpp
     station_base.h
     station_cmd.cpp
@@ -459,6 +464,7 @@ add_files(
     station_gui.cpp
     station_gui.h
     station_kdtree.h
+    station_layout_type.h
     station_map.h
     station_type.h
     statusbar_gui.cpp

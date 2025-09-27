@@ -122,7 +122,7 @@ const uint8_t _tileh_to_sprite[32] = {
 
 void DrawZoningSprites(SpriteID image, SpriteID colour, const TileInfo *ti) {
 	if (colour != INVALID_SPRITE_ID){
-		AddSortableSpriteToDraw(image + _tileh_to_sprite[ti->tileh], colour, ti->x, ti->y, 0x10, 0x10, 1, ti->z + 7);
+		AddSortableSpriteToDraw(image + _tileh_to_sprite[ti->tileh], colour, ti->x, ti->y, ti->z + 7, {{}, {0x10, 0x10, 1}, {}});
 	}
 }
 
@@ -243,26 +243,26 @@ SpriteID TileZoneCheckUnservedIndustriesEvaluation(TileIndex tile) {
 
 //Check which town zone tile belongs to.
 SpriteID TileZoneCheckTownZones(TileIndex tile) {
-	HouseZonesBits next_zone = HZB_BEGIN, tz = HZB_END;
+	uint8_t next_zone = 0, tz = (uint8_t)HouseZone::TownEnd;
 
 	for (Town *town : Town::Iterate()) {
 		uint dist = DistanceSquare(tile, town->xy);
 		// town code uses <= for checking town borders (tz0) but < for other zones
-		while (next_zone < HZB_END
+		while (next_zone < (uint8_t)HouseZone::TownEnd
 			&& (town->cache.squared_town_zone_radius[next_zone] == 0
-				|| dist <= town->cache.squared_town_zone_radius[next_zone] - (next_zone == HZB_BEGIN ? 0 : 1))
+				|| dist <= town->cache.squared_town_zone_radius[next_zone] - (next_zone == (uint8_t)HouseZone::TownEdge ? 0 : 1))
 		){
 			if(town->cache.squared_town_zone_radius[next_zone] != 0)  tz = next_zone;
 			next_zone++;
 		}
 	}
 
-	switch (tz) {
-		case HZB_TOWN_EDGE:         return CM_SPR_PALETTE_ZONING_LIGHT_BLUE; // Tz0
-		case HZB_TOWN_OUTSKIRT:     return CM_SPR_PALETTE_ZONING_RED; // Tz1
-		case HZB_TOWN_OUTER_SUBURB: return CM_SPR_PALETTE_ZONING_YELLOW; // Tz2
-		case HZB_TOWN_INNER_SUBURB: return CM_SPR_PALETTE_ZONING_GREEN; // Tz3
-		case HZB_TOWN_CENTRE:       return CM_SPR_PALETTE_ZONING_WHITE; // Tz4 - center
+	switch ((HouseZone)tz) {
+		case HouseZone::TownEdge:         return CM_SPR_PALETTE_ZONING_LIGHT_BLUE; // Tz0
+		case HouseZone::TownOutskirt:     return CM_SPR_PALETTE_ZONING_RED; // Tz1
+		case HouseZone::TownOuterSuburb:  return CM_SPR_PALETTE_ZONING_YELLOW; // Tz2
+		case HouseZone::TownInnerSuburb:  return CM_SPR_PALETTE_ZONING_GREEN; // Tz3
+		case HouseZone::TownCentre:       return CM_SPR_PALETTE_ZONING_WHITE; // Tz4 - center
 		default:                    return INVALID_SPRITE_ID; // no town
 	}
 	return INVALID_SPRITE_ID;

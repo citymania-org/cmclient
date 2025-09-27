@@ -99,7 +99,7 @@ uint BaseSettingEntry::Draw(GameSettings *settings_ptr, int left, int right, int
 
 	int x = rtl ? right : left;
 	if (cur_row >= first_row) {
-		int colour = GetColourGradient(COLOUR_ORANGE, SHADE_NORMAL);
+		PixelColour colour = GetColourGradient(COLOUR_ORANGE, SHADE_NORMAL);
 		y += (cur_row - first_row) * SETTING_HEIGHT; // Compute correct y start position
 
 		/* Draw vertical for parent nesting levels */
@@ -123,16 +123,6 @@ uint BaseSettingEntry::Draw(GameSettings *settings_ptr, int left, int right, int
 }
 
 /* == SettingEntry methods == */
-
-/**
- * Constructor for a single setting in the 'advanced settings' window
- * @param name Name of the setting in the setting table
- */
-SettingEntry::SettingEntry(const char *name)
-{
-	this->name = name;
-	this->setting = nullptr;
-}
 
 /**
  * Initialization of a setting entry
@@ -293,7 +283,7 @@ void SettingEntry::DrawSetting(GameSettings *settings_ptr, int left, int right, 
 	int32_t value = sd->Read(ResolveObject(settings_ptr, sd));
 	if (sd->IsBoolSetting()) {
 		/* Draw checkbox for boolean-value either on/off */
-		DrawBoolButton(buttons_left, button_y, value != 0, editable);
+		DrawBoolButton(buttons_left, button_y, COLOUR_YELLOW, COLOUR_MAUVE, value != 0, editable);
 	} else if (sd->flags.Test(SettingFlag::GuiDropdown)) {
 		/* Draw [v] button for settings of an enum-type */
 		DrawDropDownButton(buttons_left, button_y, COLOUR_YELLOW, state != 0, editable);
@@ -679,6 +669,7 @@ SettingsContainer &GetSettingsTree()
 				general->Add(new SettingEntry("gui.window_snap_radius"));
 				general->Add(new SettingEntry("gui.window_soft_limit"));
 				general->Add(new SettingEntry("gui.right_click_wnd_close"));
+				general->Add(new SettingEntry("gui.toolbar_dropdown_autoselect"));
 			}
 
 			SettingsPage *viewports = interface->Add(new SettingsPage(STR_CONFIG_SETTING_INTERFACE_VIEWPORTS));

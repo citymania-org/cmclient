@@ -38,14 +38,14 @@ static constexpr std::string_view BTPRO_HTTP_LOGIN         = "http://openttd.btp
 
 static const std::string CFG_LOGIN_FILE  = "citymania.cfg";
 static const std::string CFG_LOGIN_KEY   = "login";
-static const char * const NOVAPOLIS_LOGIN = "citymania_login";
-static const char * const NOVAPOLIS_PW    = "citymania_pw";
-static const char * const NICE_LOGIN      = "nice_login";
-static const char * const NICE_PW         = "nice_pw";
-static const char * const BTPRO_LOGIN     = "btpro_login";
-static const char * const BTPRO_PW        = "btpro_pw";
+static constexpr std::string_view NOVAPOLIS_LOGIN = "citymania_login";
+static constexpr std::string_view NOVAPOLIS_PW    = "citymania_pw";
+static constexpr std::string_view NICE_LOGIN      = "nice_login";
+static constexpr std::string_view NICE_PW         = "nice_pw";
+static constexpr std::string_view BTPRO_LOGIN     = "btpro_login";
+static constexpr std::string_view BTPRO_PW        = "btpro_pw";
 
-static const char * const INI_LOGIN_KEYS[] = {
+static constexpr std::string_view INI_LOGIN_KEYS[] = {
 	NOVAPOLIS_LOGIN,
 	NOVAPOLIS_PW,
 	NICE_LOGIN,
@@ -204,7 +204,7 @@ void IniLoginInitiate(){
 	IniReloadLogin();
 }
 
-std::string GetLoginItem(const std::string& itemname){
+std::string GetLoginItem(std::string_view itemname){
 	IniGroup &group = _inilogin->GetOrCreateGroup(CFG_LOGIN_KEY);
 	IniItem &item = group.GetOrCreateItem(itemname);
 	return item.value.value_or("");
@@ -220,7 +220,7 @@ void IniReloadLogin() {
 	}
 }
 
-void SetLoginItem(const std::string& itemname, const std::string& value){
+void SetLoginItem(std::string_view itemname, std::string_view value){
 	IniGroup &group = _inilogin->GetOrCreateGroup(CFG_LOGIN_KEY);
 	IniItem &item = group.GetOrCreateItem(itemname);
 	item.SetValue(value);
@@ -552,7 +552,7 @@ static const NWidgetPart _nested_commands_toolbar_widgets[] = {
 };
 
 static WindowDesc _commands_toolbar_desc(
-	WDP_ALIGN_TOOLBAR, NULL, 0, 0,
+	WDP_ALIGN_TOOLBAR, {}, 0, 0,
 	WC_COMMAND_TOOLBAR, WC_NONE,
 	WDF_CONSTRUCTION,
 	_nested_commands_toolbar_widgets, lengthof(_nested_commands_toolbar_widgets)
@@ -699,15 +699,15 @@ public:
 	{
 		switch(widget){
 			case LWW_NOVAPOLIS_LOGIN:
-				return GetString(CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY, _inilogindata[NOVAPOLISUSER]);
+				return GetString(CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY, std::string_view(_inilogindata[NOVAPOLISUSER]));
 			case LWW_NOVAPOLIS_PW:
 				return GetString(CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY, (GetLoginItem(NOVAPOLIS_PW).empty() ? CM_STR_LOGIN_WINDOW_NOT_SET : CM_STR_LOGIN_WINDOW_SET));
 			case LWW_NICE_LOGIN:
-				return GetString(CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY, _inilogindata[NICEUSER]);
+				return GetString(CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY, std::string_view(_inilogindata[NICEUSER]));
 			case LWW_NICE_PW:
 				return GetString(CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY, (GetLoginItem(NICE_PW).empty() ? CM_STR_LOGIN_WINDOW_NOT_SET : CM_STR_LOGIN_WINDOW_SET));
 			case LWW_BTPRO_LOGIN:
-				return GetString(CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY, _inilogindata[BTPROUSER]);
+				return GetString(CM_STR_LOGIN_WINDOW_USERNAME_DISPLAY, std::string_view(_inilogindata[BTPROUSER]));
 			case LWW_BTPRO_PW:
 				return GetString(CM_STR_LOGIN_WINDOW_PASSWORD_DISPLAY, (GetLoginItem(BTPRO_PW).empty() ? CM_STR_LOGIN_WINDOW_NOT_SET : CM_STR_LOGIN_WINDOW_SET));
 			default:
@@ -839,10 +839,10 @@ static const NWidgetPart _nested_login_window_widgets[] = {
 };
 
 static WindowDesc _login_window_desc(
-	WDP_CENTER, nullptr, 0, 0,
+	WDP_CENTER, {}, 0, 0,
 	CM_WC_LOGIN_WINDOW, WC_NONE,
 	WindowDefaultFlag::Construction,
-	std::span<const NWidgetPart>(_nested_login_window_widgets)
+	_nested_login_window_widgets
 );
 
 void ShowLoginWindow()

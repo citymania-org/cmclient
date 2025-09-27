@@ -229,9 +229,9 @@ static void LoadSpriteTables()
 }
 
 
-static void RealChangeBlitter(const std::string_view repl_blitter)
+static void RealChangeBlitter(std::string_view repl_blitter)
 {
-	const std::string_view cur_blitter = BlitterFactory::GetCurrentBlitter()->GetName();
+	std::string_view cur_blitter = BlitterFactory::GetCurrentBlitter()->GetName();
 	if (cur_blitter == repl_blitter) return;
 
 	Debug(driver, 1, "Switching blitter from '{}' to '{}'... ", cur_blitter, repl_blitter);
@@ -246,7 +246,7 @@ static void RealChangeBlitter(const std::string_view repl_blitter)
 
 	/* Clear caches that might have sprites for another blitter. */
 	VideoDriver::GetInstance()->ClearSystemSprites();
-	ClearFontCache();
+	FontCache::ClearFontCaches(FONTSIZES_ALL);
 	GfxClearSpriteCache();
 	ReInitAllWindows(false);
 }
@@ -300,7 +300,7 @@ static bool SwitchNewGRFBlitter()
 	};
 
 	const bool animation_wanted = HasBit(_display_opt, DO_FULL_ANIMATION);
-	const std::string_view cur_blitter = BlitterFactory::GetCurrentBlitter()->GetName();
+	std::string_view cur_blitter = BlitterFactory::GetCurrentBlitter()->GetName();
 
 	for (const auto &replacement_blitter : replacement_blitters) {
 		if (animation_wanted && (replacement_blitter.animation == 0)) continue;
@@ -327,7 +327,7 @@ void CheckBlitter()
 {
 	if (!SwitchNewGRFBlitter()) return;
 
-	ClearFontCache();
+	FontCache::ClearFontCaches(FONTSIZES_ALL);
 	GfxClearSpriteCache();
 	ReInitAllWindows(false);
 }
@@ -339,7 +339,7 @@ void GfxLoadSprites()
 
 	SwitchNewGRFBlitter();
 	VideoDriver::GetInstance()->ClearSystemSprites();
-	ClearFontCache();
+	FontCache::ClearFontCaches(FONTSIZES_ALL);
 	GfxInitSpriteMem();
 	LoadSpriteTables();
 	GfxInitPalettes();
@@ -347,28 +347,29 @@ void GfxLoadSprites()
 	UpdateCursorSize();
 }
 
-// instantiate here, because unique_ptr needs a complete type
+/* instantiate here, because unique_ptr needs a complete type */
 GraphicsSet::GraphicsSet() = default;
 
-// instantiate here, because unique_ptr needs a complete type
+/* instantiate here, because unique_ptr needs a complete type */
 GraphicsSet::~GraphicsSet() = default;
 
 bool GraphicsSet::FillSetDetails(const IniFile &ini, const std::string &path, const std::string &full_filename)
 {
-	bool ret = this->BaseSet<GraphicsSet>::FillSetDetails(ini, path, full_filename, false);
-	if (ret) {
-		const IniGroup *metadata = ini.GetGroup("metadata");
-		assert(metadata != nullptr); /* ret can't be true if metadata isn't present. */
-		const IniItem *item;
+	if (!this->BaseSet<GraphicsSet>::FillSetDetails(ini, path, full_filename, false)) return false;
 
-		fetch_metadata("palette");
-		this->palette = ((*item->value)[0] == 'D' || (*item->value)[0] == 'd') ? PAL_DOS : PAL_WINDOWS;
+	const IniGroup *metadata = ini.GetGroup("metadata");
+	assert(metadata != nullptr); /* already checked by the inherited FillSetDetails. */
+	const IniItem *item;
 
-		/* Get optional blitter information. */
-		item = metadata->GetItem("blitter");
-		this->blitter = (item != nullptr && (*item->value)[0] == '3') ? BLT_32BPP : BLT_8BPP;
-	}
-	return ret;
+	item = this->GetMandatoryItem(full_filename, *metadata, "palette");
+	if (item == nullptr) return false;
+	this->palette = ((*item->value)[0] == 'D' || (*item->value)[0] == 'd') ? PAL_DOS : PAL_WINDOWS;
+
+	/* Get optional blitter information. */
+	item = metadata->GetItem("blitter");
+	this->blitter = (item != nullptr && (*item->value)[0] == '3') ? BLT_32BPP : BLT_8BPP;
+
+	return true;
 }
 
 /**
@@ -480,7 +481,7 @@ template <>
 
 	const GraphicsSet *best = nullptr;
 
-	auto IsBetter = [&best] (const auto *current) {
+	auto IsBetter = [&best] (const GraphicsSet *current) {
 		/* Nothing chosen yet. */
 		if (best == nullptr) return true;
 		/* Not being a fallback is better. */
@@ -495,11 +496,11 @@ template <>
 		return best->palette != PAL_DOS && current->palette == PAL_DOS;
 	};
 
-	for (const GraphicsSet *c = BaseMedia<GraphicsSet>::available_sets; c != nullptr; c = c->next) {
+	for (const auto &c : BaseMedia<GraphicsSet>::available_sets) {
 		/* Skip unusable sets */
 		if (c->GetNumMissing() != 0) continue;
 
-		if (IsBetter(c)) best = c;
+		if (IsBetter(c.get())) best = c.get();
 	}
 
 	BaseMedia<GraphicsSet>::used_set = best;
@@ -507,7 +508,7 @@ template <>
 }
 
 template <>
-/* static */ const char *BaseMedia<GraphicsSet>::GetExtension()
+/* static */ std::string_view BaseMedia<GraphicsSet>::GetExtension()
 {
 	return ".obg"; // OpenTTD Base Graphics
 }

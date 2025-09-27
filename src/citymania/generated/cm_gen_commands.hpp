@@ -1493,10 +1493,11 @@ public:
 
 class SetCompanyManagerFace: public Command {
 public:
-    CompanyManagerFace cmf;
+    uint style;
+    uint32_t bits;
 
-    SetCompanyManagerFace(CompanyManagerFace cmf)
-        :cmf{cmf} {}
+    SetCompanyManagerFace(uint style, uint32_t bits)
+        :style{style}, bits{bits} {}
     ~SetCompanyManagerFace() override {}
 
     bool _post(::CommandCallback * callback) override;
@@ -1658,9 +1659,10 @@ class ExpandTown: public Command {
 public:
     TownID town_id;
     uint32_t grow_amount;
+    TownExpandModes modes;
 
-    ExpandTown(TownID town_id, uint32_t grow_amount)
-        :town_id{town_id}, grow_amount{grow_amount} {}
+    ExpandTown(TownID town_id, uint32_t grow_amount, TownExpandModes modes)
+        :town_id{town_id}, grow_amount{grow_amount}, modes{modes} {}
     ~ExpandTown() override {}
 
     bool _post(::CommandCallback * callback) override;

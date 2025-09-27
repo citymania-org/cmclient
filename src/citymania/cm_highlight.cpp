@@ -24,6 +24,7 @@
 #include "../newgrf_station.h"
 #include "../newgrf_industrytiles.h"
 #include "../sound_func.h"
+#include "../station_layout_type.h"
 #include "../spritecache.h"
 #include "../strings_func.h"
 #include "../town.h"
@@ -75,8 +76,7 @@ extern DiagDirection _road_depot_orientation;
 extern uint32 _realtime_tick;
 extern uint32 _cm_funding_layout;
 extern IndustryType _cm_funding_type;
-extern void GetStationLayout(uint8_t *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
-extern void IndustryDrawTileLayout(const TileInfo *ti, const TileLayoutSpriteGroup *group, uint8_t rnd_colour, uint8_t stage);
+extern void IndustryDrawTileLayout(const TileInfo *ti, const DrawTileSpriteSpan &dts, Colours rnd_colour, uint8_t stage);
 extern void SetSelectionTilesDirty();
 
 struct RoadStopPickerSelection {
@@ -588,9 +588,8 @@ void ObjectHighlight::UpdateTiles() {
             ).test();
             auto palette = (this->cost.Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
 
-            std::vector<uint8_t> layouts(numtracks * plat_len);
-            auto layout_ptr = layouts.data();
-            GetStationLayout(layout_ptr, numtracks, plat_len, nullptr); // TODO statspec
+            RailStationTileLayout stl{nullptr, numtracks, plat_len};  // TODO statspec
+            auto it = stl.begin();
 
             auto tile_delta = (this->axis == AXIS_X ? TileDiffXY(1, 0) : TileDiffXY(0, 1));
             TileIndex tile_track = this->tile;
@@ -598,8 +597,7 @@ void ObjectHighlight::UpdateTiles() {
                 TileIndex tile = tile_track;
                 int w = plat_len;
                 do {
-                    uint8_t layout = *layout_ptr++;
-                    this->AddTile(tile, ObjectTileHighlight::make_rail_station(palette, this->axis, layout & ~1));
+                    this->AddTile(tile, ObjectTileHighlight::make_rail_station(palette, this->axis, *it++));
                     tile += tile_delta;
                 } while (--w);
                 tile_track += tile_delta ^ TileDiffXY(1, 1); // perpendicular to tile_delta
@@ -654,7 +652,7 @@ void ObjectHighlight::UpdateTiles() {
             if (!as->IsAvailable() || this->airport_layout >= as->layouts.size()) break;
             Direction rotation = as->layouts[this->airport_layout].rotation;
             if (rotation == INVALID_DIR) break;
-            for (AirportTileTableIterator iter(as->layouts[this->airport_layout].tiles.data(), this->tile); iter != INVALID_TILE; ++iter) {
+            for (AirportTileTableIterator iter(as->layouts[this->airport_layout].tiles, tile); iter != INVALID_TILE; ++iter) {
                 this->AddTile(iter, ObjectTileHighlight::make_airport_tile(palette, iter.GetStationGfx()));
             }
             break;
@@ -797,8 +795,8 @@ void ObjectHighlight::MarkDirty() {
         MarkAllViewportsDirty(
             left,
             top,
-            left + UnScaleByZoom(sprite->width, ZOOM_LVL_NORMAL),
-            top + UnScaleByZoom(sprite->height, ZOOM_LVL_NORMAL)
+            left + UnScaleByZoom(sprite->width, ZoomLevel::Normal),
+            top + UnScaleByZoom(sprite->height, ZoomLevel::Normal)
         );
     }
     if (this->type == ObjectHighlight::Type::BLUEPRINT && this->blueprint) {  // TODO why && blueprint check is needed?
@@ -1041,6 +1039,10 @@ void DrawTrainStationSprite(SpriteID palette, const TileInfo *ti, RailType railt
     DrawRailTileSeq(ti, t, TO_INVALID, total_offset, 0, palette);
 }
 
+void AddSortableStationSprite(SpriteID sprite, SpriteID palette, const TileInfo *ti) {
+    AddSortableSpriteToDraw(sprite, palette, *ti, {{}, {1, 1, BB_HEIGHT_UNDER_BRIDGE}, {}});
+}
+
 void DrawRoadStop(SpriteID palette, const TileInfo *ti, RoadType roadtype, DiagDirection orientation, bool is_truck) {
     int32 total_offset = 0;
     const RoadTypeInfo* rti = GetRoadTypeInfo(roadtype);
@@ -1057,22 +1059,22 @@ void DrawRoadStop(SpriteID palette, const TileInfo *ti, RoadType roadtype, DiagD
 
             SpriteID overlay = GetCustomRoadSprite(rti, INVALID_TILE, ROTSG_OVERLAY);
             // if (overlay) DrawSprite(overlay + sprite_offset, PAL_NONE, x, y);
-            if (overlay) AddSortableSpriteToDraw(overlay + sprite_offset, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+            if (overlay) AddSortableStationSprite(overlay + sprite_offset, palette, ti);
         } else if (RoadTypeIsTram(roadtype)) {
             // DrawSprite(SPR_TRAMWAY_TRAM + sprite_offset, PAL_NONE, x, y);
-            AddSortableSpriteToDraw(SPR_TRAMWAY_TRAM + sprite_offset, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+            AddSortableStationSprite(SPR_TRAMWAY_TRAM + sprite_offset, palette, ti);
         }
     } else {
         /* Drive-in stop */
         if (RoadTypeIsRoad(roadtype) && rti->UsesOverlay()) {
             SpriteID ground = GetCustomRoadSprite(rti, INVALID_TILE, ROTSG_ROADSTOP);
             // DrawSprite(, PAL_NONE, x, y);
-            AddSortableSpriteToDraw(ground + image, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+            AddSortableStationSprite(ground + image, palette, ti);
         }
     }
 
     const DrawTileSprites *t = GetStationTileLayout(is_truck ? StationType::Truck : StationType::Bus, image);
-    AddSortableSpriteToDraw(t->ground.sprite, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+    AddSortableStationSprite(t->ground.sprite, palette, ti);
     DrawRailTileSeq(ti, t, TO_INVALID, total_offset, 0, palette);
     /* Draw road, tram catenary */
     // DrawRoadCatenary(ti);
@@ -1142,15 +1144,15 @@ void DrawRoadDepot(SpriteID palette, const TileInfo *ti, RoadType roadtype, Diag
     }
 
     const DrawTileSprites *dts = &_road_depot[orientation];
-    AddSortableSpriteToDraw(dts->ground.sprite, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+    AddSortableStationSprite(dts->ground.sprite, palette, ti);
 
     if (default_gfx) {
         uint offset = GetRoadSpriteOffset(SLOPE_FLAT, DiagDirToRoadBits(orientation));
         if (rti->UsesOverlay()) {
             SpriteID ground = GetCustomRoadSprite(rti, INVALID_TILE, ROTSG_OVERLAY);
-            if (ground != 0) AddSortableSpriteToDraw(ground + offset, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+            if (ground != 0) AddSortableStationSprite(ground + offset, palette, ti);
         } else if (RoadTypeIsTram(roadtype)) {
-            AddSortableSpriteToDraw(SPR_TRAMWAY_OVERLAY + offset, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+            AddSortableStationSprite(SPR_TRAMWAY_OVERLAY + offset, palette, ti);
         }
     }
 
@@ -1192,7 +1194,7 @@ void DrawAirportTile(SpriteID palette, const TileInfo *ti, StationGfx gfx) {
     }
     if (t == nullptr || t->GetSequence().empty()) t = GetStationTileLayout(StationType::Airport, gfx);
     if (t) {
-        AddSortableSpriteToDraw(t->ground.sprite, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+        AddSortableStationSprite(t->ground.sprite, palette, ti);
         DrawRailTileSeq(ti, t, TO_INVALID, total_offset, 0, palette);
     }
 }
@@ -1224,10 +1226,10 @@ struct IndustryTilePreviewScopeResolver : public IndustryTileScopeResolver {
     IndustryTilePreviewScopeResolver(ResolverObject &ro, Industry *industry, TileIndex tile)
         : IndustryTileScopeResolver{ro, industry, tile} {}
 
-    uint32 GetRandomBits() const override { return 0; };
-    uint32 GetTriggers() const override { return 0; };
+    uint32_t GetRandomBits() const override { return 0; };
+    uint32_t GetRandomTriggers() const override { return 0; };
 
-    uint32 GetVariable(uint8_t variable, uint32 parameter, bool &available) const override {
+    uint32_t GetVariable(uint8_t variable, uint32_t parameter, bool &available) const override {
         // Debug(misc, 0, "TILE VAR {:X} requested", variable);
         switch (variable) {
             /* Construction state of the tile: a value between 0 and 3 */
@@ -1266,9 +1268,9 @@ struct IndustriesPreviewScopeResolver : public IndustriesScopeResolver {
     IndustriesPreviewScopeResolver(ResolverObject &ro, TileIndex tile, Industry *industry, IndustryType type, uint32 random_bits = 0)
         : IndustriesScopeResolver{ro, tile, industry, type, random_bits} {}
 
-    uint32 GetRandomBits() const override { return 0; };
-    uint32 GetTriggers() const override { return 0; };
-    uint32 GetVariable(uint8_t variable, uint32 parameter, bool &available) const override {
+    uint32_t GetRandomBits() const override { return 0; };
+    uint32_t GetRandomTriggers() const override { return 0; };
+    uint32_t GetVariable(uint8_t variable, uint32_t parameter, bool &available) const override {
         // Debug(misc, 0, "UNDUSTRY VAR {:X} requested", variable);
         return IndustriesScopeResolver::GetVariable(variable, parameter, available);
     }
@@ -1324,13 +1326,13 @@ bool DrawNewIndustryTile(TileInfo *ti, Industry *i, IndustryGfx gfx, const Indus
     // IndustryTileResolverObject object(gfx, ti->tile, i);
     IndustryTilePreviewResolverObject object(gfx, ti->tile, i);
 
-    const SpriteGroup *group = object.Resolve();
-    if (group == nullptr || group->type != SGT_TILELAYOUT) return false;
+    const auto *group = object.Resolve<TileLayoutSpriteGroup>();
+    if (group == nullptr) return false;
 
-    /* Limit the building stage to the number of stages supplied. */
-    const TileLayoutSpriteGroup *tlgroup = (const TileLayoutSpriteGroup *)group;
-
-    IndustryDrawTileLayout(ti, tlgroup, i->random_colour, INDUSTRY_COMPLETED);
+    uint8_t stage = INDUSTRY_COMPLETED;
+    auto processor = group->ProcessRegisters(object, &stage);
+    auto dts = processor.GetLayout();
+    IndustryDrawTileLayout(ti, dts, i->random_colour, stage);
     return true;
 }
 
@@ -1379,16 +1381,7 @@ void DrawIndustryTile(SpriteID palette, const TileInfo *ti, IndustryType ind_typ
     /* Add industry on top of the ground? */
     image = dits->building.sprite;
     if (image != 0) {
-        AddSortableSpriteToDraw(image, palette,
-            ti->x + dits->subtile_x,
-            ti->y + dits->subtile_y,
-            dits->width,
-            dits->height,
-            dits->dz,
-            ti->z,
-            false,
-            0, 0, 0, nullptr,
-            true);
+        AddSortableSpriteToDraw(image, palette, *ti, *dits, false);
     }
 }
 
@@ -1470,7 +1463,7 @@ void DrawSignal(SpriteID palette, const TileInfo *ti, RailType railtype, uint po
         sprite += type * 16 + variant * 64 + image * 2 + condition + (type > SIGTYPE_LAST_NOPBS ? 64 : 0);
     }
 
-    AddSortableSpriteToDraw(sprite, palette, x, y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, GetSaveSlopeZ(x, y, track));
+    AddSortableSpriteToDraw(sprite, palette, x, y, GetSaveSlopeZ(x, y, track), {{}, {1, 1, BB_HEIGHT_UNDER_BRIDGE}, {}});
 }
 
 // copied from tunnelbridge_cmd.cpp
@@ -1495,7 +1488,7 @@ void DrawBridgeHead(SpriteID palette, const TileInfo *ti, RailType railtype, Dia
     if (ti->tileh == SLOPE_FLAT) base_offset += 4; // sloped bridge head
     psid = &GetBridgeSpriteTable(type, BRIDGE_PIECE_HEAD)[base_offset];
 
-    AddSortableSpriteToDraw(psid->sprite, palette, ti->x, ti->y, 16, 16, ti->tileh == SLOPE_FLAT ? 0 : 8, ti->z);
+    AddSortableSpriteToDraw(psid->sprite, palette, ti->x, ti->y, ti->z, {{}, {16, 16, ti->tileh == SLOPE_FLAT ? 0 : 8}, {}});
     // DrawAutorailSelection(ti, (ddir == DIAGDIR_SW || ddir == DIAGDIR_NE ? HT_DIR_X : HT_DIR_Y), PAL_NONE);
 }
 
@@ -1513,7 +1506,7 @@ void DrawTunnelHead(SpriteID palette, const TileInfo *ti, RailType railtype, Dia
     }
 
     image += ddir * 2;
-    AddSortableSpriteToDraw(image, palette, ti->x, ti->y, 16, 16, 0, ti->z);
+    AddSortableSpriteToDraw(image, palette, ti->x, ti->y, ti->z, {{}, {16, 16, 0}, {}});
 }
 
 void DrawSelectionPoint(SpriteID palette, const TileInfo *ti) {
@@ -2172,11 +2165,11 @@ void AllocateZoningMap(uint map_size) {
 
 uint8 GetTownZone(Town *town, TileIndex tile) {
     auto dist = DistanceSquare(tile, town->xy);
-    if (dist > town->cache.squared_town_zone_radius[HZB_TOWN_EDGE])
+    if (dist > town->cache.squared_town_zone_radius[(uint8_t)HouseZone::TownEdge])
         return 0;
 
     uint8 z = 1;
-    for (HouseZonesBits i = HZB_TOWN_OUTSKIRT; i < HZB_END; i++)
+    for (uint8_t i = (uint8_t)HouseZone::TownOutskirt; i < (uint8_t)HouseZone::TownEnd; i++)
         if (dist < town->cache.squared_town_zone_radius[i])
             z = (uint8)i + 1;
         else if (town->cache.squared_town_zone_radius[i] != 0)
@@ -2185,15 +2178,15 @@ uint8 GetTownZone(Town *town, TileIndex tile) {
 }
 
 uint8 GetAnyTownZone(TileIndex tile) {
-    HouseZonesBits next_zone = HZB_BEGIN;
+    uint8_t next_zone = (uint8_t)HouseZone::TownEdge;
     uint8 z = 0;
 
     for (Town *town : Town::Iterate()) {
         uint dist = DistanceSquare(tile, town->xy);
         // town code uses <= for checking town borders (tz0) but < for other zones
-        while (next_zone < HZB_END
+        while (next_zone < (uint8_t)HouseZone::TownEnd
             && (town->cache.squared_town_zone_radius[next_zone] == 0
-                || dist <= town->cache.squared_town_zone_radius[next_zone] - (next_zone == HZB_BEGIN ? 0 : 1))
+                || dist <= town->cache.squared_town_zone_radius[next_zone] - (next_zone == (uint8_t)HouseZone::TownEdge ? 0 : 1))
         ) {
             if (town->cache.squared_town_zone_radius[next_zone] != 0)  z = (uint8)next_zone + 1;
             next_zone++;
@@ -2203,7 +2196,7 @@ uint8 GetAnyTownZone(TileIndex tile) {
 }
 
 void UpdateTownZoning(Town *town, uint32 prev_edge) {
-    auto edge = town->cache.squared_town_zone_radius[HZB_TOWN_EDGE];
+    auto edge = town->cache.squared_town_zone_radius[(uint8_t)HouseZone::TownEdge];
     if (prev_edge && edge == prev_edge)
         return;
 

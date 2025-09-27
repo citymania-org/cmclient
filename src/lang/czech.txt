@@ -519,7 +519,6 @@ STR_SCENEDIT_TOWN_MENU_PACE_HOUSE                               :Budovat domy
 
 # Settings menu
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Možnosti hry
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Nastavení
 STR_SETTINGS_MENU_AI_SETTINGS                                   :Nastavení AI
 STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS                           :Nastavení herních skriptů
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :Nastavení grafik
@@ -710,6 +709,8 @@ STR_GRAPH_COMPANY_VALUES_CAPTION                                :{WHITE}Graf hod
 STR_GRAPH_LAST_24_MINUTES_TIME_LABEL                            :{TINY_FONT}{BLACK}Posledních 24 minut
 STR_GRAPH_LAST_72_MINUTES_TIME_LABEL                            :{TINY_FONT}{BLACK}Posledních 72 minut
 
+
+
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE}Ceny za přepravu nákladu
 STR_GRAPH_CARGO_PAYMENT_RATES_DAYS                              :{TINY_FONT}{BLACK}Dnů v přepravě
 STR_GRAPH_CARGO_PAYMENT_RATES_SECONDS                           :{TINY_FONT}{BLACK}Sekund v přepravě
@@ -721,9 +722,9 @@ STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Skryje v
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}Zobrazit nebo skrýt graf pro určitý druh nákladu
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
 
-STR_GRAPH_INDUSTRY_PRODUCTION_CAPTION                           :{WHITE}{INDUSTRY} - Historie produkce
 STR_GRAPH_INDUSTRY_RANGE_PRODUCED                               :Vyprodukováno
 STR_GRAPH_INDUSTRY_RANGE_TRANSPORTED                            :Přepraveno
+
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}Zobrazit podrobné hodnocení výkonu
 
@@ -1046,26 +1047,27 @@ STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TOOLTIP                        :{BLACK}Nastavit
 STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Možnosti hry
 
 STR_GAME_OPTIONS_TAB_GENERAL                                    :Obecné
-STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :{BLACK}Zobrazit obecná nastavení
+STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :Zobrazit obecná nastavení
 STR_GAME_OPTIONS_TAB_GRAPHICS                                   :Grafika
-STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :{BLACK}Zobrazit nastavení grafiky
+STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :Zobrazit nastavení grafiky
 STR_GAME_OPTIONS_TAB_SOUND                                      :Zvuk
-STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :{BLACK}Zobrazit nastavení zvuku a hudby
+STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :Zobrazit nastavení zvuku a hudby
 STR_GAME_OPTIONS_TAB_SOCIAL                                     :Sociální
-STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :{BLACK}Zobrazit nastavení pro sociální interakci
+STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :Zobrazit nastavení pro sociální interakci
 
 STR_GAME_OPTIONS_VOLUME                                         :Hlasitost
 STR_GAME_OPTIONS_SFX_VOLUME                                     :Zvukové efekty
 STR_GAME_OPTIONS_MUSIC_VOLUME                                   :Hudba
 
+
 STR_GAME_OPTIONS_VOLUME_MARK                                    :{NUM}%
 
-STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Měna
-STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Výběr jednotek měny
+STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :Měna
+STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :Výběr jednotek měny
 
 STR_GAME_OPTIONS_CURRENCY_CODE                                  :{STRING} ({STRING})
 
-###length 45
+###length 46
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Libra
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Dolar
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Euro
@@ -1112,8 +1114,8 @@ STR_GAME_OPTIONS_CURRENCY_LVL                                   :Lotyšský lat
 STR_GAME_OPTIONS_CURRENCY_PTE                                   :Portugalské escudo
 STR_GAME_OPTIONS_CURRENCY_UAH                                   :Ukrajinská hřivna
 
-STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Automatické ukládání
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Volba intervalu mezi automatickým ukládáním hry
+STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :Automatické ukládání
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :Volba intervalu mezi automatickým ukládáním hry
 
 # Autosave dropdown
 ###length 5
@@ -1123,77 +1125,77 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_30_MINUTES             :Každých 30 mi
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_60_MINUTES             :Každých 60 minut
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_120_MINUTES            :Každých 120 minut
 
-STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Jazyk
-STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Zvolit jazyk uživatelského rozhraní
+STR_GAME_OPTIONS_LANGUAGE                                       :Jazyk
+STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :Zvolit jazyk uživatelského rozhraní
 STR_GAME_OPTIONS_LANGUAGE_PERCENTAGE                            :{STRING} ({NUM}% dokončeno)
 
-STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Na celou obrazovku
-STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Zaškrtnutím této volby poběží OpenTTD na celé obrazovce
+STR_GAME_OPTIONS_FULLSCREEN                                     :Na celou obrazovku
+STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :Zaškrtnutím této volby poběží OpenTTD na celé obrazovce
 
-STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Rozlišení obrazovky
-STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Zvolit rozlišení obrazovky
+STR_GAME_OPTIONS_RESOLUTION                                     :Rozlišení obrazovky
+STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :Zvolit rozlišení obrazovky
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :jiné
 STR_GAME_OPTIONS_RESOLUTION_ITEM                                :{NUM}x{NUM}
 
-STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Hardwarová akcelerace
-STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Zaškrtni, pokud chceš OpenTTD povolit použití hardwarové akcelerace. Změněné nastavení bude aplikováno po restartu hry
+STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :Hardwarová akcelerace
+STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :Zaškrtni, pokud chceš OpenTTD povolit použití hardwarové akcelerace. Změněné nastavení bude aplikováno po restartu hry
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Nastavení vstoupí v platnost pouze po restartu hry
 
-STR_GAME_OPTIONS_VIDEO_VSYNC                                    :{BLACK}VSync
-STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Zaškrtní tento box pro v-sync obrazovky. Změna se projeví po znovu spuštění hry. Funguje to pouze pro povolenou hardwarovou akceleraci.
+STR_GAME_OPTIONS_VIDEO_VSYNC                                    :VSync
+STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :Zaškrtní tento box pro v-sync obrazovky. Změna se projeví po znovu spuštění hry. Funguje to pouze pro povolenou hardwarovou akceleraci.
 
-STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :{BLACK}Aktuální ovladač: {STRING}
+STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :Aktuální ovladač: {STRING}
 
-STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :{BLACK}Velikost uživatelského rozhraní
-STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :{BLACK}Přetažením posuvníku změníš velikost rozhraní. Drž Ctrl pro plynulé přizpůsobení
-STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :{BLACK}Automaticky detekovat velikost
-STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :{BLACK}Zaškrtni pro automatické nastavení velikosti uživatelského rozhraní
 
-STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :{BLACK}Škálovat úkosy
-STR_GAME_OPTIONS_GUI_SCALE_BEVELS_TOOLTIP                       :{BLACK}Zaškrtni toto políčko pro škálování úkosů dle velikosti uživatelského rozhraní
+STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :Velikost uživatelského rozhraní
+STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :Přetažením posuvníku změníš velikost rozhraní. Drž Ctrl pro plynulé přizpůsobení
+STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :Automaticky detekovat velikost
+STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :Zaškrtni pro automatické nastavení velikosti uživatelského rozhraní
 
-STR_GAME_OPTIONS_GUI_FONT_SPRITE                                :{BLACK}Používat tradiční písma ze sprite
-STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :{BLACK}Zaškrtni toto políčko, pokud dáváš přednost tradičním písmům pevné velikosti ze sprite
-STR_GAME_OPTIONS_GUI_FONT_AA                                    :{BLACK}Anti-aliasovat písma
-STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :{BLACK}Zaškrtni toto políčko pro zapnutí anti-aliasování škálovatelných písem
+STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :Škálovat úkosy
+STR_GAME_OPTIONS_GUI_SCALE_BEVELS_TOOLTIP                       :Zaškrtni toto políčko pro škálování úkosů dle velikosti uživatelského rozhraní
+
+STR_GAME_OPTIONS_GUI_FONT_SPRITE                                :Používat tradiční písma ze sprite
+STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :Zaškrtni toto políčko, pokud dáváš přednost tradičním písmům pevné velikosti ze sprite
+STR_GAME_OPTIONS_GUI_FONT_AA                                    :Anti-aliasovat písma
+STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :Zaškrtni toto políčko pro zapnutí anti-aliasování škálovatelných písem
 
 STR_GAME_OPTIONS_GUI_SCALE_MARK                                 :{DECIMAL}x
 
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :{BLACK}Automatický průzkum
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :{BLACK}Účastnit se automatického průzkumu
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :{BLACK}Pokud je zapnuto, OpenTTD odešle průzkum při opuštění hry
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :{BLACK}O anketě a ochraně soukromí
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :{BLACK}Otevře prohlížeč s více informacemi o automatickém průzkumu
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :{BLACK}Náhled výsledků průzkumu
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :{BLACK}Zobrazovat výsledek průzkumu z aktuálně běžící hry
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :Automatický průzkum
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :Účastnit se automatického průzkumu
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :Pokud je zapnuto, OpenTTD odešle průzkum při opuštění hry
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :O anketě a ochraně soukromí
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :Otevře prohlížeč s více informacemi o automatickém průzkumu
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :Náhled výsledků průzkumu
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :Zobrazovat výsledek průzkumu z aktuálně běžící hry
 
-STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK}Grafiky
 
-STR_GAME_OPTIONS_REFRESH_RATE                                   :{BLACK}Obnovovací frekvence obrazovky
-STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :{BLACK}Zvolit obnovovací frekvenci obrazovky
+STR_GAME_OPTIONS_REFRESH_RATE                                   :Obnovovací frekvence obrazovky
+STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :Zvolit obnovovací frekvenci obrazovky
 STR_GAME_OPTIONS_REFRESH_RATE_ITEM                              :{NUM}Hz
 STR_GAME_OPTIONS_REFRESH_RATE_WARNING                           :{WHITE}Obnovovací frekvence vyšší než 60Hz může mít dopad výkon.
 
-STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Základní sada grafiky
-STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Vyber si základní sadu grafiky (nemůže být změněna během hry, ale pouze z hlavního menu)
-STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}Další informace o základní sadě grafiky
+STR_GAME_OPTIONS_BASE_GRF                                       :Základní sada grafiky
+STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :Vyber si základní sadu grafiky (nemůže být změněna během hry, ale pouze z hlavního menu)
+STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :Další informace o základní sadě grafiky
 
-STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}Základní sada zvuků
-STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :{BLACK}Vyber si základní sadu zvuků (nemůže být změněna během hry, ale pouze z hlavního menu)
-STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Další informace o základní sadě zvuků
+STR_GAME_OPTIONS_BASE_SFX                                       :Základní sada zvuků
+STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :Vyber si základní sadu zvuků (nemůže být změněna během hry, ale pouze z hlavního menu)
+STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :Další informace o základní sadě zvuků
 
-STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Základní hudební set
-STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Vyberte jaký základní hudební set použít
-STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Další informace o základním hudebním setu
+STR_GAME_OPTIONS_BASE_MUSIC                                     :Základní hudební set
+STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :Vyberte jaký základní hudební set použít
+STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :Další informace o základním hudebním setu
 
 STR_GAME_OPTIONS_ONLINE_CONTENT                                 :Získat obsah
 STR_GAME_OPTIONS_ONLINE_CONTENT_TOOLTIP                         :Zkontrolovat nový a aktualizovaný obsah ke stažení
 
 STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :{LTBLUE}(nejsou nainstalovány žádné zásuvné moduly pro integraci sociálních platforem)
 
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_TITLE                            :{BLACK}{STRING} ({STRING})
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_PLATFORM                         :{BLACK}Platforma:
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :{BLACK}Stav zásuvného modulu:
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_TITLE                            :{STRING} ({STRING})
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_PLATFORM                         :Platforma:
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :Stav zásuvného modulu:
 
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_RUNNING                    :{GREEN}Spuštěn
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_FAILED                     :{RED}Inicializace selhala
@@ -1305,12 +1307,11 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :Nezaujatý (bez
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Žádná vhodná AI není k dispozici...{}Některé AI lze stáhnout pomocí služby "Stahovat součásti"
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Nastavení
-STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Filtrovat:
-STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Rozbalit vše
-STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Sbalit vše
-STR_CONFIG_SETTING_RESET_ALL                                    :{BLACK}Vymazat všechny hodnoty
+# Settings tree in the Game Options window
+STR_CONFIG_SETTING_FILTER_TITLE                                 :Filtrovat:
+STR_CONFIG_SETTING_EXPAND_ALL                                   :Rozbalit vše
+STR_CONFIG_SETTING_COLLAPSE_ALL                                 :Sbalit vše
+STR_CONFIG_SETTING_RESET_ALL                                    :Vymazat všechny hodnoty
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(žádné vysvětlení není k dispozici)
 STR_CONFIG_SETTING_VALUE                                        :{PUSH_COLOUR}{ORANGE}{STRING}{POP_COLOUR}
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Výchozí hodnota: {ORANGE}{STRING}
@@ -1323,9 +1324,9 @@ STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Nastavení spol
 STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_CAPTION        :{WHITE}Pozor!
 STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_TEXT           :{WHITE}Tato akce resetuje všechna nastavení hry na výchozí hodnoty.{}Jste si jistý, že chcete pokračovat?
 
-STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategorie:
-STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Druh:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Omezit nastavení v seznamu níže pomocí předdefinovaných filtrů
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :Kategorie:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :Druh:
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :Omezit nastavení v seznamu níže pomocí předdefinovaných filtrů
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Základní (zobrazí pouze důležitá nastavení)
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Pokročilé (zobrazí většinu nastavení)
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Expertní (zobrazí všechna nastavení, včetně těch podivných)
@@ -1342,9 +1343,9 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Nastavení spol
 
 STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Nic -
 ###length 3
-STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Všechny výsledky vyhledávání zobrazíš nastavením{}{SILVER}kategorie {BLACK}na {WHITE}{STRING}
-STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Všechny výsledky vyhledávání zobrazíš nastavením{}{SILVER}typu {BLACK}na {WHITE}Všechny typy nastavení
-STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Všechny výsledky vyhledávání zobrazíš nastavením{}{SILVER}kategorie {BLACK}na {WHITE}{STRING} {BLACK}a {SILVER}typu {BLACK}na {WHITE}Všechny typy nastavení
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :Všechny výsledky vyhledávání zobrazíš nastavením{}{SILVER}kategorie {BLACK}na {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :Všechny výsledky vyhledávání zobrazíš nastavením{}{SILVER}typu {BLACK}na {WHITE}Všechny typy nastavení
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :Všechny výsledky vyhledávání zobrazíš nastavením{}{SILVER}kategorie {BLACK}na {WHITE}{STRING} {BLACK}a {SILVER}typu {BLACK}na {WHITE}Všechny typy nastavení
 
 ###length 3
 STR_CONFIG_SETTING_OFF                                          :Vypnuto
@@ -1382,6 +1383,7 @@ STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :Výše úroků 
 
 STR_CONFIG_SETTING_RUNNING_COSTS                                :Cena provozu: {STRING}
 STR_CONFIG_SETTING_RUNNING_COSTS_HELPTEXT                       :Nastav cenu údržby a provozu vozidel a infrastruktury
+###length 3
 
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED                           :Rychlost výstavby: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED_HELPTEXT                  :Omezení výstavby AI
@@ -1403,6 +1405,7 @@ STR_CONFIG_SETTING_SUBSIDY_DURATION_DISABLED                    :Žádné dotace
 
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS                           :Cena výstavby: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :Nastav cenu výstavby a nákupu
+###length 3
 
 STR_CONFIG_SETTING_RECESSIONS                                   :Krize: {STRING}
 STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Pokud jsou krize zapnuty, mohou se občas objevit krize. Během krize je snížena veškerá produkce. Po krizi se opět vrátí do původních hodnot
@@ -1747,6 +1750,7 @@ STR_CONFIG_SETTING_SCROLLMODE_LMB                               :Pohyb v mapě p
 
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Plynulé posouvání po mapě: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Ovládá jak se hlavní pohled posouvá na specifické místo na mapě, kliknutím na minimapu nebo spuštěním příkazu na posun na specifický objekt na mapě. Pokud zapnuto, pohled se posouvá plynule, pokud vypnuto, skáče pohled přímo na cílové místo
+
 
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Ukázat rozměry při použití stavebních nástrojů: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :Zobrazovat vzdálenost a výškový rozdíl při výstavbě tahem.
@@ -2262,8 +2266,6 @@ STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :{WHITE}... form
 STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND                :{WHITE}... ignorování základní grafické sady '{STRING}': nenalezeno
 STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND                  :{WHITE}... ignorování základní hudební sady '{STRING}': nenalazeno
 STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE}... ignorování základní hudební sady '{STRING}': nenalezeno
-STR_CONFIG_ERROR_OUT_OF_MEMORY                                  :{WHITE}Nedostatek paměti
-STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}Alokování {BYTES} grafické mezipaměti selhalo. Grafická mezipaměť byla zredukována na {BYTES}. To sníží výkon OpenTTD. Pro snížení paměťových nároků můžeš zkusit vypnout 32bpp grafiku a/nebo úrovně přiblížení
 
 # Video initalization errors
 STR_VIDEO_DRIVER_ERROR                                          :{WHITE}Chyba v nastavení zobrazení...
@@ -2271,7 +2273,6 @@ STR_VIDEO_DRIVER_ERROR_NO_HARDWARE_ACCELERATION                 :{WHITE}... neby
 STR_VIDEO_DRIVER_ERROR_HARDWARE_ACCELERATION_CRASH              :{WHITE}... grafická karta způsobila pád hry. Hadwarová akcelerace byla zakázána
 
 # Intro window
-STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
 
 STR_INTRO_NEW_GAME                                              :{BLACK}Nová hra
 STR_INTRO_LOAD_GAME                                             :{BLACK}Nahrát hru
@@ -2283,11 +2284,7 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Více hr
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Možnosti hry
 STR_INTRO_HIGHSCORE                                             :{BLACK}Nejlepší výsledky
 STR_INTRO_HELP                                                  :{BLACK}Nápověda a Manuály
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Nastavení
-STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}Nastavení grafik
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Stahovat součásti
-STR_INTRO_AI_SETTINGS                                           :{BLACK}Nastavení AI
-STR_INTRO_GAMESCRIPT_SETTINGS                                   :{BLACK}Nastavení herních skriptů
 STR_INTRO_QUIT                                                  :{BLACK}Ukončit
 
 STR_INTRO_TOOLTIP_NEW_GAME                                      :{BLACK}Hrát novou hru. Pomocí Ctrl přeskočíš nastavení mapy
@@ -2305,11 +2302,7 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Země hr
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Otevřít možnosti hry
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Zobrazit tabulku nejlepších výsledků
 STR_INTRO_TOOLTIP_HELP                                          :{BLACK}Prohlédnout dokumentaci a online zdroje
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Otevřít nastavení
-STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Otevřít nastavení NewGRF
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Ukázat, jaký nový nebo upravený obsah se dá stáhnout
-STR_INTRO_TOOLTIP_AI_SETTINGS                                   :{BLACK}Otevřít nastavení AI
-STR_INTRO_TOOLTIP_GAMESCRIPT_SETTINGS                           :{BLACK}Otevřít nastavení herních skriptů
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}Ukončit 'OpenTTD'
 
 STR_INTRO_BASESET                                               :{BLACK}V aktuálně zvolené základní sadě grafiky chybí {NUM} sprit{P "" y ů}. Zkuste, prosím, vyhledat aktualizovanou základní sadu.
@@ -2403,12 +2396,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Nákladní tram
 STR_FACE_CAPTION                                                :{WHITE}Volba tváře
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Zrušit volbu nového obličeje
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Potvrdit výběr obličeje
-STR_FACE_RANDOM                                                 :{BLACK}Nové číslo
 
-STR_FACE_MALE_BUTTON                                            :{BLACK}Mužská
-STR_FACE_MALE_TOOLTIP                                           :{BLACK}Zvolit mužské obličeje
-STR_FACE_FEMALE_BUTTON                                          :{BLACK}Ženská
-STR_FACE_FEMALE_TOOLTIP                                         :{BLACK}Zvolit ženské obličeje
 STR_FACE_NEW_FACE_BUTTON                                        :{BLACK}Nový obličej
 STR_FACE_NEW_FACE_TOOLTIP                                       :{BLACK}Vytvořit náhodnou novou tvář
 STR_FACE_ADVANCED                                               :{BLACK}Podrobně
@@ -2426,36 +2414,20 @@ STR_FACE_FACECODE_ERR                                           :{WHITE}Nelze na
 STR_FACE_SAVE                                                   :{BLACK}Uložit
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}Uložit oblíbený obličej
 STR_FACE_SAVE_DONE                                              :{WHITE}Tato tvář bude uložena do konfiguračního souboru jako tvá oblíbená
-STR_FACE_EUROPEAN                                               :{BLACK}Europoidní
-STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}Vybrat europoidní tváře
-STR_FACE_AFRICAN                                                :{BLACK}Africká
-STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}Vybrat africké tváře
 STR_FACE_YES                                                    :Ano
 STR_FACE_NO                                                     :Ne
-STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}Povolit knír nebo náušnici
 STR_FACE_HAIR                                                   :Vlasy:
-STR_FACE_HAIR_TOOLTIP                                           :{BLACK}Změnit vlasy
 STR_FACE_EYEBROWS                                               :Obočí:
-STR_FACE_EYEBROWS_TOOLTIP                                       :{BLACK}Změnit obočí
 STR_FACE_EYECOLOUR                                              :Barva očí:
-STR_FACE_EYECOLOUR_TOOLTIP                                      :{BLACK}Změnit barvu očí
 STR_FACE_GLASSES                                                :Brýle:
-STR_FACE_GLASSES_TOOLTIP                                        :{BLACK}Povolit brýle
-STR_FACE_GLASSES_TOOLTIP_2                                      :{BLACK}Změnit brýle
 STR_FACE_NOSE                                                   :Nos:
-STR_FACE_NOSE_TOOLTIP                                           :{BLACK}Změnit nos
 STR_FACE_LIPS                                                   :Rty:
 STR_FACE_MOUSTACHE                                              :Knír:
-STR_FACE_LIPS_MOUSTACHE_TOOLTIP                                 :{BLACK}Změnit rty nebo knír
 STR_FACE_CHIN                                                   :Brada:
-STR_FACE_CHIN_TOOLTIP                                           :{BLACK}Změnit bradu
 STR_FACE_JACKET                                                 :Sako:
-STR_FACE_JACKET_TOOLTIP                                         :{BLACK}Změnit sako
 STR_FACE_COLLAR                                                 :Límec:
-STR_FACE_COLLAR_TOOLTIP                                         :{BLACK}Změnit límec
 STR_FACE_TIE                                                    :Kravata:
 STR_FACE_EARRING                                                :Náušnice:
-STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Změnit kravatu nebo náušnice
 
 # Matches ServerGameType
 ###length 3
@@ -2861,10 +2833,10 @@ STR_STATION_BUILD_INFRASTRUCTURE_COST_PERIOD                    :{BLACK}Náklady
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Spojování stanic
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Postavit samostatnou stanici
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}Postavit samostatnou stanici
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Spojování směrování
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Postavit samostatné směrování
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}Postavit samostatné směrování
 
 # Generic toolbar
 STR_TOOLBAR_DISABLED_NO_VEHICLE_AVAILABLE                       :{BLACK}Zakázáno, protože pro tento typ infrastruktury aktuálně nejsou dostupná žádná vozidla
@@ -2913,6 +2885,7 @@ STR_PICKER_MODE_ALL                                             :Vše
 STR_PICKER_MODE_USED                                            :Použito
 STR_PICKER_MODE_SAVED                                           :Uloženo
 
+
 STR_PICKER_STATION_CLASS_TOOLTIP                                :Vyber typ stanice pro zobrazení
 STR_PICKER_STATION_TYPE_TOOLTIP                                 :Zvol typ stanice pro stavbu. Podrž Ctrl pro přidaní nebo odebrání z oblíbených položek
 STR_PICKER_WAYPOINT_CLASS_TOOLTIP                               :Vyber typ směrování pro zobrazení
@@ -2956,7 +2929,6 @@ STR_STATION_CLASS_WAYP_WAYPOINT                                 :Původní směr
 
 # Signal window
 STR_BUILD_SIGNAL_CAPTION                                        :{WHITE}Výběr návěstidel
-STR_BUILD_SIGNAL_TOGGLE_ADVANCED_SIGNAL_TOOLTIP                 :{BLACK}Zobrazit dokonalejší návěstidla
 STR_BUILD_SIGNAL_SEMAPHORE_NORM_TOOLTIP                         :{BLACK}Obyčejné návěstidlo (semafor){}Návěstidla jsou nutná, aby nedocházelo ke srážkám vlaků na tratích, kde jezdí více než jeden vlak
 STR_BUILD_SIGNAL_SEMAPHORE_ENTRY_TOOLTIP                        :{BLACK}Vjezdové návěstidlo (semafor){}Svítí zeleně do té doby, kdy v následujícím úseku trati je alespoň jedno další svítící zeleně. Jinak svítí červeně
 STR_BUILD_SIGNAL_SEMAPHORE_EXIT_TOOLTIP                         :{BLACK}Výjezdové návěstidlo (semafor){}Chová se stejně jako obyčejné, ale je nezbytné nastavit správnou barvu vjezdových a kombinovaných pre-signálů
@@ -3151,6 +3123,7 @@ STR_FOUND_TOWN_SIZE_RANDOM                                      :{BLACK}Náhodn�
 STR_FOUND_TOWN_INITIAL_SIZE_TOOLTIP                             :{BLACK}Zvolte velikost města
 STR_FOUND_TOWN_CITY                                             :{BLACK}Velkoměsto
 STR_FOUND_TOWN_CITY_TOOLTIP                                     :{BLACK}Velkoměsta rostou rychleji než běžná města. V závislosti na nastavení jsou při založení větší
+
 
 STR_FOUND_TOWN_ROAD_LAYOUT                                      :{YELLOW}Silniční síť města:
 STR_FOUND_TOWN_SELECT_LAYOUT_TOOLTIP                            :{BLACK}Zvolte rozvržení silniční sítě v tomto městě
@@ -3604,15 +3577,12 @@ STR_SAVE_PRESET_CAPTION                                         :{WHITE}Uložit 
 STR_SAVE_PRESET_LIST_TOOLTIP                                    :{BLACK}Seznam předvoleb k dispozici, vyber jednu pro zkopírování do uložené hry vybrané níže
 STR_SAVE_PRESET_TITLE                                           :{BLACK}Vlož název pro předvolby
 STR_SAVE_PRESET_EDITBOX_TOOLTIP                                 :{BLACK}Aktuálně zvolený název pro předvolby
-STR_SAVE_PRESET_CANCEL                                          :{BLACK}Zrušit
-STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}Neměnit předvolby
 STR_SAVE_PRESET_SAVE                                            :{BLACK}Uložit
 STR_SAVE_PRESET_SAVE_TOOLTIP                                    :{BLACK}Uloží předvolby do aktuálně zvolené uložené hry
 
 # NewGRF parameters window
 STR_BASEGRF_PARAMETERS_CAPTION                                  :{WHITE}Změnit parametry základní grafiky
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Úprava nastavení parametrů
-STR_NEWGRF_PARAMETERS_CLOSE                                     :{BLACK}Zavřít
 STR_NEWGRF_PARAMETERS_RESET                                     :{BLACK}Reset
 STR_NEWGRF_PARAMETERS_RESET_TOOLTIP                             :{BLACK}Nastav všechny parametry na jejich výchozí hodnotu
 STR_NEWGRF_PARAMETERS_DEFAULT_NAME                              :Parametr {NUM}
@@ -4102,8 +4072,6 @@ STR_INDUSTRY_VIEW_PRODUCTION_LAST_MONTH_TITLE                   :{BLACK}Produkce
 STR_INDUSTRY_VIEW_PRODUCTION_LAST_MINUTE_TITLE                  :{BLACK}Produkce v minulé minutě:
 STR_INDUSTRY_VIEW_TRANSPORTED                                   :{YELLOW}{CARGO_LONG}{STRING}{BLACK} ({COMMA}% přepraveno)
 STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}Vystředit pohled na průmysl. Ctrl+Klik otevře nový pohled na umístění průmyslu
-STR_INDUSTRY_VIEW_PRODUCTION_GRAPH                              :{BLACK}Graf výroby
-STR_INDUSTRY_VIEW_PRODUCTION_GRAPH_TOOLTIP                      :{BLACK}Zobrazí graf historie produkce průmyslu
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}Produkce: {YELLOW}{COMMA}%
 STR_INDUSTRY_VIEW_INDUSTRY_ANNOUNCED_CLOSURE                    :{YELLOW}Průmysl oznámila blížící se uzavření!
 
@@ -4845,7 +4813,6 @@ STR_TIMETABLE_TOOLTIP                                           :{BLACK}Jízdní
 STR_TIMETABLE_NO_TRAVEL                                         :Nikam nejet
 STR_TIMETABLE_NOT_TIMETABLEABLE                                 :Jet do (automatický; jizdní řád podle následujícího ručního příkazu)
 STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :Jet do (mimo jízdní řád)
-STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Jet (mimo jízdní řád) maximální rychlostí {2:VELOCITY}
 STR_TIMETABLE_TRAVEL_FOR                                        :Jet do {STRING}
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :Jeď {STRING} a maximálně {VELOCITY}
 STR_TIMETABLE_TRAVEL_FOR_ESTIMATED                              :Jeď ({STRING}, mimo jízdní řád)
@@ -4971,8 +4938,6 @@ STR_AI_LIST_URL                                                 :{LTBLUE}URL: {O
 
 STR_AI_LIST_ACCEPT                                              :{BLACK}Potvrdit
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Vybrat označený skript
-STR_AI_LIST_CANCEL                                              :{BLACK}Zrušit
-STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Neměňte skript
 
 STR_SCREENSHOT_CAPTION                                          :{WHITE}Pořídit snímek obrazovky
 STR_SCREENSHOT_SCREENSHOT                                       :{BLACK}Běžný snímek obrazovky
@@ -4985,7 +4950,6 @@ STR_SCREENSHOT_MINIMAP_SCREENSHOT                               :{BLACK}Snímek 
 # Script Parameters
 STR_AI_SETTINGS_CAPTION_AI                                      :{WHITE}Parametry AI
 STR_AI_SETTINGS_CAPTION_GAMESCRIPT                              :{WHITE}Parametry herního skriptu
-STR_AI_SETTINGS_CLOSE                                           :{BLACK}Zavřít
 STR_AI_SETTINGS_RESET                                           :{BLACK}Obnovit nastavení
 STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORANGE}{STRING}
 
@@ -5116,7 +5080,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}Nelze p�
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}... nejvyšší možná výše půjčky je {CURRENCY_LONG}
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}Nelze půjčit více peněz...
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... žádný dluh ke splacení
+STR_ERROR_LOAN_ALREADY_REPAID                                   :{WHITE}... žádný dluh ke splacení
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}... je potřeba {CURRENCY_LONG}
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}Nelze splatit dluh...
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Nelze darovat peníze půjčené z banky...
@@ -5210,12 +5174,12 @@ STR_ERROR_MUST_DEMOLISH_AIRPORT_FIRST                           :{WHITE}Je nutn�
 STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}Sousedí s více než jedním existujícím bodem na trase
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_WAYPOINT                         :{WHITE}Příliš blízko k jinému směrování
 
-STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT                            :{WHITE}Zde nelze postavit směrování...
+STR_ERROR_CAN_T_BUILD_RAIL_WAYPOINT                             :{WHITE}Zde nelze postavit směrování...
 STR_ERROR_CAN_T_BUILD_ROAD_WAYPOINT                             :{WHITE}Zde nelze postavit směrování...
 STR_ERROR_CAN_T_POSITION_BUOY_HERE                              :{WHITE}Zde nelze umístit bójku...
 STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}Nelze přejmenovat směrování...
 
-STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}Zde nelze zbourat směrování...
+STR_ERROR_CAN_T_REMOVE_RAIL_WAYPOINT                            :{WHITE}Zde nelze zbourat směrování...
 STR_ERROR_CAN_T_REMOVE_ROAD_WAYPOINT                            :{WHITE}Zde nelze odstranit směrovaní...
 STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}Je nutné nejprve zničit směrování
 STR_ERROR_MUST_REMOVE_ROADWAYPOINT_FIRST                        :{WHITE}Je nutné nejprve odstranit směrování

@@ -367,7 +367,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :Keluar
 
 # Settings menu
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Pilihan permainan
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Tetapan
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :Tetapan NewGRF
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Pilihan Ketelusan
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :Paparkan nama bandar
@@ -530,6 +529,8 @@ STR_GRAPH_COMPANY_PERFORMANCE_RATINGS_CAPTION                   :{WHITE}Penilaia
 STR_GRAPH_COMPANY_VALUES_CAPTION                                :{WHITE}Nilai syarikat
 
 
+
+
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE}Kadar Bayaran Kargo
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}Bayaran untuk hantaran 10 unit (atau 10,000 liter) kargo sejauh 20 petak
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}Guna Semua
@@ -538,6 +539,7 @@ STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Paparkan
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Tiada paparan muatan pada graf kadar pembayaran muatan
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}Papar atau padamkan graf kargo
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}Tunjukkan penarafan prestasi secara terperinci
@@ -826,11 +828,12 @@ STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Pilihan 
 
 
 
-STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Unit kewangan
-STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Pilihan unit kewangan
+
+STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :Unit kewangan
+STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :Pilihan unit kewangan
 
 
-###length 45
+###length 46
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Paun British
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Dolar Amerika
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Euro
@@ -865,21 +868,21 @@ STR_GAME_OPTIONS_CURRENCY_ZAR                                   :South African R
 STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Sesuaikan...
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Georgian Lari
 
-STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Simpanan automatik
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Pilih tempoh untuk simpanan permainan automatik
+STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :Simpanan automatik
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :Pilih tempoh untuk simpanan permainan automatik
 
 # Autosave dropdown
 ###length 5
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :Matikan
 
-STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Bahasa
-STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Pilih bahasa antaramuka yang ingin digunakan
+STR_GAME_OPTIONS_LANGUAGE                                       :Bahasa
+STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :Pilih bahasa antaramuka yang ingin digunakan
 
-STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Skrin Penuh
-STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Tanda kotak ini untuk bermain OpenTTD dalam mod skrin penuh
+STR_GAME_OPTIONS_FULLSCREEN                                     :Skrin Penuh
+STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :Tanda kotak ini untuk bermain OpenTTD dalam mod skrin penuh
 
-STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Resolusi Skrin
-STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Pilih resolusi skrin untuk digunakan
+STR_GAME_OPTIONS_RESOLUTION                                     :Resolusi Skrin
+STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :Pilih resolusi skrin untuk digunakan
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :lain
 
 
@@ -892,17 +895,18 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :lain
 
 
 
-STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Set grafik asas
-STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Pilih set grafik asas untuk digunakan
-STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}Maklumat tambahan tentang set grafik asas ini
 
-STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}Set bunyi asas
-STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :{BLACK}Pilih set bunyi asas untuk digunakan
-STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Maklumat tambahan tentang set bunyi asas ini
+STR_GAME_OPTIONS_BASE_GRF                                       :Set grafik asas
+STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :Pilih set grafik asas untuk digunakan
+STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :Maklumat tambahan tentang set grafik asas ini
 
-STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Set muzik asas
-STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Pilih set muzik asas yang akan digunakan
-STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Maklumat lebih tentang set muzik asas
+STR_GAME_OPTIONS_BASE_SFX                                       :Set bunyi asas
+STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :Pilih set bunyi asas untuk digunakan
+STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :Maklumat tambahan tentang set bunyi asas ini
+
+STR_GAME_OPTIONS_BASE_MUSIC                                     :Set muzik asas
+STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :Pilih set muzik asas yang akan digunakan
+STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :Maklumat lebih tentang set muzik asas
 
 
 
@@ -1005,11 +1009,10 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :Mengizinkan
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Tiada AI yang bersesuaian...{}Anda boleh memuat turun beberapa AI dari sistem 'Kandungan Atas Talian'
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Tetapan
-STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Tapis baris:
-STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Kembangkan semua
-STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Musnahkan semua
+# Settings tree in the Game Options window
+STR_CONFIG_SETTING_FILTER_TITLE                                 :Tapis baris:
+STR_CONFIG_SETTING_EXPAND_ALL                                   :Kembangkan semua
+STR_CONFIG_SETTING_COLLAPSE_ALL                                 :Musnahkan semua
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(Tiada penjelasan)
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Nilai lalai: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Jenis tetapan: {ORANGE}{STRING}
@@ -1019,8 +1022,8 @@ STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Tetapan permain
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Tetapan syarikat (disimpan di simpanan; berkesan hanya permainan baru)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Tetapan syarikat (disimpan di penyimpanan; hanya berkesan kepada syarikat semasa)
 
-STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategori:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Hadkan senarai di bawah menggunakan penapis yang telah ditetapkan
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :Kategori:
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :Hadkan senarai di bawah menggunakan penapis yang telah ditetapkan
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Asas (menunjukkan tetapan yang penting sahaja)
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Terperinci (tunjukkan kebanyakan tetapan)
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Expert (memaparkan semua tetapan, termasuk yang pelik)
@@ -1062,6 +1065,7 @@ STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :Kadar faedah pi
 
 STR_CONFIG_SETTING_RUNNING_COSTS                                :Kos penyelenggaraan: {STRING}
 STR_CONFIG_SETTING_RUNNING_COSTS_HELPTEXT                       :Tetapkan tahap penyelenggaraan dan kos perjalanan kenderaan dan infrastuktur
+###length 3
 
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED                           :Kelajuan pembinaan: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED_HELPTEXT                  :Had jumlah pembinaan untuk AI
@@ -1078,6 +1082,7 @@ STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER_HELPTEXT                  :Tetapkan jumlah
 
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS                           :Kos pembinaan: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :Tetapkan tahap pembinaan dan kos pembelian
+###length 3
 
 STR_CONFIG_SETTING_RECESSIONS                                   :Kemelesetan: {STRING}
 STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Jika diupayakan, kemelesetan mungkin berlaku setiap tahun. Semasa kemelesetan, pengeluaran adalah lebih rendah (ia kembali ke tahap sebelumnya apabila kemelesetan berakhir)
@@ -1323,6 +1328,7 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Ungu
 ###length 4
 
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Skrol tetingkap pemandangan yang licin: {STRING}
+
 
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Tunjukkan bantuan ukuran ketika menggunakan alat binaan: {STRING}
 
@@ -1628,7 +1634,6 @@ STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE} ... aba
 # Video initalization errors
 
 # Intro window
-STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
 
 STR_INTRO_NEW_GAME                                              :{BLACK}Permainan Baru
 STR_INTRO_LOAD_GAME                                             :{BLACK}Buka Permainan
@@ -1639,8 +1644,6 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Pemain b
 
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Pilihan Permainan
 STR_INTRO_HIGHSCORE                                             :{BLACK}Carta mata tertinggi
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Tetapan
-STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}Tetapan NewGRF
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Periksa Kandungan Atas Talian
 STR_INTRO_QUIT                                                  :{BLACK}Keluar
 
@@ -1658,8 +1661,6 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Pilih la
 
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Paparkan pilihan permainan
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Paparan carta mata tertinggi
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Pamerkan pilihan
-STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Paparkan tetapan NewGRF
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Periksa kandungan baru atau yang telah dikemaskini untuk dimuat turun
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}Keluar 'OpenTTD'
 
@@ -1730,12 +1731,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Trem Tambang Mu
 STR_FACE_CAPTION                                                :{WHITE}Pilihan Wajah
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Batal pilihan wajah baru
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Terima pilihan wajah baru
-STR_FACE_RANDOM                                                 :{BLACK}Rambangkan
 
-STR_FACE_MALE_BUTTON                                            :{BLACK}Lelaki
-STR_FACE_MALE_TOOLTIP                                           :{BLACK}Pilih wajah lelaki
-STR_FACE_FEMALE_BUTTON                                          :{BLACK}Perempuan
-STR_FACE_FEMALE_TOOLTIP                                         :{BLACK}Pilih wajah perempuan
 STR_FACE_NEW_FACE_BUTTON                                        :{BLACK}Wajah Baru
 STR_FACE_NEW_FACE_TOOLTIP                                       :{BLACK}Janakan wajah secara rawak
 STR_FACE_ADVANCED                                               :{BLACK}Lanjutan
@@ -1753,36 +1749,20 @@ STR_FACE_FACECODE_ERR                                           :{WHITE}Nombor w
 STR_FACE_SAVE                                                   :{BLACK}Simpan
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}Simpan wajah kegemaran anda
 STR_FACE_SAVE_DONE                                              :{WHITE}Wajah ini akan disimpan sebagai wajah kegemaran anda dalam fail config OpenTTD.
-STR_FACE_EUROPEAN                                               :{BLACK}Eropah
-STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}Pilih wajah orang Eropah
-STR_FACE_AFRICAN                                                :{BLACK}Afrika
-STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}Pilih wajah orang Afrika
 STR_FACE_YES                                                    :Ya
 STR_FACE_NO                                                     :Tidak
-STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}Benarkan misai atau anting-anting
 STR_FACE_HAIR                                                   :Rambut:
-STR_FACE_HAIR_TOOLTIP                                           :{BLACK}Tukar rambut
 STR_FACE_EYEBROWS                                               :Bulu kening:
-STR_FACE_EYEBROWS_TOOLTIP                                       :{BLACK}Tukar bulu kening
 STR_FACE_EYECOLOUR                                              :Warna mata:
-STR_FACE_EYECOLOUR_TOOLTIP                                      :{BLACK}Tukar warna mata
 STR_FACE_GLASSES                                                :Cermin mata:
-STR_FACE_GLASSES_TOOLTIP                                        :{BLACK}Pakaikan cermin mata
-STR_FACE_GLASSES_TOOLTIP_2                                      :{BLACK}Tukar cermin mata
 STR_FACE_NOSE                                                   :Hidung:
-STR_FACE_NOSE_TOOLTIP                                           :{BLACK}Tukar hidung
 STR_FACE_LIPS                                                   :Bibir:
 STR_FACE_MOUSTACHE                                              :Misai:
-STR_FACE_LIPS_MOUSTACHE_TOOLTIP                                 :{BLACK}Tukar bibir atau misai
 STR_FACE_CHIN                                                   :Dagu:
-STR_FACE_CHIN_TOOLTIP                                           :{BLACK}Tukar dagu
 STR_FACE_JACKET                                                 :Jaket:
-STR_FACE_JACKET_TOOLTIP                                         :{BLACK}Tukar jaket
 STR_FACE_COLLAR                                                 :Kolar:
-STR_FACE_COLLAR_TOOLTIP                                         :{BLACK}Tukar kolar
 STR_FACE_TIE                                                    :Tali leher:
 STR_FACE_EARRING                                                :Anting-anting:
-STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Tukar tali leher atau anting-anting
 
 # Matches ServerGameType
 ###length 3
@@ -2077,10 +2057,10 @@ STR_STATION_BUILD_SUPPLIES_CARGO                                :{BLACK}Bekalan-
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Gabungkan stesen
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Bina stesen asingan
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}Bina stesen asingan
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Sambungkan tandatuju
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Bina tandatuju yang berasingan
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}Bina tandatuju yang berasingan
 
 # Generic toolbar
 
@@ -2123,6 +2103,7 @@ STR_STATION_BUILD_PLATFORM_LENGTH                               :{BLACK}Kepanjan
 STR_STATION_BUILD_PLATFORM_LENGTH_TOOLTIP                       :{BLACK}Pilih kepanjangan stesen keretapi
 STR_STATION_BUILD_DRAG_DROP                                     :{BLACK}Seret & Lepas
 STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}Bina stesen menggunakan kaedah seret & lepas
+
 
 
 
@@ -2309,6 +2290,7 @@ STR_FOUND_TOWN_SIZE_RANDOM                                      :{BLACK}Rawak
 STR_FOUND_TOWN_INITIAL_SIZE_TOOLTIP                             :{BLACK}Pilih saiz bandar
 STR_FOUND_TOWN_CITY                                             :{BLACK}Bandar
 STR_FOUND_TOWN_CITY_TOOLTIP                                     :{BLACK}Bandaraya membesar dengan lebih cepat daripada bandar{}Bergantung kepada tetapan, bandaraya akan lebih besar sewaktu dibina
+
 
 STR_FOUND_TOWN_ROAD_LAYOUT                                      :{YELLOW}Susunan jalanraya bandar:
 STR_FOUND_TOWN_SELECT_LAYOUT_TOOLTIP                            :{BLACK}Pilih susunan jalanraya untuk bandar ini
@@ -2635,12 +2617,10 @@ STR_NEWGRF_SETTINGS_INCOMPATIBLE                                :{RED}Tidak sera
 # NewGRF save preset window
 STR_SAVE_PRESET_CAPTION                                         :{WHITE}Simpan pratetapan
 STR_SAVE_PRESET_TITLE                                           :{BLACK}Masukkan nama untuk pratetapan
-STR_SAVE_PRESET_CANCEL                                          :{BLACK}Batal
 STR_SAVE_PRESET_SAVE                                            :{BLACK}Simpan
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Ubah parameter NewGRF
-STR_NEWGRF_PARAMETERS_CLOSE                                     :{BLACK}Tutup
 STR_NEWGRF_PARAMETERS_RESET                                     :{BLACK}Tetapan semula
 STR_NEWGRF_PARAMETERS_RESET_TOOLTIP                             :{BLACK}Tetapkan semua parameter kepada nilai asal mereka
 STR_NEWGRF_PARAMETERS_DEFAULT_NAME                              :Parameter {NUM}
@@ -3740,13 +3720,10 @@ STR_AI_LIST_URL                                                 :{LTBLUE}URL: {O
 
 STR_AI_LIST_ACCEPT                                              :{BLACK}Terima
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Pilih skrip yang diserlahkan
-STR_AI_LIST_CANCEL                                              :{BLACK}Batal
-STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Jangan ubah skrip
 
 
 # Script Parameters
 STR_AI_SETTINGS_CAPTION_AI                                      :AI
-STR_AI_SETTINGS_CLOSE                                           :{BLACK}Tutup
 STR_AI_SETTINGS_RESET                                           :{BLACK}Semula
 STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORANGE}{STRING}
 
@@ -3858,7 +3835,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}Nama pen
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}... saiz pinjaman maksimum yang dibenarkan ialah {CURRENCY_LONG}
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}Tidak boleh meminjam wang lagi...
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... tiada pinjaman untuk dibayar semula
+STR_ERROR_LOAN_ALREADY_REPAID                                   :{WHITE}... tiada pinjaman untuk dibayar semula
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}... {CURRENCY_LONG} diperlukan
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}Tidak boleh membayar semula pinjaman...
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Tidak boleh memberi wang yang dipinjamkan oleh bank...
@@ -3943,11 +3920,11 @@ STR_ERROR_MUST_DEMOLISH_AIRPORT_FIRST                           :{WHITE}Lapangan
 STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}Lebih daripada satu tandatuju bersempadanan
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_WAYPOINT                         :{WHITE}Terlalu hampir dengan tandatuju lain
 
-STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT                            :{WHITE}Tandatuju keretapi tidak dapat dibina di sini...
+STR_ERROR_CAN_T_BUILD_RAIL_WAYPOINT                             :{WHITE}Tandatuju keretapi tidak dapat dibina di sini...
 STR_ERROR_CAN_T_POSITION_BUOY_HERE                              :{WHITE}Pelampung tidak dapat diletak di sini...
 STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}Nama tandatuju tidak dapat ditukar...
 
-STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}Tandatuju keretapi tidak dapat dibuang di sini...
+STR_ERROR_CAN_T_REMOVE_RAIL_WAYPOINT                            :{WHITE}Tandatuju keretapi tidak dapat dibuang di sini...
 STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}Tandatuju keretapi mesti dibuang terlebih dahulu
 STR_ERROR_BUOY_IN_THE_WAY                                       :{WHITE}... pelampung menghalang
 STR_ERROR_BUOY_IS_IN_USE                                        :{WHITE}... pelampung sedang diguna oleh syarikat lain!

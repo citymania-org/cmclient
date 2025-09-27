@@ -19,6 +19,7 @@
 #include "../town.h"
 #include "../train.h"
 #include "../tree_map.h"
+#include "../core/string_consumer.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -26,7 +27,8 @@
 
 #include "../safeguards.h"
 
-bool ReadHeightMap(DetailedFileType dft, const char *filename, uint *x, uint *y, std::vector<uint8_t> *map);
+bool ReadHeightMap(DetailedFileType dft, std::string_view filename, uint *x, uint *y, std::vector<uint8_t> *map);
+extern uint32 _gfx_debug_flags;
 
 namespace citymania {
 
@@ -35,27 +37,50 @@ uint32 _replay_last_save = 0;
 uint32 _replay_ticks = 0;
 extern uint32 _pause_countdown;
 
-static void IConsoleHelp(const char *str)
-{
+static void IConsoleHelp(std::string_view str) {
     IConsolePrint(CC_WARNING, "- {}", str);
 }
 
-bool ConGameSpeed([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
-    if (argc == 0 || argc > 2) {
+template <typename ... Args>
+void IConsoleError(fmt::format_string<Args...> format, Args&&... args) {
+    IConsolePrint(CC_ERROR, fmt::format(format, std::forward<Args>(args)...));
+}
+
+bool ConGameSpeed(std::span<std::string_view> argv) {
+    if (argv.empty() == 0 || argv.size() > 2) {
         IConsoleHelp("Changes game speed. Usage: 'cmgamespeed [n]'");
         return true;
     }
-    _game_speed = (argc > 1 ? atoi(argv[1]) : 100);
+    uint new_speed = 100;
+    if (argv.size() > 1) {
+        auto t = ParseInteger<uint>(argv[1]);
+        if (!t.has_value()) {
+            IConsoleError("Invalid number '{}'", argv[1]);
+            return true;
+        }
+        new_speed = t.value();
+    }
+    _game_speed = new_speed;
 
     return true;
 }
 
-bool ConStep([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
-    if (argc == 0 || argc > 2) {
-        IConsoleHelp("Advances the game for a certain amount of ticks (default 1). Usage: 'cmstep [n]'");
+bool ConStep(std::span<std::string_view> argv) {
+    if (argv.empty()) {
+        IConsoleHelp("Advances the game for a certain number of ticks (default 1). Usage: 'cmstep [n]'");
         return true;
     }
-    auto n = (argc > 1 ? atoi(argv[1]) : 1);
+    if (argv.size() > 2) return false;
+
+    uint n = 1;
+    if (argv.size() > 1) {
+        auto t = ParseInteger<uint>(argv[1]);
+        if (!t.has_value()) {
+            IConsoleError("Invalid number '{}'", argv[1]);
+            return true;
+        }
+        n = t.value();
+    }
 
     _pause_countdown = n;
     cmd::Pause(PauseMode::Normal, 0).post();
@@ -63,8 +88,8 @@ bool ConStep([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
     return true;
 }
 
-bool ConExport([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
-    if (argc == 0) {
+bool ConExport(std::span<std::string_view> argv) {
+    if (argv.empty()) {
         IConsoleHelp("Exports various game data in json format to openttd.json file");
         return true;
     }
@@ -75,17 +100,17 @@ bool ConExport([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
     return true;
 }
 
-bool ConTreeMap([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
-    if (argc == 0) {
+bool ConTreeMap(std::span<std::string_view> argv) {
+    if (argv.empty()) {
         IConsoleHelp("Loads heighmap-like file and plants trees according to it, values 0-256 ore scaled to 0-4 trees.");
         IConsoleHelp("Usage: 'cmtreemap <file>'");
         IConsoleHelp("Default lookup path is in scenario/heightmap in your openttd directory");
         return true;
     }
 
-    if (argc != 2) return false;
+    if (argv.size() != 2) return false;
 
-    std::string filename = argv[1];
+    std::string_view filename = std::string_view(argv[1]);
 
     if (_game_mode != GM_EDITOR) {
         IConsolePrint(CC_ERROR, "This command is only available in scenario editor.");
@@ -106,9 +131,9 @@ bool ConTreeMap([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
 #endif
     else {
 #ifdef WITH_PNG
-        IConsolePrint(CC_ERROR, "Unknown treemap extension {}, should be .bmp or .png.", ext.c_str());
+        IConsolePrint(CC_ERROR, "Unknown treemap extension {}, should be .bmp or .png.", ext);
 #else
-        IConsolePrint(CC_ERROR, "Unknown treemap extension {}, should be .bmp (game was compiled without PNG support).", ext.c_str());
+        IConsolePrint(CC_ERROR, "Unknown treemap extension {}, should be .bmp (game was compiled without PNG support).", ext);
 #endif
         return true;
     }
@@ -116,7 +141,7 @@ bool ConTreeMap([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
     uint x, y;
     std::vector<uint8_t> map;
 
-    if (!ReadHeightMap(dft, filename.c_str(), &x, &y, &map)) {
+    if (!ReadHeightMap(dft, filename, &x, &y, &map)) {
         return true;
     }
 
@@ -136,14 +161,14 @@ bool ConTreeMap([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
 
 extern void (*UpdateTownGrowthRate)(Town *t);
 
-bool ConResetTownGrowth([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
-    if (argc == 0) {
+bool ConResetTownGrowth(std::span<std::string_view> argv) {
+    if (argv.empty()) {
         IConsoleHelp("Resets growth to normal for all towns.");
         IConsoleHelp("Usage: 'cmresettowngrowth'");
         return true;
     }
 
-    if (argc > 1) return false;
+    if (argv.size() > 1) return false;
 
     for (Town *town : Town::Iterate()) {
         ClrBit(town->flags, TOWN_CUSTOM_GROWTH);
@@ -179,34 +204,40 @@ void SetReplaySaveInterval(uint32 interval) {
     if (_replay_save_interval) MakeReplaySave();
 }
 
-bool ConLoadCommands([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
-    if (argc == 0) {
+bool ConLoadCommands(std::span<std::string_view> argv) {
+    if (argv.empty()) {
         IConsoleHelp("Loads a file with command queue to execute");
         IConsoleHelp("Usage: 'cmloadcommands <file>'");
         return true;
     }
 
-    if (argc > 3) return false;
+    if (argv.size() > 3) return false;
 
     load_replay_commands(argv[1], [](auto error) {
         IConsolePrint(CC_ERROR, "{}", error);
     });
-    SetReplaySaveInterval(argc > 2 ? atoi(argv[2]) : 0);
+    SetReplaySaveInterval(argv.size() > 2 ? ParseInteger(argv[2]).value_or(0) : 0);
 
     return true;
 }
 
-bool ConStartRecord([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
+bool ConStartRecord(std::span<std::string_view> argv) {
     StartRecording();
     return true;
 }
 
-bool ConStopRecord([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
+bool ConStopRecord(std::span<std::string_view> argv) {
     StopRecording();
     return true;
 }
 
-bool ConGameStats([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) {
+bool ConGameStats(std::span<std::string_view> argv) {
+    if (argv.empty()) {
+        IConsoleHelp("Prints total number of vehicles");
+        IConsoleHelp("Usage: 'cmgamestats'");
+        return true;
+    }
+
     auto num_trains = 0u;
     auto num_rvs = 0u;
     auto num_ships = 0u;
@@ -228,6 +259,29 @@ bool ConGameStats([[maybe_unused]] uint8_t argc, [[maybe_unused]] char *argv[]) 
     IConsolePrint(CC_INFO, "Number of ships: {}", num_ships);
     IConsolePrint(CC_INFO, "Number of aircraft: {}", num_aircraft);
     IConsolePrint(CC_INFO, "Total number of vehicles: {}", num_trains + num_rvs + num_ships + num_aircraft);
+
+    return true;
+}
+
+// From jgrpp viewports
+bool ConGfxDebug(std::span<std::string_view> argv) {
+    if (argv.empty()) {
+        IConsolePrint(CC_HELP, "Debug: gfx flags.  Usage: 'gfx_debug [<flags>]'");
+        IConsolePrint(CC_HELP, "  1: GDF_SHOW_WINDOW_DIRTY");
+        IConsolePrint(CC_HELP, "  2: GDF_SHOW_WIDGET_DIRTY");
+        IConsolePrint(CC_HELP, "  4: GDF_SHOW_RECT_DIRTY");
+        return true;
+    }
+
+    if (argv.size() > 2) return false;
+
+    if (argv.size() == 1) {
+        IConsolePrint(CC_DEFAULT, "Gfx debug flags: {:X}", _gfx_debug_flags);
+    } else {
+        auto t = ParseInteger(argv[1], 16);
+        if (t.has_value()) _gfx_debug_flags = t.value();
+        else IConsolePrint(CC_ERROR, "Invalid hex: '{}'", argv[1]);
+    }
 
     return true;
 }

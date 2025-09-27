@@ -180,7 +180,7 @@ public:
             // if (ci->client_id == CLIENT_ID_SERVER) colour = TC_ORANGE;
             DrawString(text_left, text_right, y + this->text_offset_y, name, colour);
 
-            if (icon != PAL_NONE) DrawSprite(icon, COMPANY_SPRITE_COLOUR(playas), x, y + this->icon_offset_y);
+            if (icon != PAL_NONE) DrawSprite(icon, GetCompanyPalette(playas), x, y + this->icon_offset_y);
                 // DrawCompanyIcon(playas, x, y + this->icon_offset_y);
             y += this->line_height;
         }

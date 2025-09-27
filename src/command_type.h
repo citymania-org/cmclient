@@ -26,7 +26,7 @@ struct GRFFile;
 class CommandCost {
 	Money cost;                                 ///< The cost of this action
 	StringID message;                           ///< Warning message for when success is unset
-	ExpensesType expense_type;                  ///< the type of expence as shown on the finances view
+	ExpensesType expense_type;                  ///< the type of expense as shown on the finances view
 	bool success;                               ///< Whether the command went fine up to this moment
 	Owner owner = CompanyID::Invalid(); ///< Originator owner of error.
 	StringID extra_message = INVALID_STRING_ID; ///< Additional warning message for when success is unset
@@ -474,7 +474,7 @@ template <Commands Tcmd> struct CommandTraits;
 		static constexpr auto &proc = proc_; \
 		static constexpr CommandFlags flags = flags_; \
 		static constexpr CommandType type = type_; \
-		static inline constexpr const char *name = #proc_; \
+		static inline constexpr std::string_view name = #proc_; \
 	};
 
 /** Storage buffer for serialized command data. */

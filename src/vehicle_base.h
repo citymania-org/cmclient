@@ -10,6 +10,7 @@
 #ifndef VEHICLE_BASE_H
 #define VEHICLE_BASE_H
 
+#include "sprite.h"
 #include "track_type.h"
 #include "command_type.h"
 #include "order_base.h"
@@ -293,13 +294,7 @@ public:
 	 * 0xff == reserved for another custom sprite
 	 */
 	uint8_t spritenum = 0;
-	uint8_t x_extent = 0; ///< x-extent of vehicle bounding box
-	uint8_t y_extent = 0; ///< y-extent of vehicle bounding box
-	uint8_t z_extent = 0; ///< z-extent of vehicle bounding box
-	int8_t x_bb_offs = 0; ///< x offset of vehicle bounding box
-	int8_t y_bb_offs = 0; ///< y offset of vehicle bounding box
-	int8_t x_offs = 0; ///< x offset for vehicle sprite
-	int8_t y_offs = 0; ///< y offset for vehicle sprite
+	SpriteBounds bounds{}; ///< Bounding box of vehicle.
 	EngineID engine_type = EngineID::Invalid(); ///< The type of engine used for this vehicle.
 
 	TextEffectID fill_percent_te_id = INVALID_TE_ID; ///< a text-effect id to a loading indicator object
@@ -311,7 +306,7 @@ public:
 	uint32_t motion_counter = 0; ///< counter to occasionally play a vehicle sound.
 	uint8_t progress = 0; ///< The percentage (if divided by 256) this vehicle already crossed the tile unit.
 
-	uint8_t waiting_triggers = 0; ///< Triggers to be yet matched before rerandomizing the random bits.
+	VehicleRandomTriggers waiting_random_triggers; ///< Triggers to be yet matched before rerandomizing the random bits.
 	uint16_t random_bits = 0; ///< Bits used for randomized variational spritegroups.
 
 	StationID last_station_visited = StationID::Invalid(); ///< The last station we stopped at.
@@ -337,7 +332,7 @@ public:
 
 	union {
 		OrderList *orders = nullptr; ///< Pointer to the order list for this vehicle
-		Order *old_orders; ///< Only used during conversion of old save games
+		uint32_t old_orders; ///< Only used during conversion of old save games
 	};
 
 	NewGRFCache grf_cache{}; ///< Cache of often used calculated NewGRF values
@@ -682,7 +677,19 @@ public:
 	 * Get the first order of the vehicles order list.
 	 * @return first order of order list.
 	 */
-	inline Order *GetFirstOrder() const { return (this->orders == nullptr) ? nullptr : this->orders->GetFirstOrder(); }
+	inline const Order *GetFirstOrder() const { return (this->orders == nullptr) ? nullptr : this->GetOrder(this->orders->GetFirstOrder()); }
+
+	inline std::span<const Order> Orders() const
+	{
+		if (this->orders == nullptr) return {};
+		return this->orders->GetOrders();
+	}
+
+	inline std::span<Order> Orders()
+	{
+		if (this->orders == nullptr) return {};
+		return this->orders->GetOrders();
+	}
 
 	void AddToShared(Vehicle *shared_chain);
 	void RemoveFromShared();
@@ -729,7 +736,7 @@ public:
 	 */
 	inline StationIDStack GetNextStoppingStation() const
 	{
-		return (this->orders == nullptr) ? StationID::Invalid().base() : this->orders->GetNextStoppingStation(this);
+		return (this->orders == nullptr) ? StationID::Invalid() : this->orders->GetNextStoppingStation(this);
 	}
 
 	void ResetRefitCaps();
@@ -739,7 +746,7 @@ public:
 	/**
 	 * Copy certain configurations and statistics of a vehicle after successful autoreplace/renew
 	 * The function shall copy everything that cannot be copied by a command (like orders / group etc),
-	 * and that shall not be resetted for the new vehicle.
+	 * and that shall not be reset for the new vehicle.
 	 * @param src The old vehicle
 	 */
 	inline void CopyVehicleConfigAndStatistics(Vehicle *src)
@@ -908,9 +915,9 @@ public:
 	 * Returns the last order of a vehicle, or nullptr if it doesn't exists
 	 * @return last order of a vehicle, if available
 	 */
-	inline Order *GetLastOrder() const
+	inline const Order *GetLastOrder() const
 	{
-		return (this->orders == nullptr) ? nullptr : this->orders->GetLastOrder();
+		return (this->orders == nullptr) ? nullptr : this->orders->GetOrderAt(this->orders->GetLastOrder());
 	}
 
 	bool IsEngineCountable() const;
@@ -1013,54 +1020,6 @@ public:
 
 		return v;
 	}
-
-	/**
-	 * Iterator to iterate orders
-	 * Supports deletion of current order
-	 */
-	struct OrderIterator {
-		typedef Order value_type;
-		typedef Order *pointer;
-		typedef Order &reference;
-		typedef size_t difference_type;
-		typedef std::forward_iterator_tag iterator_category;
-
-		explicit OrderIterator(OrderList *list) : list(list), prev(nullptr)
-		{
-			this->order = (this->list == nullptr) ? nullptr : this->list->GetFirstOrder();
-		}
-
-		bool operator==(const OrderIterator &other) const { return this->order == other.order; }
-		Order * operator*() const { return this->order; }
-		OrderIterator & operator++()
-		{
-			this->prev = (this->prev == nullptr) ? this->list->GetFirstOrder() : this->prev->next;
-			this->order = (this->prev == nullptr) ? nullptr : this->prev->next;
-			return *this;
-		}
-
-	private:
-		OrderList *list;
-		Order *order;
-		Order *prev;
-	};
-
-	/**
-	 * Iterable ensemble of orders
-	 */
-	struct IterateWrapper {
-		OrderList *list;
-		IterateWrapper(OrderList *list = nullptr) : list(list) {}
-		OrderIterator begin() { return OrderIterator(this->list); }
-		OrderIterator end() { return OrderIterator(nullptr); }
-		bool empty() { return this->begin() == this->end(); }
-	};
-
-	/**
-	 * Returns an iterable ensemble of orders of a vehicle
-	 * @return an iterable ensemble of orders of a vehicle
-	 */
-	IterateWrapper Orders() const { return IterateWrapper(this->orders); }
 
 	uint32_t GetDisplayMaxWeight() const;
 	uint32_t GetDisplayMinPowerToWeight() const;
@@ -1170,7 +1129,7 @@ struct SpecializedVehicle : public Vehicle {
 
 	/**
 	 * Gets vehicle with given index
-	 * @return pointer to vehicle with given index casted to T *
+	 * @return pointer to vehicle with given index cast to T *
 	 */
 	static inline T *Get(auto index)
 	{

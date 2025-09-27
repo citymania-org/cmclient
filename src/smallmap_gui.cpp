@@ -47,7 +47,7 @@ static int _smallmap_cargo_count;    ///< Number of cargos in the link stats leg
 
 /** Structure for holding relevant data for legends in small map */
 struct LegendAndColour {
-	uint8_t colour;            ///< Colour of the item on the map.
+	PixelColour colour; ///< Colour of the item on the map.
 	StringID legend;           ///< String corresponding to the coloured item.
 	IndustryType type;         ///< Type of industry. Only valid for industry entries.
 	uint8_t height;            ///< Height in tiles. Only valid for height legend entries.
@@ -58,7 +58,7 @@ struct LegendAndColour {
 };
 
 /** Link stat colours shown in legenda. */
-static uint8_t _linkstat_colours_in_legenda[] = {0, 1, 3, 5, 7, 9, 11};
+static const uint8_t _linkstat_colours_in_legenda[] = {0, 1, 3, 5, 7, 9, 11};
 
 static const int NUM_NO_COMPANY_ENTRIES = 4; ///< Number of entries in the owner legend that are not companies.
 
@@ -66,16 +66,16 @@ static const int NUM_NO_COMPANY_ENTRIES = 4; ///< Number of entries in the owner
 #define MK(a, b) {a, b, IT_INVALID, 0, CompanyID::Invalid(), true, false, false}
 
 /** Macro for a height legend entry with configurable colour. */
-#define MC(col_break)  {0, STR_TINY_BLACK_HEIGHT, IT_INVALID, 0, CompanyID::Invalid(), true, false, col_break}
+#define MC(col_break) {{}, STR_TINY_BLACK_HEIGHT, IT_INVALID, 0, CompanyID::Invalid(), true, false, col_break}
 
 /** Macro for non-company owned property entry of LegendAndColour */
 #define MO(a, b) {a, b, IT_INVALID, 0, CompanyID::Invalid(), true, false, false}
 
 /** Macro used for forcing a rebuild of the owner legend the first time it is used. */
-#define MOEND() {0, STR_NULL, IT_INVALID, 0, OWNER_NONE, true, true, false}
+#define MOEND() {{}, STR_NULL, IT_INVALID, 0, OWNER_NONE, true, true, false}
 
 /** Macro for end of list marker in arrays of LegendAndColour */
-#define MKEND() {0, STR_NULL, IT_INVALID, 0, CompanyID::Invalid(), true, true, false}
+#define MKEND() {{}, STR_NULL, IT_INVALID, 0, CompanyID::Invalid(), true, true, false}
 
 /**
  * Macro for break marker in arrays of LegendAndColour.
@@ -152,7 +152,7 @@ static const LegendAndColour _legend_vegetation[] = {
 
 static LegendAndColour _legend_land_owners[NUM_NO_COMPANY_ENTRIES + MAX_COMPANIES + 1] = {
 	MO(PC_WATER,           STR_SMALLMAP_LEGENDA_WATER),
-	MO(0x00,               STR_SMALLMAP_LEGENDA_NO_OWNER), // This colour will vary depending on settings.
+	MO({},                 STR_SMALLMAP_LEGENDA_NO_OWNER), // This colour will vary depending on settings.
 	MO(PC_DARK_RED,        STR_SMALLMAP_LEGENDA_TOWNS),
 	MO(PC_DARK_GREY,       STR_SMALLMAP_LEGENDA_INDUSTRIES),
 	/* The legend will be terminated the first time it is used. */
@@ -184,7 +184,7 @@ static IndustryType _smallmap_industry_highlight = IT_INVALID;
 /** State of highlight blinking */
 static bool _smallmap_industry_highlight_state;
 /** For connecting company ID to position in owner list (small map legend) */
-static ReferenceThroughBaseContainer<std::array<uint32_t, MAX_COMPANIES>> _company_to_list_pos;
+static TypedIndexContainer<std::array<uint32_t, MAX_COMPANIES>, CompanyID> _company_to_list_pos;
 
 /**
  * Fills an array for the industries legends.
@@ -268,15 +268,15 @@ static const LegendAndColour * const _legend_table[] = {
 
 #define MKCOLOUR(x)         TO_LE32(x)
 
-#define MKCOLOUR_XXXX(x)    (MKCOLOUR(0x01010101) * (uint)(x))
-#define MKCOLOUR_0XX0(x)    (MKCOLOUR(0x00010100) * (uint)(x))
-#define MKCOLOUR_X00X(x)    (MKCOLOUR(0x01000001) * (uint)(x))
+#define MKCOLOUR_XXXX(x)    (MKCOLOUR(0x01010101) * (uint)(x.p))
+#define MKCOLOUR_0XX0(x)    (MKCOLOUR(0x00010100) * (uint)(x.p))
+#define MKCOLOUR_X00X(x)    (MKCOLOUR(0x01000001) * (uint)(x.p))
 
 #define MKCOLOUR_XYYX(x, y) (MKCOLOUR_X00X(x) | MKCOLOUR_0XX0(y))
 
-#define MKCOLOUR_0000       MKCOLOUR_XXXX(0x00)
-#define MKCOLOUR_F00F       MKCOLOUR_X00X(0xFF)
-#define MKCOLOUR_FFFF       MKCOLOUR_XXXX(0xFF)
+#define MKCOLOUR_0000       MKCOLOUR_XXXX(PixelColour{0x00})
+#define MKCOLOUR_F00F       MKCOLOUR_X00X(PixelColour{0xFF})
+#define MKCOLOUR_FFFF       MKCOLOUR_XXXX(PixelColour{0xFF})
 
 #include "table/heightmap_colours.h"
 
@@ -289,10 +289,10 @@ struct SmallMapColourScheme {
 
 /** Available colour schemes for height maps. */
 static SmallMapColourScheme _heightmap_schemes[] = {
-	{{}, _green_map_heights,      MKCOLOUR_XXXX(0x54)}, ///< Green colour scheme.
-	{{}, _dark_green_map_heights, MKCOLOUR_XXXX(0x62)}, ///< Dark green colour scheme.
-	{{}, _violet_map_heights,     MKCOLOUR_XXXX(0x81)}, ///< Violet colour scheme.
-	{{}, citymania::_yellow_map_heights, MKCOLOUR_XXXX(0xC1)},
+	{{}, _green_map_heights,      MKCOLOUR_XXXX(PixelColour{0x54})}, ///< Green colour scheme.
+	{{}, _dark_green_map_heights, MKCOLOUR_XXXX(PixelColour{0x62})}, ///< Dark green colour scheme.
+	{{}, _violet_map_heights,     MKCOLOUR_XXXX(PixelColour{0x81})}, ///< Violet colour scheme.
+	{{}, citymania::_yellow_map_heights, MKCOLOUR_XXXX(PixelColour{0xC1})},
 };
 
 /**
@@ -343,7 +343,7 @@ void BuildLandLegend()
 		_legend_land_contours[i].col_break = j % rows == 0;
 		_legend_land_contours[i].end = false;
 		_legend_land_contours[i].height = j * delta;
-		_legend_land_contours[i].colour = static_cast<uint8_t>(_heightmap_schemes[_settings_client.gui.smallmap_land_colour].height_colours[_legend_land_contours[i].height]);
+		_legend_land_contours[i].colour = PixelColour{static_cast<uint8_t>(_heightmap_schemes[_settings_client.gui.smallmap_land_colour].height_colours[_legend_land_contours[i].height])};
 		j++;
 	}
 	_legend_land_contours[i].end = true;
@@ -356,8 +356,8 @@ void BuildOwnerLegend()
 {
 	citymania::BuildOwnerLegend();
 	return;
-
-	_legend_land_owners[1].colour = static_cast<uint8_t>(_heightmap_schemes[_settings_client.gui.smallmap_land_colour].default_colour);
+	
+	_legend_land_owners[1].colour = PixelColour{static_cast<uint8_t>(_heightmap_schemes[_settings_client.gui.smallmap_land_colour].default_colour)};
 
 	int i = NUM_NO_COMPANY_ENTRIES;
 	for (const Company *c : Company::Iterate()) {
@@ -569,7 +569,7 @@ static inline uint32_t GetSmallMapVegetationPixels(TileIndex tile, TileType t)
 				if (GetClearDensity(tile) < 3) return MKCOLOUR_XXXX(PC_BARE_LAND);
 				if (GetTropicZone(tile) == TROPICZONE_RAINFOREST) return MKCOLOUR_XXXX(PC_RAINFOREST);
 			}
-			return _vegetation_clear_bits[GetClearGround(tile)];
+			return _vegetation_clear_bits[IsSnowTile(tile) ? CLEAR_SNOW : GetClearGround(tile)];
 
 		case MP_INDUSTRY:
 			return IsTileForestIndustry(tile) ? MKCOLOUR_XXXX(PC_GREEN) : MKCOLOUR_XXXX(PC_DARK_RED);
@@ -649,7 +649,7 @@ static inline uint32 CM_GetSmallMapIMBAPixels(TileIndex tile, TileType t)
 }
 
 /** Vehicle colours in #SMT_VEHICLES mode. Indexed by #VehicleType. */
-static const uint8_t _vehicle_type_colours[6] = {
+static const PixelColour _vehicle_type_colours[6] = {
 	PC_RED, PC_YELLOW, PC_LIGHT_BLUE, PC_WHITE, PC_BLACK, PC_RED
 };
 
@@ -773,12 +773,12 @@ protected:
 	}
 
 	/** Blink the industries (if selected) on a regular interval. */
-	IntervalTimer<TimerWindow> blink_interval = {TIMER_BLINK_INTERVAL, [this](auto) {
+	const IntervalTimer<TimerWindow> blink_interval = {TIMER_BLINK_INTERVAL, [this](auto) {
 		Blink();
 	}};
 
 	/** Update the whole map on a regular interval. */
-	IntervalTimer<TimerWindow> refresh_interval = {std::chrono::milliseconds(930), [this](auto) {
+	const IntervalTimer<TimerWindow> refresh_interval = {std::chrono::milliseconds(930), [this](auto) {
 		ForceRefresh();
 	}};
 
@@ -978,7 +978,7 @@ protected:
 			uint8_t *val8 = (uint8_t *)&val;
 			int idx = std::max(0, -start_pos);
 			for (int pos = std::max(0, start_pos); pos < end_pos; pos++) {
-				blitter->SetPixel(dst, idx, 0, val8[idx]);
+				blitter->SetPixel(dst, idx, 0, PixelColour{val8[idx]});
 				idx++;
 			}
 		/* Switch to next tile in the column */
@@ -1016,7 +1016,7 @@ protected:
 			}
 
 			/* Calculate pointer to pixel and the colour */
-			uint8_t colour = (this->map_type == SMT_VEHICLES) ? _vehicle_type_colours[v->type] : PC_WHITE;
+			PixelColour colour = (this->map_type == SMT_VEHICLES) ? _vehicle_type_colours[v->type] : PC_WHITE;
 
 			/* And draw either one or two pixels depending on clipping */
 			blitter->SetPixel(dpi->dst_ptr, x, y, colour);
@@ -1393,7 +1393,7 @@ protected:
 							if (type == _smallmap_industry_highlight) {
 								if (_smallmap_industry_highlight_state) return MKCOLOUR_XXXX(PC_WHITE);
 							} else {
-								return GetIndustrySpec(type)->map_colour * 0x01010101;
+								return GetIndustrySpec(type)->map_colour.p * 0x01010101;
 							}
 						}
 						/* Otherwise make it disappear */
@@ -1543,8 +1543,8 @@ public:
 	 */
 	Point GetStationMiddle(const Station *st) const
 	{
-		int x = CenterBounds(st->rect.left, st->rect.right, 0);
-		int y = CenterBounds(st->rect.top, st->rect.bottom, 0);
+		int x = CentreBounds(st->rect.left, st->rect.right, 0);
+		int y = CentreBounds(st->rect.top, st->rect.bottom, 0);
 		Point ret = this->RemapTile(x, y);
 
 		/* Same magic 3 as in DrawVehicles; that's where I got it from.
@@ -1693,7 +1693,7 @@ public:
 						i = 1;
 					}
 
-					uint8_t legend_colour = tbl->colour;
+					PixelColour legend_colour = tbl->colour;
 
 					std::array<StringParameter, 2> params{};
 					switch (this->map_type) {
@@ -1773,7 +1773,7 @@ public:
 				const NWidgetBase *wid = this->GetWidget<NWidgetBase>(WID_SM_MAP);
 				Point zoom_pt = { (int)wid->current_x / 2, (int)wid->current_y / 2};
 				this->SetZoomLevel((widget == WID_SM_ZOOM_IN) ? ZLC_ZOOM_IN : ZLC_ZOOM_OUT, &zoom_pt);
-				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
+				SndClickBeep();
 				break;
 			}
 
@@ -1786,13 +1786,12 @@ public:
 			case WID_SM_OWNERS:     // Show land owners
 			case CM_WID_SM_IMBA:     
 				this->SwitchMapType((SmallMapType)(widget - WID_SM_CONTOUR));
-				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
+				SndClickBeep();
 				break;
 
 			case WID_SM_CENTERMAP: // Center the smallmap again
 				this->SmallMapCenterOnCurrentPos();
 				this->HandleButtonClick(WID_SM_CENTERMAP);
-				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 				break;
 
 			case WID_SM_TOGGLETOWNNAME: // Toggle town names
@@ -1800,7 +1799,7 @@ public:
 				this->SetWidgetLoweredState(WID_SM_TOGGLETOWNNAME, this->show_towns);
 
 				this->SetDirty();
-				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
+				SndClickBeep();
 				break;
 
 			case WID_SM_SHOW_IND_NAMES: // Toggle industry names
@@ -1808,7 +1807,7 @@ public:
 				this->SetWidgetLoweredState(WID_SM_SHOW_IND_NAMES, this->show_ind_names);
 
 				this->SetDirty();
-				if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
+				SndClickBeep();
 				break;
 
 			case WID_SM_LEGEND: // Legend
@@ -1915,16 +1914,15 @@ public:
 		return true;
 	}
 
-	void OnMouseWheel(int wheel) override
+	void OnMouseWheel(int wheel, WidgetID widget) override
 	{
+		if (widget != WID_SM_MAP) return;
 		if (_settings_client.gui.scrollwheel_scrolling != SWS_OFF) {
 			const NWidgetBase *wid = this->GetWidget<NWidgetBase>(WID_SM_MAP);
 			int cursor_x = _cursor.pos.x - this->left - wid->pos_x;
 			int cursor_y = _cursor.pos.y - this->top  - wid->pos_y;
-			if (IsInsideMM(cursor_x, 0, wid->current_x) && IsInsideMM(cursor_y, 0, wid->current_y)) {
-				Point pt = {cursor_x, cursor_y};
-				this->SetZoomLevel((wheel < 0) ? ZLC_ZOOM_IN : ZLC_ZOOM_OUT, &pt);
-			}
+			Point pt = {cursor_x, cursor_y};
+			this->SetZoomLevel((wheel < 0) ? ZLC_ZOOM_IN : ZLC_ZOOM_OUT, &pt);
 		}
 	}
 

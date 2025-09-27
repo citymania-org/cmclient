@@ -530,6 +530,8 @@ STR_GRAPH_COMPANY_PERFORMANCE_RATINGS_CAPTION                   :{WHITE} کمپ�
 STR_GRAPH_COMPANY_VALUES_CAPTION                                :{WHITE}کمپنی کی مالیت
 
 
+
+
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE} سامان کی ادایگی کا تناسب
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK} سامان کی دس اکائیات (یآ 10،000 لیٹر)، 20 چکور تک لے جانے کی ادائیگی
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT} {BLACK} سب کو قابل کیجیئے
@@ -538,6 +540,7 @@ STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK} سام�
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK} سامان کی ادائیگی کے مخطط پر کوئ بھی سامان نا دیکھئہے
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK} ظرزِ سامان مخطط تدویم کیجئیے
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK} کارکردگی کی تفصیلی درجہ بندی دکھائیے
@@ -820,11 +823,12 @@ STR_GAME_OPTIONS_CAPTION                                        :{WHITE}کھیل
 
 
 
-STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}کرنسی کی اکائیاں
-STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}کرنسی کی اکائی اختیار کریں
+
+STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :کرنسی کی اکائیاں
+STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :کرنسی کی اکائی اختیار کریں
 
 
-###length 45
+###length 46
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :برطانوی پاونڈ
 STR_GAME_OPTIONS_CURRENCY_USD                                   :امریکی ڈالر
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :یورو
@@ -858,21 +862,21 @@ STR_GAME_OPTIONS_CURRENCY_KRW                                   :جنوبی کو
 STR_GAME_OPTIONS_CURRENCY_ZAR                                   :جنوبی افریقہ کے رنڈ
 STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :اپنی مرضی کی ۔۔۔
 
-STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}خود مختار بچاو
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}خودمختار کھیل بچانے کے درمیان وقفہ اختیار کریں
+STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :خود مختار بچاو
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :خودمختار کھیل بچانے کے درمیان وقفہ اختیار کریں
 
 # Autosave dropdown
 ###length 5
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :بند
 
-STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}زبان
-STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}استعمال کرنے کےلئے زبان اختیار کئیجیے
+STR_GAME_OPTIONS_LANGUAGE                                       :زبان
+STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :استعمال کرنے کےلئے زبان اختیار کئیجیے
 
-STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}مُکمل سکرین
-STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}مُکمل اسکرین پر کھیلنے کے لئے اِس ڈبے کو نشان لگائیں
+STR_GAME_OPTIONS_FULLSCREEN                                     :مُکمل سکرین
+STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :مُکمل اسکرین پر کھیلنے کے لئے اِس ڈبے کو نشان لگائیں
 
-STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}اسکرین کی resolution
-STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}اسکرین کی resolution اختیار کریں
+STR_GAME_OPTIONS_RESOLUTION                                     :اسکرین کی resolution
+STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :اسکرین کی resolution اختیار کریں
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :دیگر
 
 
@@ -885,17 +889,18 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :دیگر
 
 
 
-STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}بُنیادی گرافک سیٹ
-STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}بُنیادی گرافک سیٹ اختیار کریں
-STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}بُنیادی گرافک سیٹ کے بارے میں اضافی معلومات
 
-STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}بُنیادی صوتی سیٹ
-STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :{BLACK}بُنیادی صوتی سیٹ اختیار کریں
-STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}بُنیادی صوتی سیٹ کے بارے میں اضافی معلومات
+STR_GAME_OPTIONS_BASE_GRF                                       :بُنیادی گرافک سیٹ
+STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :بُنیادی گرافک سیٹ اختیار کریں
+STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :بُنیادی گرافک سیٹ کے بارے میں اضافی معلومات
 
-STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}بُنیادی موسیقی سیٹ
-STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}بُنیادی موسیقی سیٹ اختیار کریں
-STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}بُنیادی موسیقی سیٹ کے بارے میں اضافی معلومات
+STR_GAME_OPTIONS_BASE_SFX                                       :بُنیادی صوتی سیٹ
+STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :بُنیادی صوتی سیٹ اختیار کریں
+STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :بُنیادی صوتی سیٹ کے بارے میں اضافی معلومات
+
+STR_GAME_OPTIONS_BASE_MUSIC                                     :بُنیادی موسیقی سیٹ
+STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :بُنیادی موسیقی سیٹ اختیار کریں
+STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :بُنیادی موسیقی سیٹ کے بارے میں اضافی معلومات
 
 
 
@@ -995,7 +1000,7 @@ STR_CITY_APPROVAL_HOSTILE                                       :مخالفان�
 STR_CITY_APPROVAL_PERMISSIVE                                    :اجازت دینے والا
 
 
-# Settings tree window
+# Settings tree in the Game Options window
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(کوئی وضاحت موجود نہیں)
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}ترتیب قسم: {ORANGE}{STRING}
 
@@ -1028,6 +1033,7 @@ STR_CONFIG_SETTING_HORIZONTAL_POS_RIGHT                         :دائیں
 ###setting-zero-is-special
 
 
+###length 3
 
 
 
@@ -1036,6 +1042,7 @@ STR_CONFIG_SETTING_HORIZONTAL_POS_RIGHT                         :دائیں
 
 ###setting-zero-is-special
 
+###length 3
 
 
 
@@ -1234,6 +1241,7 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :بنفشی
 ###length 4
 
 ###length 4
+
 
 
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :تعمیراتی کام کے دوران پیمائشی ٹول ٹپ دکھائیں: {STRING}
@@ -1507,7 +1515,6 @@ STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :{WHITE} ۔ ۔ �
 # Video initalization errors
 
 # Intro window
-STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
 
 STR_INTRO_NEW_GAME                                              :{BLACK}نیا کھیل
 STR_INTRO_LOAD_GAME                                             :{BLACK}کھیل لوڈ کریں
@@ -1517,7 +1524,6 @@ STR_INTRO_SCENARIO_EDITOR                                       :{BLACK}منظر
 STR_INTRO_MULTIPLAYER                                           :{BLACK}زیادہ کھلاڑی
 
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}کھیل کے اختیارات
-STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}NewGRF چنئے
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}آن لائن مواد دیکھیں
 STR_INTRO_QUIT                                                  :{BLACK}باہر نکلو
 
@@ -1534,7 +1540,6 @@ STR_INTRO_TOOLTIP_SUB_TROPICAL_LANDSCAPE                        :{BLACK}منظر
 STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}منظر کشی کا 'toyland' طریقہ چُنئیے
 
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}کھیل کے اختیارات دکھائیں
-STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}NewGRF سیٹنگز دیکھیئے
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}نئے اور ترمیم شدہ مواد کو ڈاون لوڈ کرنے کے لئے چیک کریں
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}'OpenTTD' سے باہر نکلو
 
@@ -1603,10 +1608,6 @@ STR_FACE_CAPTION                                                :{WHITE}چہرہ
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}چہرہ چننا منسوخ کریں
 STR_FACE_OK_TOOLTIP                                             :{BLACK}نیا چہرہ چننا قبول کریں
 
-STR_FACE_MALE_BUTTON                                            :{BLACK}مرد
-STR_FACE_MALE_TOOLTIP                                           :{BLACK}مردانہ چہرے چنئے
-STR_FACE_FEMALE_BUTTON                                          :{BLACK}عورت
-STR_FACE_FEMALE_TOOLTIP                                         :{BLACK}زنانہ چہرے چنئے
 STR_FACE_NEW_FACE_BUTTON                                        :{BLACK}نیا چہرہ
 STR_FACE_NEW_FACE_TOOLTIP                                       :{BLACK}بے ترتیب نیا چہرہ بنائیں
 STR_FACE_ADVANCED                                               :{BLACK}ایڈوانسڈ
@@ -1624,36 +1625,20 @@ STR_FACE_FACECODE_ERR                                           :{WHITE}نمبر
 STR_FACE_SAVE                                                   :{BLACK}بچائیں
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}پسندیدہ چہرہ بچائیں
 STR_FACE_SAVE_DONE                                              :{WHITE}یہ چہرہ آپ کے پسندیدہ چہرے کے طور پر OpenTTD configuration file میں محفوظ کر لیا جائے گا
-STR_FACE_EUROPEAN                                               :{BLACK}یورپئین
-STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}یورپئین چہرہ چنئے
-STR_FACE_AFRICAN                                                :{BLACK}افریقی
-STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}افریقی چہرہ چنئے
 STR_FACE_YES                                                    :ہاں
 STR_FACE_NO                                                     :نہیں
-STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}مونچھیں یا کان کی بالیاں فعال کریں
 STR_FACE_HAIR                                                   :بال:
-STR_FACE_HAIR_TOOLTIP                                           :{BLACK}بال بدلیں
 STR_FACE_EYEBROWS                                               :بھوئیں:
-STR_FACE_EYEBROWS_TOOLTIP                                       :{BLACK}بھوئیں بدلیں
 STR_FACE_EYECOLOUR                                              :آنکھوں کا رنگ:
-STR_FACE_EYECOLOUR_TOOLTIP                                      :{BLACK}آنکھوں کا رنگ بدلیں
 STR_FACE_GLASSES                                                :چشمے:
-STR_FACE_GLASSES_TOOLTIP                                        :{BLACK}چشمے فعال کریں
-STR_FACE_GLASSES_TOOLTIP_2                                      :{BLACK}چشمے بدلیں
 STR_FACE_NOSE                                                   :ناک:
-STR_FACE_NOSE_TOOLTIP                                           :{BLACK}ناک بدلیں
 STR_FACE_LIPS                                                   :ہونٹ:
 STR_FACE_MOUSTACHE                                              :مونچھیں:
-STR_FACE_LIPS_MOUSTACHE_TOOLTIP                                 :{BLACK}ہونٹ یا مونچھیں بدلیں
 STR_FACE_CHIN                                                   :ٹھوڑی:
-STR_FACE_CHIN_TOOLTIP                                           :{BLACK}ٹھوڑی بدلیں
 STR_FACE_JACKET                                                 :جیکٹ:
-STR_FACE_JACKET_TOOLTIP                                         :{BLACK}جیکٹ بدلیں
 STR_FACE_COLLAR                                                 :کالر:
-STR_FACE_COLLAR_TOOLTIP                                         :{BLACK}کالر بدلیں
 STR_FACE_TIE                                                    :ٹائی:
 STR_FACE_EARRING                                                :بالیاں:
-STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}ٹائی یا بالیاں بدلیں
 
 # Matches ServerGameType
 ###length 3
@@ -1947,10 +1932,10 @@ STR_STATION_BUILD_SUPPLIES_CARGO                                :{GOLD}{CARGO_LI
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}اسٹیشن ملائیں
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}الگ اسٹیشن تعمیر کریں
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}الگ اسٹیشن تعمیر کریں
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}گزرگاہ ملائیں
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}الگ سے گزرگاہ تعمیر کریں
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}الگ سے گزرگاہ تعمیر کریں
 
 # Generic toolbar
 
@@ -1992,6 +1977,7 @@ STR_STATION_BUILD_PLATFORM_LENGTH                               :{BLACK}پلیٹ
 STR_STATION_BUILD_PLATFORM_LENGTH_TOOLTIP                       :{BLACK}ریلوے اسٹیشن کی لمبائی منتخب کریں
 STR_STATION_BUILD_DRAG_DROP                                     :{BLACK}کھینچ کر رکھ دیں
 STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}کھینچ کر رکھ کر اسٹیشن تعمیر کریں
+
 
 
 
@@ -2157,6 +2143,7 @@ STR_FOUND_TOWN_SIZE_RANDOM                                      :{G=m}{BLACK}ک�
 STR_FOUND_TOWN_INITIAL_SIZE_TOOLTIP                             :{BLACK}شہر کا حجم منتخب کرو
 STR_FOUND_TOWN_CITY                                             :{BLACK}شہر
 
+
 STR_FOUND_TOWN_ROAD_LAYOUT                                      :{YELLOW}شہر کی سڑکوں کا پھیلائو:
 STR_FOUND_TOWN_SELECT_LAYOUT_TOOLTIP                            :{BLACK}اس شہر کیلئے سڑکوں کا بھیلائو منتخب کرو
 STR_FOUND_TOWN_SELECT_LAYOUT_ORIGINAL                           :{BLACK}اصلی
@@ -2261,8 +2248,6 @@ STR_NEWGRF_SETTINGS_UPGRADE                                     :{BLACK}اپگر
 
 
 # NewGRF save preset window
-STR_SAVE_PRESET_CANCEL                                          :{BLACK}منسوخ
-STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}پریسیٹ تبدیل نہ کریں
 STR_SAVE_PRESET_SAVE                                            :{BLACK}بچایں
 
 # NewGRF parameters window
@@ -2673,7 +2658,6 @@ STR_ORDER_OUT_OF_RANGE                                          :{RED} (اگلا
 # Time table window
 
 
-STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :زیادہ سے زیادہ {2:VELOCITY} رفتار پر سفر کریں (بغیر اوقات کے)
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :{STRING} کے لئے زیادہ سے زیادہ {VELOCITY} رفتار پر سفر کریں
 
 

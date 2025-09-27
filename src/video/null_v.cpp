@@ -34,7 +34,7 @@ std::optional<std::string_view> VideoDriver_Null::Start(const StringList &parm)
 
 	this->ticks = GetDriverParamInt(parm, "ticks", 1000);
 	auto saveptr = GetDriverParam(parm, "save");
-	this->savefile = saveptr ? saveptr : "";
+	this->savefile = saveptr.value_or("");
 	_screen.width  = _screen.pitch = _cur_resolution.width;
 	_screen.height = _cur_resolution.height;
 	_screen.dst_ptr = nullptr;

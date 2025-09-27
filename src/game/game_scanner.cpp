@@ -23,12 +23,12 @@ void GameScannerInfo::Initialize()
 	ScriptScanner::Initialize("GSScanner");
 }
 
-std::string GameScannerInfo::GetScriptName(ScriptInfo *info)
+std::string GameScannerInfo::GetScriptName(ScriptInfo &info)
 {
-	return info->GetName();
+	return info.GetName();
 }
 
-void GameScannerInfo::RegisterAPI(class Squirrel *engine)
+void GameScannerInfo::RegisterAPI(class Squirrel &engine)
 {
 	GameInfo::RegisterAPI(engine);
 }
@@ -75,13 +75,13 @@ void GameScannerLibrary::Initialize()
 	ScriptScanner::Initialize("GSScanner");
 }
 
-std::string GameScannerLibrary::GetScriptName(ScriptInfo *info)
+std::string GameScannerLibrary::GetScriptName(ScriptInfo &info)
 {
-	GameLibrary *library = static_cast<GameLibrary *>(info);
-	return fmt::format("{}.{}", library->GetCategory(), library->GetInstanceName());
+	GameLibrary &library = static_cast<GameLibrary &>(info);
+	return fmt::format("{}.{}", library.GetCategory(), library.GetInstanceName());
 }
 
-void GameScannerLibrary::RegisterAPI(class Squirrel *engine)
+void GameScannerLibrary::RegisterAPI(class Squirrel &engine)
 {
 	GameLibrary::RegisterAPI(engine);
 }
@@ -92,8 +92,8 @@ GameLibrary *GameScannerLibrary::FindLibrary(const std::string &library, int ver
 	std::string library_name = fmt::format("{}.{}", library, version);
 
 	/* Check if the library + version exists */
-	ScriptInfoList::iterator it = this->info_list.find(library_name);
+	auto it = this->info_list.find(library_name);
 	if (it == this->info_list.end()) return nullptr;
 
-	return static_cast<GameLibrary *>((*it).second);
+	return static_cast<GameLibrary *>(it->second);
 }

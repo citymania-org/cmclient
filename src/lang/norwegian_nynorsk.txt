@@ -390,7 +390,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :Avslutt
 
 # Settings menu
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Spelinstillingar
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Innstillinger
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :NewGRF-innstillingar
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Gjennomsiktigheitsinnstillingar
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :Syne bynamn
@@ -556,6 +555,8 @@ STR_GRAPH_COMPANY_PERFORMANCE_RATINGS_CAPTION                   :{WHITE}Prestasj
 STR_GRAPH_COMPANY_VALUES_CAPTION                                :{WHITE}Firmaverdi
 
 
+
+
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE}Varetakster
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}Betaling for levering av ti einingar (eller 10 000 liter) over ein distanse på 20 ruter
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}Syn alle
@@ -564,6 +565,7 @@ STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Syn alle
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Gøym alle varer på varetakstgrafen
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}Syne/gøym graf for ein bestemd varetype
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
+
 
 
 STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}Syne detaljerte ytelsesrangeringar
@@ -858,11 +860,12 @@ STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Spelinns
 
 
 
-STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Valutaeining
-STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Vel valutaeining
+
+STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :Valutaeining
+STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :Vel valutaeining
 
 
-###length 45
+###length 46
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :Pund
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Dollar
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Euro
@@ -898,21 +901,21 @@ STR_GAME_OPTIONS_CURRENCY_CUSTOM                                :Eigendefinert..
 STR_GAME_OPTIONS_CURRENCY_GEL                                   :Georgiske Lari
 STR_GAME_OPTIONS_CURRENCY_IRR                                   :Iranske Rial
 
-STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Automatisk lagring
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Vel intervall for automatisk lagring
+STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :Automatisk lagring
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :Vel intervall for automatisk lagring
 
 # Autosave dropdown
 ###length 5
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_OFF                          :Av
 
-STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Språk
-STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Vel språk som skal nyttast
+STR_GAME_OPTIONS_LANGUAGE                                       :Språk
+STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :Vel språk som skal nyttast
 
-STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Fullskjerm
-STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Kryss av i denne boksen for å spele OpenTTD i fullskjermmodus
+STR_GAME_OPTIONS_FULLSCREEN                                     :Fullskjerm
+STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :Kryss av i denne boksen for å spele OpenTTD i fullskjermmodus
 
-STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Skjermoppløysing
-STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Vel skjermoppløysinga som skal nyttast
+STR_GAME_OPTIONS_RESOLUTION                                     :Skjermoppløysing
+STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :Vel skjermoppløysinga som skal nyttast
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :anna
 
 
@@ -925,17 +928,18 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :anna
 
 
 
-STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Grafikksett
-STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Vel grafikksett som skal nyttast
-STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}Tilleggsinformasjon om grafikksettet
 
-STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}Lydsett
-STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :{BLACK}Vel lydsett som skal nyttast
-STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Tilleggsinformasjon om lydsettet
+STR_GAME_OPTIONS_BASE_GRF                                       :Grafikksett
+STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :Vel grafikksett som skal nyttast
+STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :Tilleggsinformasjon om grafikksettet
 
-STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Musikksett
-STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Vel musikksett som skal nyttast
-STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Tilleggsinformasjon om musikksettet
+STR_GAME_OPTIONS_BASE_SFX                                       :Lydsett
+STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :Vel lydsett som skal nyttast
+STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :Tilleggsinformasjon om lydsettet
+
+STR_GAME_OPTIONS_BASE_MUSIC                                     :Musikksett
+STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :Vel musikksett som skal nyttast
+STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :Tilleggsinformasjon om musikksettet
 
 
 
@@ -1038,11 +1042,10 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :Tillatande
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Inga passande AIer tilgjengeleg...{}Du kan lasta ned fleire AI'ar frå nettet med spelets nedlastingssystem.
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Innstillingar
-STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Søkefilter:
-STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Utvid alle
-STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Skjul alle
+# Settings tree in the Game Options window
+STR_CONFIG_SETTING_FILTER_TITLE                                 :Søkefilter:
+STR_CONFIG_SETTING_EXPAND_ALL                                   :Utvid alle
+STR_CONFIG_SETTING_COLLAPSE_ALL                                 :Skjul alle
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(inga forklaring tilgjengeleg)
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Standarverdi: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Type innstilling: {ORANGE}{STRING}
@@ -1052,9 +1055,9 @@ STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Spelinnstilling
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Firmainnstilling (lagra med enkeltspel; påverkar berre nye spel)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Firmainnstilling (lagra med enkeltspel; påverkar berre noverande firma)
 
-STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategori:
-STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Type:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Gjer at lista under berre viser innstillingar som er gjorde om
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :Kategori:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :Type:
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :Gjer at lista under berre viser innstillingar som er gjorde om
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Grunnlegjande instillingar
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Avanserte instillingar
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Ekspertinnstillingar / alle innstillingar
@@ -1071,9 +1074,9 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Firma instillin
 
 STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Ingen -
 ###length 3
-STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Syn alle søkeresultat ved å setja{}{SILVER}Kategori {BLACK}til {WHITE}{STRING}
-STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Syn alle søkeresultat ved å setja{}{SILVER}Type {BLACK}til {WHITE}Alle innstillingar
-STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Syn alle resultata ved å setja{}{SILVER}Kategori {BLACK}til {WHITE}{STRING} {BLACK}og {SILVER}Type {BLACK}til {WHITE}Alle innstillingar
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :Syn alle søkeresultat ved å setja{}{SILVER}Kategori {BLACK}til {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :Syn alle søkeresultat ved å setja{}{SILVER}Type {BLACK}til {WHITE}Alle innstillingar
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :Syn alle resultata ved å setja{}{SILVER}Kategori {BLACK}til {WHITE}{STRING} {BLACK}og {SILVER}Type {BLACK}til {WHITE}Alle innstillingar
 
 ###length 3
 STR_CONFIG_SETTING_OFF                                          :Av
@@ -1106,6 +1109,7 @@ STR_CONFIG_SETTING_INTEREST_RATE_HELPTEXT                       :Lånerente; kon
 
 STR_CONFIG_SETTING_RUNNING_COSTS                                :Køyrekostnadar: {STRING}
 STR_CONFIG_SETTING_RUNNING_COSTS_HELPTEXT                       :Set vedlikehaldsnivå og driftskostnadar for køyretøy og infrastruktur
+###length 3
 
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED                           :Fart for bygging: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED_HELPTEXT                  :Avgrensing av farten AIar kan gjere konstruksjonshandlingar i.
@@ -1122,6 +1126,7 @@ STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER_HELPTEXT                  :Kor mykje ekstr
 
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS                           :Byggjekostnadar: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :Nivået kostnadene for konstruksjon og kjøp ligg på
+###length 3
 
 STR_CONFIG_SETTING_RECESSIONS                                   :Nedgangstider: {STRING}
 STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Skru på at det frå tid til anna kjem nedgangstider. Under nedgangstider fell all produksjon kraftig. (Han går opp att når nedgangstida er over.)
@@ -1382,6 +1387,7 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Fiolett
 ###length 4
 
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Jamn rulling i tilleggsvindauge: {STRING}
+
 
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Syne eit målingverktøytips når ymse byggjeverktøy brukast: {STRING}
 
@@ -1791,13 +1797,10 @@ STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :{WHITE}... lagr
 STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND                :{WHITE}... utelèt grafikksettet "{STRING}": ikkje funne
 STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND                  :{WHITE}... utelèt lydsettet "{STRING}": ikkje funne
 STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE}... utelèt musikksettet "{STRING}": ikkje funne
-STR_CONFIG_ERROR_OUT_OF_MEMORY                                  :{WHITE}Ikkje meir minne
-STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}Fordeling {BYTES} av spritecache feila. Spritecache vart redusert til {BYTES}. Dette vil redusera ytelsen til OpenTTD. For å redusera minnebehova kan du prøva å deaktivera 32bpp grafikk og/eller zoom-nivåer
 
 # Video initalization errors
 
 # Intro window
-STR_INTRO_CAPTION                                               :{WHITE}OpenTTD {REV}
 
 STR_INTRO_NEW_GAME                                              :{BLACK}Nytt spel
 STR_INTRO_LOAD_GAME                                             :{BLACK}Last inn spel
@@ -1808,11 +1811,7 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Fleirspe
 
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Spelinnstillingar
 STR_INTRO_HIGHSCORE                                             :{BLACK}Poengtavle
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Innstillingar
-STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}NewGRF-innstillingar
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Sjå etter innhald på nett
-STR_INTRO_AI_SETTINGS                                           :{BLACK}AI-innstillingar
-STR_INTRO_GAMESCRIPT_SETTINGS                                   :{BLACK}Spelscript-innstillingar
 STR_INTRO_QUIT                                                  :{BLACK}Avslutt
 
 STR_INTRO_TOOLTIP_NEW_GAME                                      :{BLACK}Start eit nytt spel. CTRL+klikk hoppar over kartkonfigurasjon
@@ -1829,8 +1828,6 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Vel leik
 
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Syne spelinstillingar
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Syn poengtavla
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Skjerminnstillingar
-STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Syne NewGRF-instillingar
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Sjå etter nytt og oppdatert innhald som kan lastas ned
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}Avslutt 'OpenTTD'
 
@@ -1901,12 +1898,7 @@ STR_LIVERY_FREIGHT_TRAM                                         :Varetrikk
 STR_FACE_CAPTION                                                :{WHITE}Vel utsjånad
 STR_FACE_CANCEL_TOOLTIP                                         :{BLACK}Avbryt val av utsjånad
 STR_FACE_OK_TOOLTIP                                             :{BLACK}Godta ny utsjånad
-STR_FACE_RANDOM                                                 :{BLACK}Tilferdiggjer
 
-STR_FACE_MALE_BUTTON                                            :{BLACK}Mann
-STR_FACE_MALE_TOOLTIP                                           :{BLACK}Vel mannsandlet
-STR_FACE_FEMALE_BUTTON                                          :{BLACK}Kvinne
-STR_FACE_FEMALE_TOOLTIP                                         :{BLACK}Vel kvinneandlet
 STR_FACE_NEW_FACE_BUTTON                                        :{BLACK}Nytt andlet
 STR_FACE_NEW_FACE_TOOLTIP                                       :{BLACK}Lag eit tilfeldig andlet
 STR_FACE_ADVANCED                                               :{BLACK}Avansert
@@ -1924,36 +1916,20 @@ STR_FACE_FACECODE_ERR                                           :{WHITE}Kunne ik
 STR_FACE_SAVE                                                   :{BLACK}Lagre
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}Lagre favoritandlete
 STR_FACE_SAVE_DONE                                              :{WHITE}Dette andletet vil verte lagra som favoriten din i OpenTTDs konfigurasjonfil
-STR_FACE_EUROPEAN                                               :{BLACK}Europeisk
-STR_FACE_EUROPEAN_TOOLTIP                                       :{BLACK}Velg europeiske andlet
-STR_FACE_AFRICAN                                                :{BLACK}Afrikans
-STR_FACE_AFRICAN_TOOLTIP                                        :{BLACK}Velg afrikanske andlet
 STR_FACE_YES                                                    :Ja
 STR_FACE_NO                                                     :Nei
-STR_FACE_MOUSTACHE_EARRING_TOOLTIP                              :{BLACK}Slå på bart eller øyrering
 STR_FACE_HAIR                                                   :Hår:
-STR_FACE_HAIR_TOOLTIP                                           :{BLACK}Byt hår
 STR_FACE_EYEBROWS                                               :Augebryn:
-STR_FACE_EYEBROWS_TOOLTIP                                       :{BLACK}Byt augebryn
 STR_FACE_EYECOLOUR                                              :Augefarge:
-STR_FACE_EYECOLOUR_TOOLTIP                                      :{BLACK}Byt augefarge:
 STR_FACE_GLASSES                                                :Briller:
-STR_FACE_GLASSES_TOOLTIP                                        :{BLACK}Slå på briller
-STR_FACE_GLASSES_TOOLTIP_2                                      :{BLACK}Byt briller
 STR_FACE_NOSE                                                   :Nase:
-STR_FACE_NOSE_TOOLTIP                                           :{BLACK}Byt nase
 STR_FACE_LIPS                                                   :Lepper:
 STR_FACE_MOUSTACHE                                              :Bart:
-STR_FACE_LIPS_MOUSTACHE_TOOLTIP                                 :{BLACK}Byt lepper eller bart
 STR_FACE_CHIN                                                   :Hake:
-STR_FACE_CHIN_TOOLTIP                                           :{BLACK}Byt hake
 STR_FACE_JACKET                                                 :Jakke:
-STR_FACE_JACKET_TOOLTIP                                         :{BLACK}Byt jakke
 STR_FACE_COLLAR                                                 :Krage:
-STR_FACE_COLLAR_TOOLTIP                                         :{BLACK}Byt krage
 STR_FACE_TIE                                                    :Slips:
 STR_FACE_EARRING                                                :Øyrering:
-STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Byt slips eller øyrering
 
 # Matches ServerGameType
 ###length 3
@@ -2257,10 +2233,10 @@ STR_STATION_BUILD_SUPPLIES_CARGO                                :{BLACK}Forsynin
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Spleisa stasjonen
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Bygg ein seperat stasjon
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}Bygg ein seperat stasjon
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Spleis kontrollpunkt
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Bygg eit seperat kontrollpunkt
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}Bygg eit seperat kontrollpunkt
 
 # Generic toolbar
 
@@ -2303,6 +2279,7 @@ STR_STATION_BUILD_PLATFORM_LENGTH                               :{BLACK}Plattfor
 STR_STATION_BUILD_PLATFORM_LENGTH_TOOLTIP                       :{BLACK}Vel kor lang stasjonen skal vere
 STR_STATION_BUILD_DRAG_DROP                                     :{BLACK}Dra og slipp
 STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}Bygg stasjon med dra og slipp
+
 
 
 
@@ -2489,6 +2466,7 @@ STR_FOUND_TOWN_SIZE_RANDOM                                      :{BLACK}Tilfeldi
 STR_FOUND_TOWN_INITIAL_SIZE_TOOLTIP                             :{BLACK}Vel storleik på by
 STR_FOUND_TOWN_CITY                                             :{BLACK}By
 STR_FOUND_TOWN_CITY_TOOLTIP                                     :{BLACK}Storbyar veks raskare enn vanlege byar{}Instillingane avgjer om dei er større når dei vert grunnlagt
+
 
 STR_FOUND_TOWN_ROAD_LAYOUT                                      :{YELLOW}Byars vegløysing:
 STR_FOUND_TOWN_SELECT_LAYOUT_TOOLTIP                            :{BLACK}Vel vegløysing nytta for denne byen
@@ -2825,14 +2803,11 @@ STR_SAVE_PRESET_CAPTION                                         :{WHITE}Lagre f�
 STR_SAVE_PRESET_LIST_TOOLTIP                                    :{BLACK}Liste av tilgjengelege førval, vel ein for å kopiera han til same navn nedanfor
 STR_SAVE_PRESET_TITLE                                           :{BLACK}Skriv inn eit namn for førehandsinnstillinga
 STR_SAVE_PRESET_EDITBOX_TOOLTIP                                 :{BLACK}Vald namn for førehandsinnstillinga som skal lagrast
-STR_SAVE_PRESET_CANCEL                                          :{BLACK}Avbryt
-STR_SAVE_PRESET_CANCEL_TOOLTIP                                  :{BLACK}Ikkje endre førehandsinnstillinga
 STR_SAVE_PRESET_SAVE                                            :{BLACK}Lagre
 STR_SAVE_PRESET_SAVE_TOOLTIP                                    :{BLACK}Lagra førehandsinnstillingane til valt namn
 
 # NewGRF parameters window
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Endre NewGRF-parametrar
-STR_NEWGRF_PARAMETERS_CLOSE                                     :{BLACK}Lukk
 STR_NEWGRF_PARAMETERS_RESET                                     :{BLACK}Nullstill
 STR_NEWGRF_PARAMETERS_RESET_TOOLTIP                             :{BLACK}Set alle parametrar til standardverdi
 STR_NEWGRF_PARAMETERS_DEFAULT_NAME                              :Parameter {NUM}
@@ -3881,7 +3856,6 @@ STR_TIMETABLE_TOOLTIP                                           :{BLACK}Rutetabe
 STR_TIMETABLE_NO_TRAVEL                                         :Ingen reise
 STR_TIMETABLE_NOT_TIMETABLEABLE                                 :Reis (automatisk; blir sett på ruteplan med neste manuelle ordre)
 STR_TIMETABLE_TRAVEL_NOT_TIMETABLED                             :Reis (ikkje på rutetabell)
-STR_TIMETABLE_TRAVEL_NOT_TIMETABLED_SPEED                       :Reis med maks {2:VELOCITY} (utan rutetabell)
 STR_TIMETABLE_TRAVEL_FOR                                        :Reis i {STRING}
 STR_TIMETABLE_TRAVEL_FOR_SPEED                                  :Reis i {STRING} med maks {VELOCITY}
 STR_TIMETABLE_AND_TRAVEL_FOR_ESTIMATED                          :(reis {STRING}, ikkje på rutetabell)
@@ -3990,13 +3964,10 @@ STR_AI_LIST_URL                                                 :{LTBLUE}URL: {O
 
 STR_AI_LIST_ACCEPT                                              :{BLACK}Godta
 STR_AI_LIST_ACCEPT_TOOLTIP                                      :{BLACK}Merk utheva AI
-STR_AI_LIST_CANCEL                                              :{BLACK}Avbryt
-STR_AI_LIST_CANCEL_TOOLTIP                                      :{BLACK}Ikkje endre AI
 
 
 # Script Parameters
 STR_AI_SETTINGS_CAPTION_AI                                      :AI
-STR_AI_SETTINGS_CLOSE                                           :{BLACK}Lukk
 STR_AI_SETTINGS_RESET                                           :{BLACK}Tilbakestill
 STR_AI_SETTINGS_SETTING                                         :{STRING}: {ORANGE}{STRING}
 
@@ -4113,7 +4084,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}Kan ikkj
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}... maks. lån er {CURRENCY_LONG}
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}Kan ikkje låne meir pengar...
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... lånet er allereie betalt attende
+STR_ERROR_LOAN_ALREADY_REPAID                                   :{WHITE}... lånet er allereie betalt attende
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}... du treng {CURRENCY_LONG}
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}Kan ikkje betale lånet attende...
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Kan ikkje gje vekk pengar som er lånt frå banken...
@@ -4200,11 +4171,11 @@ STR_ERROR_MUST_DEMOLISH_AIRPORT_FIRST                           :{WHITE}Må rive
 STR_ERROR_WAYPOINT_ADJOINS_MORE_THAN_ONE_EXISTING               :{WHITE}Grensar til meir enn eitt eksiterande kontrollpunkt
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_WAYPOINT                         :{WHITE}For nær eit anna kontrollpunkt
 
-STR_ERROR_CAN_T_BUILD_TRAIN_WAYPOINT                            :{WHITE}Kan ikkje byggje kontrollpunkt for tog her...
+STR_ERROR_CAN_T_BUILD_RAIL_WAYPOINT                             :{WHITE}Kan ikkje byggje kontrollpunkt for tog her...
 STR_ERROR_CAN_T_POSITION_BUOY_HERE                              :{WHITE}Kan ikkje plassere bøye her...
 STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}Kan ikkje byta kontrollpunktnamnet...
 
-STR_ERROR_CAN_T_REMOVE_TRAIN_WAYPOINT                           :{WHITE}Kan ikkje fjerne kontrollpunktet...
+STR_ERROR_CAN_T_REMOVE_RAIL_WAYPOINT                            :{WHITE}Kan ikkje fjerne kontrollpunktet...
 STR_ERROR_MUST_REMOVE_RAILWAYPOINT_FIRST                        :{WHITE}Må fjerna kontrollpunkt først
 STR_ERROR_BUOY_IN_THE_WAY                                       :{WHITE}... bøya er i vegen
 STR_ERROR_BUOY_IS_IN_USE                                        :{WHITE}... bøya er i bruk av eit anna firma!

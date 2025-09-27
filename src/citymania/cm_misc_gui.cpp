@@ -27,7 +27,7 @@ static const NWidgetPart _nested_land_info_widgets[] = {
 };
 
 static WindowDesc _land_info_desc(
-    WDP_MANUAL, nullptr, 0, 0,
+    WDP_MANUAL, {}, 0, 0,
     WC_LAND_INFO, WC_NONE,
     {},
     _nested_land_info_widgets

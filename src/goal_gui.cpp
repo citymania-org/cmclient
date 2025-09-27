@@ -174,7 +174,7 @@ struct GoalListWindow : public Window {
 		Dimension d = GetStringBoundingBox(STR_GOALS_NONE);
 
 		resize.width = 1;
-		resize.height = d.height;
+		fill.height = resize.height = d.height;
 
 		d.height *= 5;
 		d.width += WidgetDimensions::scaled.framerect.Horizontal();
@@ -411,7 +411,7 @@ struct NestedGoalWidgets {
 	static constexpr auto widgetparts = {
 		NWidget(NWID_HORIZONTAL),
 			NWidget(WWT_CLOSEBOX, bg_colour),
-			NWidget(WWT_CAPTION, bg_colour, WID_GQ_CAPTION), SetStringTip(STR_GOAL_QUESTION_CAPTION_QUESTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+			NWidget(WWT_CAPTION, bg_colour, WID_GQ_CAPTION), SetStringTip(caption, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 		EndContainer(),
 		NWidget(WWT_PANEL, bg_colour),
 			NWidget(NWID_VERTICAL), SetPadding(WidgetDimensions::unscaled.modalpopup), SetPIP(0, WidgetDimensions::unscaled.vsep_wide, 0),
@@ -442,25 +442,25 @@ static constexpr auto _nested_goal_question_widgets_error    = NestedGoalWidgets
 
 static WindowDesc _goal_question_list_desc[] = {
 	{
-		WDP_CENTER, nullptr, 0, 0,
+		WDP_CENTER, {}, 0, 0,
 		WC_GOAL_QUESTION, WC_NONE,
 		WindowDefaultFlag::Construction,
 		_nested_goal_question_widgets_question,
 	},
 	{
-		WDP_CENTER, nullptr, 0, 0,
+		WDP_CENTER, {}, 0, 0,
 		WC_GOAL_QUESTION, WC_NONE,
 		WindowDefaultFlag::Construction,
 		_nested_goal_question_widgets_info,
 	},
 	{
-		WDP_CENTER, nullptr, 0, 0,
+		WDP_CENTER, {}, 0, 0,
 		WC_GOAL_QUESTION, WC_NONE,
 		WindowDefaultFlag::Construction,
 		_nested_goal_question_widgets_warning,
 	},
 	{
-		WDP_CENTER, nullptr, 0, 0,
+		WDP_CENTER, {}, 0, 0,
 		WC_GOAL_QUESTION, WC_NONE,
 		WindowDefaultFlag::Construction,
 		_nested_goal_question_widgets_error,

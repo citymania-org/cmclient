@@ -11,30 +11,16 @@
 #define SPRITECACHE_H
 
 #include "gfx_type.h"
+#include "spritecache_type.h"
 #include "spriteloader/spriteloader.hpp"
-
-/** Data structure describing a sprite. */
-struct Sprite {
-	uint16_t height; ///< Height of the sprite.
-	uint16_t width;  ///< Width of the sprite.
-	int16_t x_offs;  ///< Number of pixels to shift the sprite to the right.
-	int16_t y_offs;  ///< Number of pixels to shift the sprite downwards.
-	uint8_t data[];   ///< Sprite data.
-};
-
-enum SpriteCacheCtrlFlags : uint8_t {
-	SCCF_ALLOW_ZOOM_MIN_1X_PAL    = 0, ///< Allow use of sprite min zoom setting at 1x in palette mode.
-	SCCF_ALLOW_ZOOM_MIN_1X_32BPP  = 1, ///< Allow use of sprite min zoom setting at 1x in 32bpp mode.
-	SCCF_ALLOW_ZOOM_MIN_2X_PAL    = 2, ///< Allow use of sprite min zoom setting at 2x in palette mode.
-	SCCF_ALLOW_ZOOM_MIN_2X_32BPP  = 3, ///< Allow use of sprite min zoom setting at 2x in 32bpp mode.
-};
 
 extern uint _sprite_cache_size;
 
 /** SpriteAllocator that allocates memory via a unique_ptr array. */
 class UniquePtrSpriteAllocator : public SpriteAllocator {
 public:
-	std::unique_ptr<uint8_t[]> data;
+	std::unique_ptr<std::byte[]> data;
+	size_t size;
 protected:
 	void *AllocatePtr(size_t size) override;
 };

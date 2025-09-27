@@ -30,7 +30,7 @@ static const NWidgetPart _nested_land_tooltips_widgets[] = {
 };
 
 static WindowDesc _land_tooltips_desc(
-    WDP_MANUAL, nullptr, 0, 0,
+    WDP_MANUAL, {}, 0, 0,
     CM_WC_LAND_TOOLTIPS, WC_NONE,
     {},
     _nested_land_tooltips_widgets
@@ -272,7 +272,7 @@ static const NWidgetPart _nested_station_rating_tooltip_widgets[] = {
 };
 
 static WindowDesc _station_rating_tooltip_desc(
-    WDP_MANUAL, nullptr, 0, 0,
+    WDP_MANUAL, {}, 0, 0,
     WC_STATION_RATING_TOOLTIP, WC_NONE,
     {},
     _nested_station_rating_tooltip_widgets

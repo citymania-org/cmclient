@@ -40,7 +40,6 @@ static constexpr auto _callback_tuple = std::make_tuple(
     &CcBuildRailTunnel,
     &CcFoundRandomTown,
     &CcFoundTown,
-    &CcBuildIndustry,
     &CcBuildBridge,
     &CcCreateGroup,
     &CcAddVehicleNewGroup,
@@ -955,12 +954,12 @@ CommandCost RenamePresident::_do(DoCommandFlags flags) {
 }
 
 Commands SetCompanyManagerFace::get_command() { return CMD_SET_COMPANY_MANAGER_FACE; }
-static constexpr auto _SetCompanyManagerFace_dispatch = MakeDispatchTable<CMD_SET_COMPANY_MANAGER_FACE, CompanyManagerFace>();
+static constexpr auto _SetCompanyManagerFace_dispatch = MakeDispatchTable<CMD_SET_COMPANY_MANAGER_FACE, uint, uint32_t>();
 bool SetCompanyManagerFace::_post(::CommandCallback *callback) {
-    return _SetCompanyManagerFace_dispatch[FindCallbackIndex(callback)](this->error, this->cmf);
+    return _SetCompanyManagerFace_dispatch[FindCallbackIndex(callback)](this->error, this->style, this->bits);
 }
 CommandCost SetCompanyManagerFace::_do(DoCommandFlags flags) {
-    return (::Command<CMD_SET_COMPANY_MANAGER_FACE>::Do(flags, cmf));
+    return (::Command<CMD_SET_COMPANY_MANAGER_FACE>::Do(flags, style, bits));
 }
 
 Commands SetCompanyColour::get_command() { return CMD_SET_COMPANY_COLOUR; }
@@ -1054,12 +1053,12 @@ CommandCost TownSetText::_do(DoCommandFlags flags) {
 }
 
 Commands ExpandTown::get_command() { return CMD_EXPAND_TOWN; }
-static constexpr auto _ExpandTown_dispatch = MakeDispatchTable<CMD_EXPAND_TOWN, TownID, uint32_t>();
+static constexpr auto _ExpandTown_dispatch = MakeDispatchTable<CMD_EXPAND_TOWN, TownID, uint32_t, TownExpandModes>();
 bool ExpandTown::_post(::CommandCallback *callback) {
-    return _ExpandTown_dispatch[FindCallbackIndex(callback)](this->error, this->town_id, this->grow_amount);
+    return _ExpandTown_dispatch[FindCallbackIndex(callback)](this->error, this->town_id, this->grow_amount, this->modes);
 }
 CommandCost ExpandTown::_do(DoCommandFlags flags) {
-    return (::Command<CMD_EXPAND_TOWN>::Do(flags, town_id, grow_amount));
+    return (::Command<CMD_EXPAND_TOWN>::Do(flags, town_id, grow_amount, modes));
 }
 
 Commands DeleteTown::get_command() { return CMD_DELETE_TOWN; }

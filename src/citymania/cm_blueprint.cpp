@@ -16,6 +16,7 @@
 #include "../station_map.h"
 #include "../station_base.h"
 #include "../strings_func.h"
+#include "../station_layout_type.h"
 #include "../tilearea_type.h"
 #include "../tile_map.h"
 #include "../tunnelbridge_map.h"
@@ -25,7 +26,6 @@
 
 extern TileHighlightData _thd;
 extern RailType _cur_railtype;
-extern void GetStationLayout(uint8_t *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
 
 // from rail_gui.cpp
 struct StationPickerSelection {
@@ -255,15 +255,14 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
                 add_tile(otile, ObjectTileHighlight::make_rail_depot(palette, o.u.rail.depot.ddir));
                 break;
             case Item::Type::RAIL_STATION_PART: {
-                std::vector<uint8_t> layouts(o.u.rail.station_part.numtracks * o.u.rail.station_part.plat_len);
-                uint8_t *layout_ptr = layouts.data();
-                GetStationLayout(layout_ptr, o.u.rail.station_part.numtracks, o.u.rail.station_part.plat_len, nullptr);
+                RailStationTileLayout stl{nullptr, o.u.rail.station_part.numtracks, o.u.rail.station_part.plat_len};  // TODO statspec
+                auto it = stl.begin();
+
                 if (palette == CM_PALETTE_TINT_WHITE && can_build_station_sign.find(o.u.rail.station_part.id) == can_build_station_sign.end())
                     palette = CM_PALETTE_TINT_ORANGE_DEEP;
                 IterateStation(otile, o.u.rail.station_part.axis, o.u.rail.station_part.numtracks, o.u.rail.station_part.plat_len,
                     [&](TileIndex tile) {
-                        uint8_t layout = *layout_ptr++;
-                        add_tile(tile, ObjectTileHighlight::make_rail_station(palette, o.u.rail.station_part.axis, layout & ~1));
+                        add_tile(tile, ObjectTileHighlight::make_rail_station(palette, o.u.rail.station_part.axis, *it++));
                     }
                 );
                 break;

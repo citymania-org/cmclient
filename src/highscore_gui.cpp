@@ -49,10 +49,18 @@ struct EndGameHighScoreBaseWindow : Window {
 
 		this->DrawWidgets();
 
+		/* Fill with the appropriate background colour instead of leaving default window colour */
+		GfxFillRect(Rect{0, 0, this->width, this->height}, PixelColour{105}, FILLRECT_OPAQUE);
+
 		/* Standard background slices are 50 pixels high, but it's designed
 		 * for 480 pixels total. 96% of 500 is 480. */
 		Dimension dim = GetSpriteSize(this->background_img);
-		Point pt = this->GetTopLeft(dim.width, dim.height * 96 / 10);
+		auto total_height = dim.height * 96 / 10;
+		Point pt = this->GetTopLeft(dim.width, total_height);
+
+		/* Original graphics contain some transparency, which assumes a black background. */
+		GfxFillRect(pt.x, pt.y, pt.x + dim.width - 1, pt.y + total_height - 1, PC_BLACK);
+
 		/* Center Highscore/Endscreen background */
 		for (uint i = 0; i < 10; i++) { // the image is split into 10 50px high parts
 			DrawSprite(this->background_img + i, PAL_NONE, pt.x, pt.y + (i * dim.height));
@@ -214,14 +222,14 @@ static constexpr NWidgetPart _nested_highscore_widgets[] = {
 };
 
 static WindowDesc _highscore_desc(
-	WDP_MANUAL, nullptr, 0, 0,
+	WDP_MANUAL, {}, 0, 0,
 	WC_HIGHSCORE, WC_NONE,
 	{},
 	_nested_highscore_widgets
 );
 
 static WindowDesc _endgame_desc(
-	WDP_MANUAL, nullptr, 0, 0,
+	WDP_MANUAL, {}, 0, 0,
 	WC_ENDSCREEN, WC_NONE,
 	{},
 	_nested_highscore_widgets
@@ -252,7 +260,7 @@ void ShowEndGameChart()
 	new EndGameWindow(_endgame_desc);
 }
 
-static IntervalTimer<TimerGameCalendar> _check_end_game({TimerGameCalendar::YEAR, TimerGameCalendar::Priority::NONE}, [](auto)
+static const IntervalTimer<TimerGameCalendar> _check_end_game({TimerGameCalendar::YEAR, TimerGameCalendar::Priority::NONE}, [](auto)
 {
 	/* 0 = never */
 	if (_settings_game.game_creation.ending_year == 0) return;

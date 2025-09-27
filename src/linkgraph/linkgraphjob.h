@@ -167,7 +167,7 @@ protected:
 	std::atomic<bool> job_completed = false; ///< Is the job still running. This is accessed by multiple threads and reads may be stale.
 	std::atomic<bool> job_aborted = false; ///< Has the job been aborted. This is accessed by multiple threads and reads may be stale.
 
-	void EraseFlows(NodeID from);
+	void EraseFlows(StationID from);
 	void JoinThread();
 	void SpawnThread();
 
@@ -299,7 +299,7 @@ public:
 	 * @param total Total capacity.
 	 * @return free * 16 / max(total, 1).
 	 */
-	inline static int GetCapacityRatio(int free, uint total)
+	static inline int GetCapacityRatio(int free, uint total)
 	{
 		return Clamp(free, PATH_CAP_MIN_FREE, PATH_CAP_MAX_FREE) * PATH_CAP_MULTIPLIER / std::max(total, 1U);
 	}

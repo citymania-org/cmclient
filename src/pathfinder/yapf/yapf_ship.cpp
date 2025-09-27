@@ -24,8 +24,7 @@ constexpr int MAX_SHIP_PF_NODES = (NUMBER_OR_WATER_REGIONS_LOOKAHEAD + 1) * WATE
 constexpr int SHIP_LOST_PATH_LENGTH = 8; // The length of the (aimless) path assigned when a ship is lost.
 
 template <class Types>
-class CYapfDestinationTileWaterT
-{
+class CYapfDestinationTileWaterT {
 public:
 	typedef typename Types::Tpf Tpf; ///< the pathfinder class (derived from THIS class).
 	typedef typename Types::TrackFollower TrackFollower;
@@ -97,25 +96,12 @@ public:
 	{
 		const TileIndex destination_tile = this->has_intermediate_dest ? this->intermediate_dest_tile : this->dest_tile;
 
-		static const int dg_dir_to_x_offs[] = { -1, 0, 1, 0 };
-		static const int dg_dir_to_y_offs[] = { 0, 1, 0, -1 };
 		if (this->PfDetectDestination(n)) {
 			n.estimate = n.cost;
 			return true;
 		}
 
-		TileIndex tile = n.segment_last_tile;
-		DiagDirection exitdir = TrackdirToExitdir(n.segment_last_td);
-		int x1 = 2 * TileX(tile) + dg_dir_to_x_offs[(int)exitdir];
-		int y1 = 2 * TileY(tile) + dg_dir_to_y_offs[(int)exitdir];
-		int x2 = 2 * TileX(destination_tile);
-		int y2 = 2 * TileY(destination_tile);
-		int dx = abs(x1 - x2);
-		int dy = abs(y1 - y2);
-		int dmin = std::min(dx, dy);
-		int dxy = abs(dx - dy);
-		int d = dmin * YAPF_TILE_CORNER_LENGTH + (dxy - 1) * (YAPF_TILE_LENGTH / 2);
-		n.estimate = n.cost + d;
+		n.estimate = n.cost + OctileDistanceCost(n.segment_last_tile, n.segment_last_td, destination_tile);
 		assert(n.estimate >= n.parent->estimate);
 		return true;
 	}
@@ -123,8 +109,7 @@ public:
 
 /** Node Follower module of YAPF for ships */
 template <class Types>
-class CYapfFollowShipT
-{
+class CYapfFollowShipT {
 public:
 	typedef typename Types::Tpf Tpf; ///< the pathfinder class (derived from THIS class).
 	typedef typename Types::TrackFollower TrackFollower;
@@ -325,8 +310,7 @@ public:
 
 /** Cost Provider module of YAPF for ships. */
 template <class Types>
-class CYapfCostShipT
-{
+class CYapfCostShipT {
 public:
 	typedef typename Types::Tpf Tpf; ///< the pathfinder class (derived from THIS class).
 	typedef typename Types::TrackFollower TrackFollower;
@@ -355,13 +339,21 @@ public:
 		return 0;
 	}
 
-	static Vehicle *CountShipProc(Vehicle *v, void *data)
+	/**
+	 * Whether the provided direction is a preferred direction for a given tile. This is used to separate ships travelling in opposite directions.
+	 * @param tile Tile of current node.
+	 * @param td Trackdir of current node.
+	 * @returns true if a preferred direction, false otherwise.
+	 */
+	inline static bool IsPreferredShipDirection(TileIndex tile, Trackdir td)
 	{
-		uint *count = (uint*)data;
-		/* Ignore other vehicles (aircraft) and ships inside depot. */
-		if (v->type == VEH_SHIP && !v->vehstatus.Test(VehState::Hidden)) (*count)++;
-
-		return nullptr;
+		const bool odd_x = TileX(tile) & 1;
+		const bool odd_y = TileY(tile) & 1;
+		if (td == TRACKDIR_X_NE) return odd_y;
+		if (td == TRACKDIR_X_SW) return !odd_y;
+		if (td == TRACKDIR_Y_NW) return odd_x;
+		if (td == TRACKDIR_Y_SE) return !odd_x;
+		return (odd_x ^ odd_y) ^ HasBit(TRACKDIR_BIT_RIGHT_N | TRACKDIR_BIT_LEFT_S | TRACKDIR_BIT_UPPER_W | TRACKDIR_BIT_LOWER_E, td);
 	}
 
 	/**
@@ -378,10 +370,15 @@ public:
 
 		if (IsDockingTile(n.GetTile())) {
 			/* Check docking tile for occupancy. */
-			uint count = 0;
-			HasVehicleOnPos(n.GetTile(), &count, &CountShipProc);
+			uint count = std::ranges::count_if(VehiclesOnTile(n.GetTile()), [](const Vehicle *v) {
+				/* Ignore other vehicles (aircraft) and ships inside depot. */
+				return v->type == VEH_SHIP && !v->vehstatus.Test(VehState::Hidden);
+			});
 			c += count * 3 * YAPF_TILE_LENGTH;
 		}
+
+		/* Encourage separation between ships traveling in different directions. */
+		if (!IsPreferredShipDirection(n.GetTile(), n.GetTrackdir())) c += YAPF_TILE_LENGTH;
 
 		/* Skipped tile cost for aqueducts. */
 		c += YAPF_TILE_LENGTH * tf->tiles_skipped;
@@ -402,8 +399,7 @@ public:
  * Defines all 6 base YAPF modules as classes providing services for CYapfBaseT.
  */
 template <class Tpf_, class Ttrack_follower, class Tnode_list>
-struct CYapfShip_TypesT
-{
+struct CYapfShip_TypesT {
 	typedef CYapfShip_TypesT<Tpf_, Ttrack_follower, Tnode_list>  Types;         ///< Shortcut for this struct type.
 	typedef Tpf_                                                 Tpf;           ///< Pathfinder type.
 	typedef Ttrack_follower                                      TrackFollower; ///< Track follower helper class.
@@ -419,8 +415,7 @@ struct CYapfShip_TypesT
 	typedef CYapfCostShipT<Types>             PfCost;        ///< Cost provider.
 };
 
-struct CYapfShip : CYapfT<CYapfShip_TypesT<CYapfShip, CFollowTrackWater, CShipNodeListExitDir > >
-{
+struct CYapfShip : CYapfT<CYapfShip_TypesT<CYapfShip, CFollowTrackWater, CShipNodeListExitDir>> {
 	explicit CYapfShip(int max_nodes) { this->max_search_nodes = max_nodes; }
 };
 

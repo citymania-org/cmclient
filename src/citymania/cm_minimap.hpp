@@ -57,7 +57,7 @@ void minimap_init_industries();
 class NWidgetSmallmapDisplay;
 
 struct LegendAndColour {
-    uint8_t colour;            ///< Colour of the item on the map.
+    PixelColour colour; ///< Colour of the item on the map.
     StringID legend;           ///< String corresponding to the coloured item.
     IndustryType type;         ///< Type of industry. Only valid for industry entries.
     uint8_t height;            ///< Height in tiles. Only valid for height legend entries.
@@ -243,7 +243,7 @@ public:
     void OnClick(Point pt, int widget, int click_count) override;
     void OnInvalidateData(int data = 0, bool gui_scope = true) override;
     bool OnRightClick(Point pt, int widget) override;
-    void OnMouseWheel(int wheel) override;
+    void OnMouseWheel(int wheel, WidgetID widget) override;
     // void OnHundredthTick() override;
     void OnScroll(Point delta) override;
     void OnMouseOver(Point pt, int widget) override;
