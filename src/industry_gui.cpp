@@ -7,6 +7,7 @@
 
 /** @file industry_gui.cpp GUIs related to industries. */
 
+#include "gfx_type.h"
 #include "stdafx.h"
 #include <ranges>
 #include "error.h"
@@ -291,7 +292,7 @@ static constexpr NWidgetPart _nested_build_industry_widgets[] = {
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_DARK_GREEN), SetResize(1, 0),
 		NWidget(NWID_HORIZONTAL), SetPIP(2, 0, 2),
-			NWidget(WWT_LABEL, COLOUR_DARK_GREEN), SetMinimalSize(140, 14), SetStringTip(CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_TITLE),
+			NWidget(WWT_LABEL, INVALID_COLOUR), SetMinimalSize(140, 14), SetStringTip(CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_TITLE),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_HORIZONTAL), SetPIP(2, 0, 2),
