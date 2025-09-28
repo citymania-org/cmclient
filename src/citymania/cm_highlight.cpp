@@ -1741,11 +1741,10 @@ SpriteID GetIndustryZoningPalette(TileIndex tile) {
     Industry *ind = Industry::GetByTile(tile);
     auto n_produced = 0;
     auto n_serviced = 0;
-    for (auto j = 0; j < INDUSTRY_NUM_OUTPUTS; j++) {
-        if (ind->produced[j].cargo == CT_INVALID) continue;
-        if (ind->produced[j].history[LAST_MONTH].production == 0 && ind->produced[j].history[THIS_MONTH].production == 0) continue;
+    for (auto &pc : ind->produced) {
+        if (pc.history[LAST_MONTH].production == 0 && pc.history[THIS_MONTH].production == 0) continue;
         n_produced++;
-        if (ind->produced[j].history[LAST_MONTH].transported > 0 || ind->produced[j].history[THIS_MONTH].transported > 0)
+        if (pc.history[LAST_MONTH].transported > 0 || pc.history[THIS_MONTH].transported > 0)
             n_serviced++;
     }
     if (n_serviced < n_produced)
