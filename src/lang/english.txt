@@ -6431,3 +6431,5 @@ CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_ROAD_VEHICLE                    :{BLACK}Show 
 CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP                            :{BLACK}Show hidden ({NUM})
 CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT                        :{BLACK}Show hidden ({NUM})
 
+CM_STR_SHOW_BLOCK_SIGNAL_TOOLTIP                             :Show advanced signal types
+CM_STR_HIDE_BLOCK_SIGNAL_TOOLTIP                             :Hide advanced signal types

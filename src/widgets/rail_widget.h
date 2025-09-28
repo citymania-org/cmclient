@@ -88,6 +88,9 @@ enum BuildSignalWidgets : WidgetID {
 	WID_BS_DRAG_SIGNALS_DENSITY_INCREASE, ///< Increase the signal density.
 	WID_BS_BLOCK_SEL,           ///< Container for the block signal group, which can be hidden.
 	WID_BS_BLOCK_SPACER_SEL,    ///< Container for the spacer between block and path signal groups, which can be hidden.
+	CM_WID_BS_BLOCK_BUTTON_SEL, ///< Container for show/hide block signal group buttons.
+	CM_WID_BS_SHOW_BLOCK,       ///< Button for showing block signal group.
+	CM_WID_BS_HIDE_BLOCK,       ///< Button for hiding block signal group.
 };
 
 /** Widgets of the #BuildRailDepotWindow class. */

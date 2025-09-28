@@ -1688,6 +1688,7 @@ private:
 
 		this->GetWidget<NWidgetStacked>(WID_BS_BLOCK_SEL)->SetDisplayedPlane(show_non_path_signals ? 0 : SZSP_NONE);
 		this->GetWidget<NWidgetStacked>(WID_BS_BLOCK_SPACER_SEL)->SetDisplayedPlane(show_non_path_signals ? 0 : SZSP_NONE);
+		this->GetWidget<NWidgetStacked>(CM_WID_BS_BLOCK_BUTTON_SEL)->SetDisplayedPlane(show_non_path_signals ? 0 : 1);
 	}
 
 public:
@@ -1810,6 +1811,18 @@ public:
 				}
 				break;
 
+			case CM_WID_BS_HIDE_BLOCK:
+				_settings_client.gui.signal_gui_mode = SIGNAL_GUI_PATH;
+				this->SetSignalUIMode();
+				this->ReInit();
+				break;
+
+			case CM_WID_BS_SHOW_BLOCK:
+				_settings_client.gui.signal_gui_mode = SIGNAL_GUI_ALL;
+				this->SetSignalUIMode();
+				this->ReInit();
+				break;
+
 			default: break;
 		}
 
@@ -1843,6 +1856,10 @@ static constexpr NWidgetPart _nested_signal_builder_widgets[] = {
 
 	/* Container for both signal groups, spacers, and convert/autofill buttons. */
 	NWidget(NWID_HORIZONTAL),
+		NWidget(NWID_SELECTION, INVALID_COLOUR, CM_WID_BS_BLOCK_BUTTON_SEL),
+			NWidget(WWT_PUSHARROWBTN, COLOUR_DARK_GREEN, CM_WID_BS_HIDE_BLOCK), SetMinimalSize(9, 12), SetArrowWidgetTypeTip(AWV_DECREASE, CM_STR_HIDE_BLOCK_SIGNAL_TOOLTIP), SetFill(0, 1),
+			NWidget(WWT_PUSHARROWBTN, COLOUR_DARK_GREEN, CM_WID_BS_SHOW_BLOCK), SetMinimalSize(9, 12), SetArrowWidgetTypeTip(AWV_INCREASE, CM_STR_SHOW_BLOCK_SIGNAL_TOOLTIP), SetFill(0, 1),
+		EndContainer(),
 		/* Block signals (can be hidden). */
 		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_BS_BLOCK_SEL),
 			NWidget(NWID_VERTICAL, NWidContainerFlag::EqualSize),
