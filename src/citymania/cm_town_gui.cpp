@@ -404,16 +404,18 @@ public:
 
 	EventState OnHotkey(int hotkey) override
 	{
-		// TODO fix to proper hotkey
-		TownExecuteAction(this->town, TownAction::BuildStatue);
-		return ES_HANDLED;
+		if (hotkey == CM_THK_BUILD_STATUE) {
+			TownExecuteAction(this->town, TownAction::BuildStatue);
+			return ES_HANDLED;
+		}
+		return ES_NOT_HANDLED;
 	}
 
 	static inline HotkeyList hotkeys{"cm_town_cb_view", {
 		Hotkey((uint16)0, "location", WID_TV_CENTER_VIEW),
 		Hotkey((uint16)0, "local_authority", WID_TV_SHOW_AUTHORITY),
 		Hotkey((uint16)0, "cb_window", CM_WID_TV_CB),
-		Hotkey(WKC_CTRL | 'S', "build_statue", HK_STATUE + 0x80),
+		Hotkey(WKC_CTRL | 'S', "build_statue", CM_THK_BUILD_STATUE),
 	}};
 };
 

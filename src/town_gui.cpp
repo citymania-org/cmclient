@@ -342,22 +342,22 @@ public:
 	EventState OnHotkey(int hotkey) override
 	{
 		switch(hotkey) {
-			case HK_SADVERT: citymania::TownExecuteAction(this->town, TownAction::AdvertiseSmall); break;
-			case HK_MADVERT: citymania::TownExecuteAction(this->town, TownAction::AdvertiseMedium); break;
-			case HK_LADVERT: citymania::TownExecuteAction(this->town, TownAction::AdvertiseLarge); break;
-			case HK_STATUE: citymania::TownExecuteAction(this->town, TownAction::BuildStatue); break;
-			case HK_FUND: citymania::TownExecuteAction(this->town, TownAction::FundBuildings); break;
+			case citymania::CM_THK_SMALL_AD: citymania::TownExecuteAction(this->town, TownAction::AdvertiseSmall); break;
+			case citymania::CM_THK_MEDIUM_AD: citymania::TownExecuteAction(this->town, TownAction::AdvertiseMedium); break;
+			case citymania::CM_THK_LARGE_AD: citymania::TownExecuteAction(this->town, TownAction::AdvertiseLarge); break;
+			case citymania::CM_THK_BUILD_STATUE: citymania::TownExecuteAction(this->town, TownAction::BuildStatue); break;
+			case citymania::CM_THK_FUND_BUILDNGS: citymania::TownExecuteAction(this->town, TownAction::FundBuildings); break;
 			default: NOT_REACHED();
 		}
 		return ES_HANDLED;
 	}
 
 	static inline HotkeyList hotkeys{"cm_town_authority", {
-		Hotkey((uint16)0, "small_advert", HK_SADVERT),
-		Hotkey((uint16)0, "medium_advert", HK_MADVERT),
-		Hotkey(WKC_CTRL | 'D', "large_advert", HK_LADVERT),
-		Hotkey(WKC_CTRL | 'S', "build_statue", HK_STATUE),
-		Hotkey(WKC_CTRL | 'F', "fund_buildings", HK_FUND)
+		Hotkey((uint16)0, "small_advert", citymania::CM_THK_SMALL_AD),
+		Hotkey((uint16)0, "medium_advert", citymania::CM_THK_MEDIUM_AD),
+		Hotkey(WKC_CTRL | 'D', "large_advert", citymania::CM_THK_LARGE_AD),
+		Hotkey(WKC_CTRL | 'S', "build_statue", citymania::CM_THK_BUILD_STATUE),
+		Hotkey(WKC_CTRL | 'F', "fund_buildings", citymania::CM_THK_FUND_BUILDNGS)
 	}};
 };
 
@@ -653,7 +653,7 @@ public:
 	EventState OnHotkey(int hotkey) override
 	{
 		if(hotkey == CM_WID_TV_CB) citymania::ShowCBTownWindow(this->window_number);
-		else if (hotkey == HK_STATUE + 0x80) { // TODO fix to proper hotkey
+		else if (hotkey == citymania::CM_THK_BUILD_STATUE) {
 			citymania::TownExecuteAction(this->town, TownAction::BuildStatue);
 			return ES_NOT_HANDLED;
 		}
@@ -669,7 +669,7 @@ public:
 		Hotkey((uint16)0, "location", WID_TV_CENTER_VIEW),
 		Hotkey((uint16)0, "local_authority", WID_TV_SHOW_AUTHORITY),
 		Hotkey((uint16)0, "cb_window", CM_WID_TV_CB),
-		Hotkey(WKC_CTRL | 'S', "build_statue", HK_STATUE + 0x80),  // TODO make a proper hotkey
+		Hotkey(WKC_CTRL | 'S', "build_statue", citymania::CM_THK_BUILD_STATUE),
 	}};
 };
 

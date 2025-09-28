@@ -84,16 +84,6 @@ enum BuildHouseWidgets : WidgetID {
 	WID_BH_PROTECT_ON, ///< Button to not protect the next house built.
 };
 
-// TODO move to cm folder
-enum TownHK {
-	HK_SADVERT,
-	HK_MADVERT,
-	HK_LADVERT,
-	HK_ROADS,
-	HK_STATUE,
-	HK_FUND,
-};
-
 enum CBTownWidgets {
 	WID_CB_CAPTION,        ///< Caption of window.
 	WID_CB_CENTER_VIEW,

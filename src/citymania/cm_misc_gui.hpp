@@ -7,6 +7,7 @@ namespace citymania {
 
 void ShowLandInfo(TileIndex tile, TileIndex end_tile = INVALID_TILE);
 
+
 } // namespace citymania
 
 #endif
