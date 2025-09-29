@@ -321,8 +321,16 @@ static const uint16_t ROAD_WAYPOINTS_SPRITE_COUNT = 4;
 static constexpr SpriteID SPR_OVERLAY_ROCKS_BASE = SPR_ROAD_WAYPOINTS_BASE + ROAD_WAYPOINTS_SPRITE_COUNT;
 static constexpr uint16_t OVERLAY_ROCKS_SPRITE_COUNT = 19 * 5; /* Rock overlays: plain, snow 1, snow 2, snow 3 and full snow. */
 
+/** Bridge deck sprites. */
+static constexpr SpriteID SPR_BRIDGE_DECKS_BASE = SPR_OVERLAY_ROCKS_BASE + OVERLAY_ROCKS_SPRITE_COUNT;
+static constexpr uint16_t BRIDGE_DECKS_SPRITE_COUNT = 6 * 4; /* Bridge deck sprites: 6 directions * (3 track types + 1 road type). */
+static const SpriteID SPR_BRIDGE_DECKS_RAIL = SPR_BRIDGE_DECKS_BASE + 0;
+static const SpriteID SPR_BRIDGE_DECKS_MONO = SPR_BRIDGE_DECKS_BASE + 6;
+static const SpriteID SPR_BRIDGE_DECKS_MGLV = SPR_BRIDGE_DECKS_BASE + 12;
+static const SpriteID SPR_BRIDGE_DECKS_ROAD = SPR_BRIDGE_DECKS_BASE + 18;
+
 /* CityMania extra sprites */
-static const SpriteID CM_SPR_CITYMANIA_BASE            = SPR_OVERLAY_ROCKS_BASE + OVERLAY_ROCKS_SPRITE_COUNT;
+static const SpriteID CM_SPR_CITYMANIA_BASE            = SPR_BRIDGE_DECKS_BASE + BRIDGE_DECKS_SPRITE_COUNT;
 static const SpriteID CM_SPR_RAIL_COPY_PASTE           = CM_SPR_CITYMANIA_BASE + 2;
 static const SpriteID CM_SPR_HQ                        = CM_SPR_CITYMANIA_BASE + 3;
 static const SpriteID CM_SPR_WATCH                     = CM_SPR_CITYMANIA_BASE + 4;
