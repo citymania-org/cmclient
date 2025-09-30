@@ -1378,6 +1378,7 @@ up<Command> AirportBuildTool::SizedPlacementHandler::GetCommand(TileIndex tile, 
 
 bool AirportBuildTool::SizedPlacementHandler::Execute(TileIndex tile) {
     this->tool.ExecuteBuildCommand(this, &CcBuildAirport, tile);
+    return true;
 }
 
 std::optional<ObjectHighlight> AirportBuildTool::SizedPlacementHandler::GetObjectHighlight(TileIndex tile) {
