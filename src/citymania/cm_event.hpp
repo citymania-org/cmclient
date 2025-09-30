@@ -3,19 +3,19 @@
 
 #include "cm_type.hpp"
 
-#include "../console_func.h"
 #include "../cargo_type.h"
-#include "../company_type.h"
 #include "../economy_type.h"
-#include "../industry_type.h"
-#include "../source_type.h"
-#include "../station_type.h"
-#include "../town_type.h"
 
 #include <functional>
 #include <map>
 #include <typeindex>
 #include <typeinfo>
+
+struct Company;
+struct Industry;
+struct Station;
+struct Source;
+struct Town;
 
 namespace citymania {
 
