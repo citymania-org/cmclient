@@ -73,6 +73,16 @@ This is usable for any OpenTTD servers
 
 
 == CHANGELOG ==
+*** 14.1 ***
+- Fixed polyrail endpoint update when removing rail.
+- Fixed industry blinking rate on minimap.
+- Fixed APM and average APM counters.
+- Fixed cargo ID in industry chains window and make it use newgrf_developer_tools setting.
+- Reimplemented all station building tools hopefully fixing all the old bugs.
+- Made industries on the minimap blink with color similar to the industry colour instead of just white.
+- Added settings to configure modifier keys for depot orders.
+- Added no unload option to station order modifier hotkey actions.
+
 *** 14.0 ***
 - Fixed graphs with cargo selection.
 - Fixed measurement tooltips.

@@ -2,7 +2,10 @@
 #define CMEXT_HOTKEYS_HPP
 
 #include "../hotkeys.h"
+#include "../order_type.h"
 #include "../window_type.h"
+
+struct Vehicle;
 
 namespace citymania {
 
@@ -32,6 +35,40 @@ void ResetEffectiveActionCounter();
 std::pair<uint32, uint32> GetEPM();
 bool ChooseSignalDragBehaviour();
 void CountHotkeyStats(const HotkeyList *list, int hotkey);
+
+
+enum class FeederOrderMod {
+    None,
+    Load,
+    Unload,
+};
+
+enum class StationOrderModAction : uint8_t {
+    None = 0,
+    FullLoad,
+    Transfer,
+    UnloadAll,
+    FeederLoad,
+    FeederUnload,
+    NoLoad,
+    NoUnload,
+};
+
+enum class DepotOrderModAction : uint8_t {
+    None = 0,
+    Service,
+    Stop,
+    Unbunch,
+};
+
+struct StationModOrders {
+    OrderLoadFlags load;
+    OrderUnloadFlags unload;
+    FeederOrderMod mod;
+};
+
+DepotOrderModAction GetDepotOrderModAction();
+StationModOrders GetStationModOrders(const Vehicle *v);
 
 } // namespace citymania
 
