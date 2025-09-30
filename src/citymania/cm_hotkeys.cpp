@@ -8,6 +8,7 @@
 #include "../sound_func.h"
 #include "../tilehighlight_func.h"
 #include "../viewport_func.h"
+#include "../vehicle_base.h"
 #include "../window_func.h"
 #include "../window_gui.h"
 #include "../window_type.h"
@@ -81,11 +82,11 @@ bool HasSeparateRemoveMod() {
 }
 
 void UpdateModKeys(bool shift_pressed, bool ctrl_pressed, bool alt_pressed, bool command_pressed) {
-    bool mod_pressed[(size_t)ModKey::END] = {false};
-    if (shift_pressed) mod_pressed[(size_t)ModKey::SHIFT] = true;
-    if (ctrl_pressed) mod_pressed[(size_t)ModKey::CTRL] = true;
-    if (alt_pressed) mod_pressed[(size_t)ModKey::ALT] = true;
-    if (command_pressed) mod_pressed[(size_t)ModKey::COMMAND] = true;
+    bool mod_pressed[(size_t)ModKey::End] = {false};
+    if (shift_pressed) mod_pressed[(size_t)ModKey::Shift] = true;
+    if (ctrl_pressed) mod_pressed[(size_t)ModKey::Ctrl] = true;
+    if (alt_pressed) mod_pressed[(size_t)ModKey::Alt] = true;
+    if (command_pressed) mod_pressed[(size_t)ModKey::Command] = true;
     bool fn_mod_prev = _fn_mod;
     bool remove_mod_prev = _remove_mod;
     _fn_mod = mod_pressed[(size_t)_settings_client.gui.cm_fn_mod];
@@ -285,6 +286,88 @@ void CountHotkeyStats(const HotkeyList *list, int hotkey) {
     if (!h) return;
     auto key = fmt::format("{}.{}", h->first, h->second.name);
     _game_session_stats.cm.hotkeys[key]++;
+}
+
+static StationOrderModAction GetStationOrderModAction()
+{
+    if (_ctrl_pressed) {
+        if (_shift_pressed)
+            return (StationOrderModAction)_settings_client.gui.cm_ctrl_shift_station_mod;
+        else if (_alt_pressed)
+            return (StationOrderModAction)_settings_client.gui.cm_alt_ctrl_station_mod;
+        else
+            return (StationOrderModAction)_settings_client.gui.cm_ctrl_station_mod;
+    } else if (_shift_pressed) {
+        if (_alt_pressed)
+            return (StationOrderModAction)_settings_client.gui.cm_alt_shift_station_mod;
+        else
+            return (StationOrderModAction)_settings_client.gui.cm_shift_station_mod;
+    } else if (_alt_pressed)
+        return (StationOrderModAction)_settings_client.gui.cm_alt_station_mod;
+    return StationOrderModAction::None;
+}
+
+DepotOrderModAction GetDepotOrderModAction() {
+    if (_ctrl_pressed) {
+        if (_shift_pressed) return (DepotOrderModAction)_settings_client.gui.cm_ctrl_shift_depot_mod;
+        else return (DepotOrderModAction)_settings_client.gui.cm_ctrl_depot_mod;
+    } else if (_shift_pressed) {
+        return (DepotOrderModAction)_settings_client.gui.cm_shift_depot_mod;
+    }
+    return DepotOrderModAction::None;
+}
+
+StationModOrders GetStationModOrders(const Vehicle *v)
+{
+    StationModOrders res = {
+        OLF_LOAD_IF_POSSIBLE,
+        OUF_UNLOAD_IF_POSSIBLE,
+        FeederOrderMod::None,
+    };
+
+    switch(GetStationOrderModAction()) {
+        case StationOrderModAction::None:
+            break;
+
+        case StationOrderModAction::FullLoad:
+            res.load = OLF_FULL_LOAD_ANY;
+            break;
+
+        case StationOrderModAction::Transfer:
+            res.unload = OUFB_TRANSFER;
+            if (_settings_client.gui.cm_no_loading_on_transfer_order)
+                res.load = OLFB_NO_LOAD;
+            break;
+
+        case StationOrderModAction::UnloadAll:
+            res.unload = OUFB_UNLOAD;
+            if (_settings_client.gui.cm_no_loading_on_unload_order)
+                res.load = OLFB_NO_LOAD;
+            break;
+
+        case StationOrderModAction::FeederLoad:
+            if (v->GetNumOrders() > 0) res.mod = FeederOrderMod::Load;
+            res.unload = OUFB_NO_UNLOAD;
+            res.load = OLF_FULL_LOAD_ANY;
+            break;
+
+        case StationOrderModAction::FeederUnload:
+            if (v->GetNumOrders() > 0) res.mod = FeederOrderMod::Unload;
+            res.unload = OUFB_TRANSFER;
+            res.load = OLFB_NO_LOAD;
+            break;
+
+        case StationOrderModAction::NoLoad:
+            res.load = OLFB_NO_LOAD;
+            break;
+
+        case StationOrderModAction::NoUnload:
+            res.unload = OUFB_NO_UNLOAD;
+            break;
+
+        default: NOT_REACHED();
+    }
+    return res;
 }
 
 } // namespace citymania

@@ -6234,6 +6234,7 @@ CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_UNLOAD_ALL             :Force unload of
 CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_FEEDER_LOAD            :Feeder Load (replace first order)
 CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_FEEDER_UNLOAD          :Feeder Unload (replace last order)
 CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_NO_LOAD                :Do not load any cargo
+CM_STR_CONFIG_SETTING_STATION_MOD_ACTION_NO_UNLOAD                :Do not unload any cargo
 
 CM_STR_CONFIG_SETTING_DEPOT_MOD_CTRL                            :Ctrl+click depot: {STRING2}
 CM_STR_CONFIG_SETTING_DEPOT_MOD_SHIFT                           :Shift+click depot: {STRING2}
