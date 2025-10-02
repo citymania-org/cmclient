@@ -11,11 +11,6 @@ extern up<Game> _game;
 void ResetGame();
 void SwitchToMode(SwitchMode new_mode);
 
-template <typename T>
-void Emit(const T &event) {
-    _game->events.emit<T>(event);
-}
-
 } // namespace citymania
 
 #endif

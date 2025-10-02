@@ -20,6 +20,7 @@
 #include "../strings_func.h"
 #include "../misc/history_func.hpp"
 
+#include "../citymania/cm_event.hpp"
 #include "../citymania/cm_main.hpp"
 #include "../citymania/cm_saveload.hpp"
 

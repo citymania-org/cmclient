@@ -60,7 +60,7 @@
 #include "table/strings.h"
 #include "table/pricebase.h"
 
-#include "citymania/cm_main.hpp"
+#include "citymania/cm_event.hpp"
 
 #include "safeguards.h"
 

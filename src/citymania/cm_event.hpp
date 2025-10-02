@@ -19,6 +19,9 @@ struct Town;
 
 namespace citymania {
 
+template <typename T>
+void Emit(const T &event);
+
 namespace event {
 
 struct NewMonth {};
