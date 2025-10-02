@@ -849,6 +849,8 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_MAP_DONE(Packet
 	/* If the savegame has successfully loaded, ALL windows have been removed,
 	 * only toolbar/statusbar and gamefield are visible */
 
+	Debug(misc, 0, "Loaded save date {} / {}, frame {}, state {}", TimerGameCalendar::date, TimerGameCalendar::date_fract, _frame_counter, _random.state[0]);
+
 	/* Say we received the map and loaded it correctly! */
 	SendMapOk();
 

@@ -1463,6 +1463,7 @@ void SetCompanyManagerFaceStyle(CompanyManagerFace &cmf, uint style)
 
 	cmf.style = style;
 	cmf.style_label = spec->label;
+	Debug(misc, 0, "Set face style {} {}", cmf.style, cmf.style_label);
 }
 
 /**

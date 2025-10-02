@@ -2309,6 +2309,10 @@ static void SlLoadChunks()
 		if (ch == nullptr) SlErrorCorrupt("Unknown chunk type");
 		SlLoadChunk(*ch);
 	}
+    Debug(misc, 0,
+		"SlLoadChunks date {} / {}, state {}, version {}-{}",
+	        TimerGameCalendar::date, TimerGameCalendar::date_fract,
+	        _random.state[0], _sl_version, _sl_minor_version);
 }
 
 /** Load all chunks for savegame checking */

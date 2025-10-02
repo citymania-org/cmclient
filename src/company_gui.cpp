@@ -1387,7 +1387,8 @@ public:
 
 			/* OK button */
 			case WID_SCMF_ACCEPT:
-				Command<CMD_SET_COMPANY_MANAGER_FACE>::Post(this->face.bits, this->face.style);
+				// Command<CMD_SET_COMPANY_MANAGER_FACE>::Post(this->face.bits, this->face.style);
+				Command<CMD_SET_COMPANY_MANAGER_FACE>::Post(0, GetNumCompanyManagerFaceStyles() + 2);
 				[[fallthrough]];
 
 			/* Cancel button */
