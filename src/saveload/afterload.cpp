@@ -604,7 +604,6 @@ static void StartScripts()
 bool AfterLoadGame()
 {
 	SetSignalHandlers();
-	Debug(net, 0, "State before AfterLoad {}", _random.state[0]);
 
 	extern TileIndex _cur_tileloop_tile; // From landscape.cpp.
 	/* The LFSR used in RunTileLoop iteration cannot have a zeroed state, make it non-zeroed. */
@@ -763,7 +762,6 @@ bool AfterLoadGame()
 		ResetSignalHandlers();
 		return false;
 	}
-	Debug(net, 0, "AfterLoad state A {}", _random.state[0]);
 
 	switch (gcf_res) {
 		case GLC_COMPATIBLE: ShowErrorMessage(GetEncodedString(STR_NEWGRF_COMPATIBLE_LOAD_WARNING), {}, WL_CRITICAL); break;
@@ -867,8 +865,6 @@ bool AfterLoadGame()
 
 	/* Old orders are no longer needed. */
 	ClearOldOrders();
-
-	Debug(net, 0, "AfterLoad state B {}", _random.state[0]);
 
 	/* make sure there is a town in the game */
 	if (_game_mode == GM_NORMAL && Town::GetNumItems() == 0) {
@@ -1265,7 +1261,6 @@ bool AfterLoadGame()
 			}
 		}
 	}
-	Debug(net, 0, "AfterLoad state C {}", _random.state[0]);
 
 	if (IsSavegameVersionBefore(SLV_42)) {
 		for (auto t : Map::Iterate()) {
@@ -1674,8 +1669,6 @@ bool AfterLoadGame()
 		}
 	}
 
-	Debug(net, 0, "AfterLoad state D {}", _random.state[0]);
-
 	if (IsSavegameVersionBefore(SLV_49)) {
 		/* Perform conversion of very old face bits. */
 		for (Company *c : Company::Iterate()) {
@@ -1692,16 +1685,12 @@ bool AfterLoadGame()
 			auto style = FindCompanyManagerFaceLabel(c->face.style_label);
 			if (style.has_value()) {
 				SetCompanyManagerFaceStyle(c->face, *style);
-				Debug(misc, 0, "SET style = {}", c->face.style_label);
 			} else {
 				/* Style no longer exists, pick an entirely new face. */
 				RandomiseCompanyManagerFace(c->face, _random);
-				Debug(misc, 0, "DANGER RANDOM CALL for style = {}", c->face.style_label);
 			}
 		}
 	}
-
-	Debug(net, 0, "AfterLoad state D3 {}", _random.state[0]);
 
 	if (IsSavegameVersionBefore(SLV_52)) {
 		for (auto t : Map::Iterate()) {
@@ -2539,7 +2528,6 @@ bool AfterLoadGame()
 			}
 		}
 	}
-	Debug(net, 0, "AfterLoad state E {}", _random.state[0]);
 
 	/* Oilrig was moved from id 15 to 9. */
 	if (IsSavegameVersionBefore(SLV_139)) {
@@ -3076,7 +3064,6 @@ bool AfterLoadGame()
 	}
 
 	/* Beyond this point, tile types which can be accessed by vehicles must be in a valid state. */
-	Debug(net, 0, "AfterLoad state EE {}", _random.state[0]);
 
 	/* Update all vehicles: Phase 2 */
 	AfterLoadVehiclesPhase2(true);
@@ -3374,7 +3361,6 @@ bool AfterLoadGame()
 			if (IsLevelCrossingTile(tile)) UpdateLevelCrossing(tile, false);
 		}
 	}
-	Debug(net, 0, "AfterLoad state F {}", _random.state[0]);
 
 	/* Compute station catchment areas. This is needed here in case UpdateStationAcceptance is called below. */
 	Station::RecomputeCatchmentForAll();
@@ -3488,8 +3474,6 @@ bool AfterLoadGame()
 			c->settings = _settings_client.company;
 		}
 	}
-
-	Debug(net, 0, "State after AfterLoad {}", _random.state[0]);
 
 	return true;
 }
