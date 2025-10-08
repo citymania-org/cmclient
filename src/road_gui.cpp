@@ -7,8 +7,11 @@
 
 /** @file road_gui.cpp GUI for building roads. */
 
+#include "direction_type.h"
+#include "gfx_type.h"
 #include "stdafx.h"
 #include "gui.h"
+#include "widget_type.h"
 #include "window_gui.h"
 #include "station_func.h"
 #include "station_gui.h"
@@ -1145,8 +1148,8 @@ static constexpr NWidgetPart _nested_build_road_depot_widgets[] = {
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN, WID_BROD_CAPTION), SetDataTip(STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_DARK_GREEN),
-		NWidget(NWID_VERTICAL), SetPIP(0, 0, 0),
-			NWidget(NWID_HORIZONTAL_LTR), SetPIP(0, WidgetDimensions::unscaled.hsep_normal, 0), SetPIPRatio(1, 0, 1), SetPadding(WidgetDimensions::unscaled.picker),
+		NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_normal, 0), SetPadding(WidgetDimensions::unscaled.picker),
+			NWidget(NWID_HORIZONTAL_LTR), SetPIP(0, WidgetDimensions::unscaled.hsep_normal, 0), SetPIPRatio(1, 0, 1),
 				NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_normal, 0),
 					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROD_DEPOT_NW), SetMinimalSize(66, 50), SetFill(0, 0), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
 					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROD_DEPOT_SW), SetMinimalSize(66, 50), SetFill(0, 0), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
@@ -1156,7 +1159,9 @@ static constexpr NWidgetPart _nested_build_road_depot_widgets[] = {
 					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BROD_DEPOT_SE), SetMinimalSize(66, 50), SetFill(0, 0), SetDataTip(0x0, STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP),
 				EndContainer(),
 			EndContainer(),
-			NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROD_DEPOT_AUTO), SetMinimalSize(134, 12), SetDataTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_BUILD_DEPOT_ROAD_ORIENTATION_AUTO_TOOLTIP),
+			NWidget(NWID_HORIZONTAL), SetPIP(0, 0, 0), SetPIPRatio(1, 0, 1),
+				NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROD_DEPOT_AUTO), SetMinimalSize(2 * 66 + WidgetDimensions::unscaled.hsep_normal, 12), SetFill(0, 0), SetDataTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_BUILD_DEPOT_ROAD_ORIENTATION_AUTO_TOOLTIP),
+			EndContainer(),
 		EndContainer(),
 	EndContainer(),
 };
@@ -1505,18 +1510,6 @@ public:
 				size->height = ScaleGUITrad(48) + WidgetDimensions::scaled.fullbevel.Vertical();
 				break;
 
-			/* CityMania code start */
-			case CM_WID_BROS_STATION_AUTO:
-				size->width  = ScaleGUITrad(128 + 2) + 2 * WidgetDimensions::scaled.fullbevel.Horizontal();
-				break;
-			case CM_WID_BROS_STATION_XY_AUTO:
-				if (RoadTypeIsTram(_cur_roadtype))
-					size->width  = ScaleGUITrad(128 + 2) + 2 * WidgetDimensions::scaled.fullbevel.Horizontal();
-				else
-					size->width  = ScaleGUITrad(64) + WidgetDimensions::scaled.fullbevel.Horizontal();
-				break;
-			/* CityMania code end */
-
 			case WID_BROS_MATRIX:
 				fill->height = 1;
 				resize->height = 1;
@@ -1595,10 +1588,12 @@ public:
 					AutoRestoreBackup dpi_backup(_cur_dpi, &tmp_dpi);
 					int x = (ir.Width()  - ScaleSpriteTrad(64)) / 2 + ScaleSpriteTrad(31);
 					int y = (ir.Height() + ScaleSpriteTrad(48)) / 2 - ScaleSpriteTrad(31);
+					DiagDirection orientation = _roadstop_gui_settings.orientation;
+					if (orientation == citymania::STATIONDIR_AUTO) orientation = DIAGDIR_BEGIN;
+					if (orientation == citymania::STATIONDIR_AUTO_XY) orientation = citymania::STATIONDIR_X;
 					if (spec == nullptr) {
-						StationPickerDrawSprite(x, y, st, INVALID_RAILTYPE, _cur_roadtype, _roadstop_gui_settings.orientation);
+						StationPickerDrawSprite(x, y, st, INVALID_RAILTYPE, _cur_roadtype, orientation);
 					} else {
-						DiagDirection orientation = _roadstop_gui_settings.orientation;
 						if (orientation < DIAGDIR_END && HasBit(spec->flags, RSF_DRIVE_THROUGH_ONLY)) orientation = DIAGDIR_END;
 						DrawRoadStopTile(x, y, _cur_roadtype, spec, st, (uint8_t)orientation);
 					}
@@ -1787,17 +1782,20 @@ static constexpr NWidgetPart _nested_road_station_picker_widgets[] = {
 									EndContainer(),
 									NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_Y),  SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
 								EndContainer(),
+								NWidget(NWID_HORIZONTAL), SetPIP(0, WidgetDimensions::unscaled.hsep_normal, 0), SetPIPRatio(1, 0, 1),
+									NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROS_STATION_AUTO), SetMinimalSize(2 * 66 + WidgetDimensions::unscaled.hsep_normal, 12), SetDataTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
+									NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROS_STATION_XY_AUTO), SetMinimalSize(66, 12), SetDataTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
+								EndContainer(),
 							EndContainer(),
 							/* 2-orientation plane. */
-							NWidget(NWID_VERTICAL), SetPIPRatio(0, 0, 1),
+							NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_normal, 0),
 								NWidget(NWID_HORIZONTAL_LTR), SetPIP(0, WidgetDimensions::unscaled.hsep_normal, 0), SetPIPRatio(1, 0, 1),
 									NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_X),  SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
 									NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_Y),  SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
 								EndContainer(),
-							EndContainer(),
-							NWidget(NWID_HORIZONTAL), SetPIP(0, WidgetDimensions::unscaled.hsep_normal, 0), SetPIPRatio(1, 0, 1),
-								NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROS_STATION_AUTO), SetMinimalSize(134, 12), SetDataTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
-								NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROS_STATION_XY_AUTO), SetMinimalSize(66, 12), SetDataTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
+								NWidget(NWID_HORIZONTAL), SetPIP(0, WidgetDimensions::unscaled.hsep_normal, 0), SetPIPRatio(1, 0, 1),
+									NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROS_STATION_XY_AUTO), SetMinimalSize(2 * 66 + WidgetDimensions::unscaled.hsep_normal, 12), SetFill(0, 0), SetDataTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
+								EndContainer(),
 							EndContainer(),
 						EndContainer(),
 						NWidget(NWID_SELECTION, INVALID_COLOUR, WID_BROS_SHOW_NEWST_TYPE_SEL),
@@ -1878,7 +1876,9 @@ static constexpr NWidgetPart _nested_tram_station_picker_widgets[] = {
 							NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_X),  SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
 							NWidget(WWT_PANEL, COLOUR_GREY, WID_BROS_STATION_Y),  SetMinimalSize(66, 50), SetFill(0, 0), EndContainer(),
 						EndContainer(),
-						NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROS_STATION_XY_AUTO), SetMinimalSize(274, 12), SetDataTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
+						NWidget(NWID_HORIZONTAL), SetPIP(0, WidgetDimensions::unscaled.hsep_normal, 0), SetPIPRatio(1, 0, 1),
+							NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROS_STATION_XY_AUTO), SetMinimalSize(2 * 66 + WidgetDimensions::unscaled.hsep_normal, 12), SetFill(0, 0), SetDataTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
+						EndContainer(),
 						NWidget(NWID_SELECTION, INVALID_COLOUR, WID_BROS_SHOW_NEWST_TYPE_SEL),
 							NWidget(WWT_LABEL, COLOUR_DARK_GREEN, WID_BROS_SHOW_NEWST_TYPE), SetMinimalSize(144, 8), SetDataTip(STR_JUST_STRING, STR_NULL), SetTextStyle(TC_ORANGE), SetFill(1, 0),
 						EndContainer(),
@@ -1902,7 +1902,6 @@ static constexpr NWidgetPart _nested_tram_station_picker_widgets[] = {
 					EndContainer(),
 				EndContainer(),
 				NWidget(WWT_EMPTY, INVALID_COLOUR, WID_BROS_ACCEPTANCE), SetFill(1, 1), SetResize(1, 0), SetMinimalTextLines(2, WidgetDimensions::unscaled.vsep_normal),
-				NWidget(WWT_TEXTBTN, COLOUR_GREY, CM_WID_BROS_STATION_XY_AUTO), SetMinimalSize(274, 12), SetDataTip(CM_STR_STATION_BUILD_ORIENTATION_AUTO, CM_STR_STATION_BUILD_ORIENTATION_AUTO_TOOLTIP),
 			EndContainer(),
 		EndContainer(),
 		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_BROS_SHOW_NEWST_RESIZE),

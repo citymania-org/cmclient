@@ -112,7 +112,7 @@ enum BuildRailDepotWidgets : WidgetID {
 	WID_BRAD_DEPOT_SE,   ///< Build a depot with the entrance in the south east.
 	WID_BRAD_DEPOT_SW,   ///< Build a depot with the entrance in the south west.
 	WID_BRAD_DEPOT_NW,   ///< Build a depot with the entrance in the north west.
-	WID_BRAD_DEPOT_AUTO, ///< Build a depot, autoselect entrance.
+	CM_WID_BRAD_DEPOT_AUTO, ///< Build a depot, autoselect entrance.
 };
 
 /** Widgets of the #BuildRailWaypointWindow class. */
