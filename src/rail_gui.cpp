@@ -7,7 +7,6 @@
 
 /** @file rail_gui.cpp %File for dealing with rail construction user interface */
 
-#include "citymania/cm_highlight_type.hpp"
 #include "stdafx.h"
 #include "gui.h"
 #include "window_gui.h"
@@ -52,6 +51,7 @@
 #include "debug.h"
 #include "citymania/cm_blueprint.hpp"
 #include "citymania/cm_commands.hpp"
+#include "citymania/cm_highlight_type.hpp"
 #include "citymania/cm_hotkeys.hpp"
 #include "citymania/cm_highlight.hpp"
 #include "citymania/cm_station_gui.hpp"

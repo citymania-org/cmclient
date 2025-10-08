@@ -731,7 +731,7 @@ template <ImplementsRemoveHandler Handler>
 void RemoveAction<Handler>::HandleMouseRelease() {
     auto area = this->GetArea();
     if (!area.has_value()) return;
-    this->handler.Execute(area.value());
+    this->handler->Execute(area.value());
     this->start_tile = INVALID_TILE;
 }
 
@@ -750,7 +750,7 @@ ToolGUIInfo RemoveAction<Handler>::GetGUIInfo() {
     CommandCost cost;
     if (area.has_value()) {
         hlmap.AddTileAreaWithBorder(area.value(), CM_PALETTE_TINT_RED_DEEP);
-        auto cmd = this->handler.GetCommand(area.value());
+        auto cmd = this->handler->GetCommand(area.value());
         if (cmd) cost = cmd->test();
     }
     return {hlmap, data, cost};
@@ -905,7 +905,7 @@ void SizedPlacementAction<Handler>::Update(Point, TileIndex tile) {
 
     auto area = this->GetArea();
     if (!area.has_value()) return;
-    auto cmdptr = this->handler.GetCommand(tile, INVALID_STATION);
+    auto cmdptr = this->handler->GetCommand(tile, INVALID_STATION);
     auto cmd = dynamic_cast<cmd::BuildRailStation *>(cmdptr.get());
     if (cmd == nullptr) return;
 
@@ -960,16 +960,16 @@ bool SizedPlacementAction<Handler>::HandleMousePress() {
 template <ImplementsSizedPlacementHandler Handler>
 void SizedPlacementAction<Handler>::HandleMouseRelease() {
     if (!IsValidTile(this->cur_tile)) return;
-    this->handler.Execute(this->cur_tile);
+    this->handler->Execute(this->cur_tile);
 }
 
 template <ImplementsSizedPlacementHandler Handler>
 ToolGUIInfo SizedPlacementAction<Handler>::GetGUIInfo() {
     if (!IsValidTile(this->cur_tile)) return {};
-    auto [sct, rad] = this->handler.GetCatchmentParams();
+    auto [sct, rad] = this->handler->GetCatchmentParams();
     return this->PrepareGUIInfo(
-        this->handler.GetObjectHighlight(this->cur_tile),
-        this->handler.GetCommand(this->cur_tile, INVALID_STATION),
+        this->handler->GetObjectHighlight(this->cur_tile),
+        this->handler->GetCommand(this->cur_tile, INVALID_STATION),
         sct,
         rad
     );
@@ -1004,7 +1004,7 @@ template <ImplementsDragNDropPlacementHandler Handler>
 void DragNDropPlacementAction<Handler>::HandleMouseRelease() {
     auto area = this->GetArea();
     if (!area.has_value()) return;
-    this->handler.Execute(area.value());
+    this->handler->Execute(area.value());
     this->start_tile = INVALID_TILE;
 }
 
@@ -1012,11 +1012,11 @@ template <ImplementsDragNDropPlacementHandler Handler>
 ToolGUIInfo DragNDropPlacementAction<Handler>::GetGUIInfo() {
     auto area = this->GetArea();
     if (!area.has_value()) return {};
-    auto ohl = this->handler.GetObjectHighlight(area.value());
-    auto [sct, rad] = this->handler.GetCatchmentParams();
+    auto ohl = this->handler->GetObjectHighlight(area.value());
+    auto [sct, rad] = this->handler->GetCatchmentParams();
     return this->PrepareGUIInfo(
-        this->handler.GetObjectHighlight(area.value()),
-        this->handler.GetCommand(area.value(), INVALID_STATION),
+        this->handler->GetObjectHighlight(area.value()),
+        this->handler->GetCommand(area.value(), INVALID_STATION),
         sct,
         rad
     );
@@ -1091,34 +1091,47 @@ StationBuildTool::StationBuildTool() {
     ResetHighlightCoverageStation();
 }
 
+extern void ShowSelectStationWindow(TileArea ta, StationPickerCmdProc&& proc);
+
 template<typename Thandler, typename Tcallback, typename Targ>
-bool StationBuildTool::ExecuteBuildCommand(Thandler *handler, Tcallback callback, Targ arg) {
-    if (auto mode = std::get_if<StationAction::Join>(&_station_action)) {
-        auto cmd = handler->GetCommand(arg, mode->station);
-        return cmd ? cmd->post(callback) : false;
-    }
+bool ExecuteBuildCommand(Thandler *handler, Tcallback callback, Targ arg) {
+    std::visit(Overload{
+        [&](StationAction::Join &action) {
+            Debug(misc, 0, "Join to {}", action.station);
+            auto cmd = handler->GetCommand(arg, action.station);
+            return cmd ? cmd->post(callback) : false;
+        },
+        [&](StationAction::Create &) {
+            Debug(misc, 0, "Create new station");
+            auto cmd = handler->GetCommand(arg, NEW_STATION);
+            return cmd ? cmd->post(callback) : false;
+        },
+        [&](StationAction::Picker &) {
+            Debug(misc, 0, "Show picker");
+            auto cmd = handler->GetCommand(arg, INVALID_STATION);
+            auto proc = [cmd=sp<Command>{std::move(cmd)}, callback](bool test, StationID to_join) -> bool {
+                if (!cmd) return false;
+                auto station_cmd = dynamic_cast<StationBuildCommand *>(cmd.get());
+                if (station_cmd == nullptr) return false;
+                station_cmd->station_to_join = to_join;
+                if (test) {
+                    return cmd->test().Succeeded();
+                } else {
+                    ResetSelectedStationToJoin();
+                    return cmd->post(callback);
+                }
+            };
 
-    // Vanilla joining behaviour
-    auto cmd = handler->GetCommand(arg, INVALID_STATION);
-    auto proc = [cmd=sp<Command>{std::move(cmd)}, callback](bool test, StationID to_join) -> bool {
-        if (!cmd) return false;
-        auto station_cmd = dynamic_cast<StationBuildCommand *>(cmd.get());
-        if (station_cmd == nullptr) return false;
-        station_cmd->station_to_join = to_join;
-        if (test) {
-            return cmd->test().Succeeded();
-        } else {
-            ResetSelectedStationToJoin();
-            return cmd->post(callback);
+            auto ohl = handler->GetObjectHighlight(arg);
+            if (!ohl.has_value()) return false;
+            auto area = ohl->GetArea();
+            if (!area.has_value()) return false;
+            // SetActiveHighlightObject(ohl);
+            ShowSelectStationWindow(*area, std::move(proc));
+            return true;
         }
-    };
+    }, _station_action);
 
-    auto ohl = handler->GetObjectHighlight(arg);
-    if (!ohl.has_value()) return false;
-    auto area = ohl->GetArea();
-    if (!area.has_value()) return false;
-    SetActiveHighlightObject(ohl);
-    ShowSelectStationIfNeeded(area.value(), proc);
     return true;
 }
 
@@ -1159,14 +1172,14 @@ up<Command> RailStationBuildTool::SizedPlacementHandler::GetCommand(TileIndex ti
         _railstation.station_class,
         _railstation.station_type,
         to_join,
-        _fn_mod
+        true
     );
     cmd->with_error(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION);
     return cmd;
 }
 
 bool RailStationBuildTool::SizedPlacementHandler::Execute(TileIndex tile) {
-    return this->tool.ExecuteBuildCommand(this, &CcStation, tile);
+    return ExecuteBuildCommand(this, &CcStation, tile);
 }
 
 up<Command> RailStationBuildTool::DragNDropPlacementHandler::GetCommand(TileArea area, StationID to_join) {
@@ -1184,14 +1197,14 @@ up<Command> RailStationBuildTool::DragNDropPlacementHandler::GetCommand(TileArea
         _railstation.station_class,
         _railstation.station_type,
         to_join,
-        _fn_mod
+        true
     );
     cmd->with_error(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION);
     return cmd;
 }
 
 bool RailStationBuildTool::DragNDropPlacementHandler::Execute(TileArea area) {
-    return this->tool.ExecuteBuildCommand(this, &CcStation, area);
+    return ExecuteBuildCommand(this, &CcStation, area);
 }
 
 std::optional<ObjectHighlight> RailStationBuildTool::DragNDropPlacementHandler::GetObjectHighlight(TileArea area) {
@@ -1203,7 +1216,7 @@ std::optional<ObjectHighlight> RailStationBuildTool::SizedPlacementHandler::GetO
 }
 
 RailStationBuildTool::RailStationBuildTool() : mode(Mode::SIZED) {
-    this->action = make_up<SizedPlacementAction<SizedPlacementHandler>>(SizedPlacementHandler(*this));
+    this->action = make_up<SizedPlacementAction<SizedPlacementHandler>>(*this);
 }
 
 void RailStationBuildTool::Update(Point pt, TileIndex tile) {
@@ -1292,14 +1305,14 @@ up<Command> RoadStopBuildTool::DragNDropPlacementHandler::GetCommand(TileArea ar
         _roadstop_gui_settings.roadstop_class,
         _roadstop_gui_settings.roadstop_type,
         to_join,
-        _fn_mod
+        true
     );
 
     return res;
 }
 
 bool RoadStopBuildTool::DragNDropPlacementHandler::Execute(TileArea area) {
-    return this->tool.ExecuteBuildCommand(this, &CcRoadStop, area);
+    return ExecuteBuildCommand(this, &CcRoadStop, area);
 }
 
 std::optional<ObjectHighlight> RoadStopBuildTool::DragNDropPlacementHandler::GetObjectHighlight(TileArea area) {
@@ -1400,13 +1413,13 @@ up<Command> DockBuildTool::SizedPlacementHandler::GetCommand(TileIndex tile, Sta
     return make_up<cmd::BuildDock>(
         tile,
         to_join,
-        _fn_mod
+        true
     );
 }
 
 
 bool DockBuildTool::SizedPlacementHandler::Execute(TileIndex tile) {
-    return this->tool.ExecuteBuildCommand(this, &CcBuildDocks, tile);
+    return ExecuteBuildCommand(this, &CcBuildDocks, tile);
 }
 
 std::optional<ObjectHighlight> DockBuildTool::SizedPlacementHandler::GetObjectHighlight(TileIndex tile) {
@@ -1489,14 +1502,14 @@ up<Command> AirportBuildTool::SizedPlacementHandler::GetCommand(TileIndex tile, 
         airport_type,
         layout,
         to_join,
-        _fn_mod
+        true
     );
     cmd->with_error(STR_ERROR_CAN_T_BUILD_AIRPORT_HERE);
     return cmd;
 }
 
 bool AirportBuildTool::SizedPlacementHandler::Execute(TileIndex tile) {
-    this->tool.ExecuteBuildCommand(this, &CcBuildAirport, tile);
+    ExecuteBuildCommand(this, &CcBuildAirport, tile);
 }
 
 std::optional<ObjectHighlight> AirportBuildTool::SizedPlacementHandler::GetObjectHighlight(TileIndex tile) {
