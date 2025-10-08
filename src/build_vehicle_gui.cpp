@@ -2000,7 +2000,6 @@ struct BuildVehicleWindow : Window {
 
 				/* We need to refresh if a filter is removed. */
 				this->eng_list.ForceRebuild();
-				this->SetDirty();
 				break;
 			}
 
@@ -2012,7 +2011,6 @@ struct BuildVehicleWindow : Window {
 						SetBadgeFilter(this->badge_filter_choices, BadgeID(index));
 					}
 					this->eng_list.ForceRebuild();
-					this->SetDirty();
 				}
 				break;
 		}
