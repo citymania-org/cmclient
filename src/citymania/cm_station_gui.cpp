@@ -716,52 +716,50 @@ ToolGUIInfo GetSelectedStationGUIInfo() {
 }
 
 // --- Action base class ---
+
 void Action::OnStationRemoved(const Station *) {}
 
 // --- RemoveAction ---
-template <ImplementsRemoveHandler Handler>
-void RemoveAction<Handler>::Update(Point, TileIndex tile) {
+
+void RemoveAction::Update(Point, TileIndex tile) {
     this->cur_tile = tile;
 }
 
-template <ImplementsRemoveHandler Handler>
-bool RemoveAction<Handler>::HandleMousePress() {
+bool RemoveAction::HandleMousePress() {
     if (!IsValidTile(this->cur_tile)) return false;
     this->start_tile = this->cur_tile;
     return true;
 }
 
-template <ImplementsRemoveHandler Handler>
-void RemoveAction<Handler>::HandleMouseRelease() {
+void RemoveAction::HandleMouseRelease() {
     auto area = this->GetArea();
     if (!area.has_value()) return;
-    this->handler->Execute(area.value());
+    this->Execute(area.value());
     this->start_tile = INVALID_TILE;
 }
 
-template <ImplementsRemoveHandler Handler>
-std::optional<TileArea> RemoveAction<Handler>::GetArea() const {
+std::optional<TileArea> RemoveAction::GetArea() const {
     if (!IsValidTile(this->cur_tile)) return std::nullopt;
     if (!IsValidTile(this->start_tile)) return TileArea{this->cur_tile, this->cur_tile};
     return TileArea{this->start_tile, this->cur_tile};
 }
 
-template <ImplementsRemoveHandler Handler>
-ToolGUIInfo RemoveAction<Handler>::GetGUIInfo() {
+ToolGUIInfo RemoveAction::GetGUIInfo() {
     HighlightMap hlmap;
     BuildInfoOverlayData data;
     auto area = this->GetArea();
     CommandCost cost;
     if (area.has_value()) {
         hlmap.AddTileAreaWithBorder(area.value(), CM_PALETTE_TINT_RED_DEEP);
-        auto cmd = this->handler->GetCommand(area.value());
+        auto cmd = this->GetCommand(area.value());
         if (cmd) cost = cmd->test();
     }
     return {hlmap, data, cost};
 }
 
-template <ImplementsRemoveHandler Handler>
-void RemoveAction<Handler>::OnStationRemoved(const Station *) {}
+void RemoveAction::OnStationRemoved(const Station *) {}
+
+// --- PlacementAction ---
 
 ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, up<Command> cmd, StationCoverageType sct, uint rad) {
     if (!cmd || !ohl.has_value()) return {};
@@ -900,8 +898,8 @@ ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, 
 }
 
 // --- SizedPlacementAction ---
-template <ImplementsSizedPlacementHandler Handler>
-void SizedPlacementAction<Handler>::Update(Point, TileIndex tile) {
+
+void SizedPlacementAction::Update(Point, TileIndex tile) {
     this->cur_tile = tile;
     if (UseImprovedStationJoin()) return;
 
@@ -909,7 +907,7 @@ void SizedPlacementAction<Handler>::Update(Point, TileIndex tile) {
 
     auto area = this->GetArea();
     if (!area.has_value()) return;
-    auto cmdptr = this->handler->GetCommand(tile, INVALID_STATION);
+    auto cmdptr = this->GetCommand(tile, INVALID_STATION);
     auto cmd = dynamic_cast<cmd::BuildRailStation *>(cmdptr.get());
     if (cmd == nullptr) return;
 
@@ -956,88 +954,80 @@ void SizedPlacementAction<Handler>::Update(Point, TileIndex tile) {
     // }
 }
 
-template <ImplementsSizedPlacementHandler Handler>
-bool SizedPlacementAction<Handler>::HandleMousePress() {
+bool SizedPlacementAction::HandleMousePress() {
     return IsValidTile(this->cur_tile);
 }
 
-template <ImplementsSizedPlacementHandler Handler>
-void SizedPlacementAction<Handler>::HandleMouseRelease() {
+void SizedPlacementAction::HandleMouseRelease() {
     if (!IsValidTile(this->cur_tile)) return;
-    this->handler->Execute(this->cur_tile);
+    this->Execute(this->cur_tile);
 }
 
-template <ImplementsSizedPlacementHandler Handler>
-ToolGUIInfo SizedPlacementAction<Handler>::GetGUIInfo() {
+ToolGUIInfo SizedPlacementAction::GetGUIInfo() {
     if (!IsValidTile(this->cur_tile)) return {};
-    auto [sct, rad] = this->handler->GetCatchmentParams();
+    auto [sct, rad] = this->GetCatchmentParams();
     return this->PrepareGUIInfo(
-        this->handler->GetObjectHighlight(this->cur_tile),
-        this->handler->GetCommand(this->cur_tile, INVALID_STATION),
+        this->GetObjectHighlight(this->cur_tile),
+        this->GetCommand(this->cur_tile, INVALID_STATION),
         sct,
         rad
     );
 }
 
-template <ImplementsSizedPlacementHandler Handler>
-void SizedPlacementAction<Handler>::OnStationRemoved(const Station *) {}
+void SizedPlacementAction::OnStationRemoved(const Station *) {}
 
 // --- DragNDropPlacementAction ---
 
-template <ImplementsDragNDropPlacementHandler Handler>
-std::optional<TileArea> DragNDropPlacementAction<Handler>::GetArea() const {
+std::optional<TileArea> DragNDropPlacementAction::GetArea() const {
     // TODO separate common fuctions with RemoveAction into base class
     if (!IsValidTile(this->cur_tile)) return std::nullopt;
     if (!IsValidTile(this->start_tile)) return TileArea{this->cur_tile, this->cur_tile};
     return TileArea{this->start_tile, this->cur_tile};
 }
 
-template <ImplementsDragNDropPlacementHandler Handler>
-void DragNDropPlacementAction<Handler>::Update(Point, TileIndex tile) {
+void DragNDropPlacementAction::Update(Point, TileIndex tile) {
     this->cur_tile = tile;
 }
 
-template <ImplementsDragNDropPlacementHandler Handler>
-bool DragNDropPlacementAction<Handler>::HandleMousePress() {
+bool DragNDropPlacementAction::HandleMousePress() {
     if (!IsValidTile(this->cur_tile)) return false;
     this->start_tile = this->cur_tile;
     return true;
 }
 
-template <ImplementsDragNDropPlacementHandler Handler>
-void DragNDropPlacementAction<Handler>::HandleMouseRelease() {
+void DragNDropPlacementAction::HandleMouseRelease() {
     auto area = this->GetArea();
     if (!area.has_value()) return;
-    this->handler->Execute(area.value());
+    this->Execute(area.value());
     this->start_tile = INVALID_TILE;
 }
 
-template <ImplementsDragNDropPlacementHandler Handler>
-ToolGUIInfo DragNDropPlacementAction<Handler>::GetGUIInfo() {
+ToolGUIInfo DragNDropPlacementAction::GetGUIInfo() {
     auto area = this->GetArea();
     if (!area.has_value()) return {};
-    auto ohl = this->handler->GetObjectHighlight(area.value());
-    auto [sct, rad] = this->handler->GetCatchmentParams();
+    auto ohl = this->GetObjectHighlight(area.value());
+    auto [sct, rad] = this->GetCatchmentParams();
     return this->PrepareGUIInfo(
-        this->handler->GetObjectHighlight(area.value()),
-        this->handler->GetCommand(area.value(), INVALID_STATION),
+        this->GetObjectHighlight(area.value()),
+        this->GetCommand(area.value(), INVALID_STATION),
         sct,
         rad
     );
 }
 
-template <ImplementsDragNDropPlacementHandler Handler>
-void DragNDropPlacementAction<Handler>::OnStationRemoved(const Station *) {}
+void DragNDropPlacementAction::OnStationRemoved(const Station *) {}
 
 // --- StationSelectAction ---
-template <ImplementsStationSelectHandler Handler>
-void StationSelectAction<Handler>::Update(Point, TileIndex tile) { this->cur_tile = tile; }
 
-template <ImplementsStationSelectHandler Handler>
-bool StationSelectAction<Handler>::HandleMousePress() { return true; }
+void StationSelectAction::Update(Point, TileIndex tile) {
+    this->cur_tile = tile;
+}
 
-template <ImplementsStationSelectHandler Handler>
-void StationSelectAction<Handler>::HandleMouseRelease() {
+bool StationSelectAction::HandleMousePress() {
+    return true;
+}
+
+void StationSelectAction::HandleMouseRelease() {
     // TODO station sign click
     if (!IsValidTile(this->cur_tile)) return;
     _station_action = StationAction::Create{};
@@ -1047,8 +1037,7 @@ void StationSelectAction<Handler>::HandleMouseRelease() {
     }
 }
 
-template <ImplementsStationSelectHandler Handler>
-ToolGUIInfo StationSelectAction<Handler>::GetGUIInfo() {
+ToolGUIInfo StationSelectAction::GetGUIInfo() {
     if (!IsValidTile(this->cur_tile)) return {};
     HighlightMap hlmap;
     hlmap.Add(this->cur_tile, ObjectTileHighlight::make_border(CM_PALETTE_TINT_BLUE, ZoningBorder::FULL));
@@ -1063,12 +1052,11 @@ ToolGUIInfo StationSelectAction<Handler>::GetGUIInfo() {
     return {hlmap, data, {}};
 }
 
-template <ImplementsStationSelectHandler Handler>
-void StationSelectAction<Handler>::OnStationRemoved(const Station *station) {
+void StationSelectAction::OnStationRemoved(const Station *station) {
     // if (this->selected_station == station->index) this->selected_station = INVALID_STATION;
 }
 
-// --- StationBuildTool ---
+// --- Misc functions ---
 
 TileArea GetCommandArea(const up<Command> &cmd) {
     if (auto rail_cmd = dynamic_cast<cmd::BuildRailStation *>(cmd.get())) {
@@ -1097,22 +1085,22 @@ StationBuildTool::StationBuildTool() {
 
 extern void ShowSelectStationWindow(TileArea ta, StationPickerCmdProc&& proc);
 
-template<typename Thandler, typename Tcallback, typename Targ>
-bool ExecuteBuildCommand(Thandler *handler, Tcallback callback, Targ arg) {
+template<typename Taction, typename Tcallback, typename Targ>
+bool ExecuteBuildCommand(Taction *action, Tcallback callback, Targ arg) {
     std::visit(Overload{
-        [&](StationAction::Join &action) {
-            Debug(misc, 0, "Join to {}", action.station);
-            auto cmd = handler->GetCommand(arg, action.station);
+        [&](StationAction::Join &a) {
+            Debug(misc, 0, "Join to {}", a.station);
+            auto cmd = action->GetCommand(arg, a.station);
             return cmd ? cmd->post(callback) : false;
         },
         [&](StationAction::Create &) {
             Debug(misc, 0, "Create new station");
-            auto cmd = handler->GetCommand(arg, NEW_STATION);
+            auto cmd = action->GetCommand(arg, NEW_STATION);
             return cmd ? cmd->post(callback) : false;
         },
         [&](StationAction::Picker &) {
             Debug(misc, 0, "Show picker");
-            auto cmd = handler->GetCommand(arg, INVALID_STATION);
+            auto cmd = action->GetCommand(arg, INVALID_STATION);
             auto proc = [cmd=sp<Command>{std::move(cmd)}, callback](bool test, StationID to_join) -> bool {
                 if (!cmd) return false;
                 auto station_cmd = dynamic_cast<StationBuildCommand *>(cmd.get());
@@ -1126,7 +1114,7 @@ bool ExecuteBuildCommand(Thandler *handler, Tcallback callback, Targ arg) {
                 }
             };
 
-            auto ohl = handler->GetObjectHighlight(arg);
+            auto ohl = action->GetObjectHighlight(arg);
             if (!ohl.has_value()) return false;
             auto area = ohl->GetArea();
             if (!area.has_value()) return false;
@@ -1140,9 +1128,9 @@ bool ExecuteBuildCommand(Thandler *handler, Tcallback callback, Targ arg) {
 }
 
 
-// --- RailStationBuildTool ---
+// --- RailStationBuildTool::RemoveAction ---
 
-up<Command> RailStationBuildTool::RemoveHandler::GetCommand(TileArea area) {
+up<Command> RailStationBuildTool::RemoveAction::GetCommand(TileArea area) {
     auto cmd = make_up<cmd::RemoveFromRailStation>(
         area.tile,
         area.CMGetEndTile(),
@@ -1152,20 +1140,23 @@ up<Command> RailStationBuildTool::RemoveHandler::GetCommand(TileArea area) {
     return cmd;
 }
 
-bool RailStationBuildTool::RemoveHandler::Execute(TileArea area) {
+bool RailStationBuildTool::RemoveAction::Execute(TileArea area) {
     auto cmd = this->GetCommand(area);
     return cmd->post(&CcPlaySound_CONSTRUCTION_RAIL);
 }
 
-std::optional<TileArea> RailStationBuildTool::SizedPlacementHandler::GetArea(TileIndex tile) const {
-    if (!IsValidTile(tile)) return std::nullopt;
+
+// --- RailStationBuildTool::SizedPlacementAction ---
+
+std::optional<TileArea> RailStationBuildTool::SizedPlacementAction::GetArea() const {
+    if (!IsValidTile(this->cur_tile)) return std::nullopt;
     auto w = _settings_client.gui.station_numtracks;
     auto h = _settings_client.gui.station_platlength;
     if (_railstation.orientation == AXIS_X) std::swap(w, h);
-    return TileArea{tile, w, h};
+    return TileArea{this->cur_tile, w, h};
 }
 
-up<Command> RailStationBuildTool::SizedPlacementHandler::GetCommand(TileIndex tile, StationID to_join) {
+up<Command> RailStationBuildTool::SizedPlacementAction::GetCommand(TileIndex tile, StationID to_join) {
     // TODO mostly same as DragNDropPlacement
     auto cmd = make_up<cmd::BuildRailStation>(
         tile,
@@ -1182,11 +1173,13 @@ up<Command> RailStationBuildTool::SizedPlacementHandler::GetCommand(TileIndex ti
     return cmd;
 }
 
-bool RailStationBuildTool::SizedPlacementHandler::Execute(TileIndex tile) {
+bool RailStationBuildTool::SizedPlacementAction::Execute(TileIndex tile) {
     return ExecuteBuildCommand(this, &CcStation, tile);
 }
 
-up<Command> RailStationBuildTool::DragNDropPlacementHandler::GetCommand(TileArea area, StationID to_join) {
+// --- RailStationBuildTool::DragNDropPlacementAction ---
+
+up<Command> RailStationBuildTool::DragNDropPlacementAction::GetCommand(TileArea area, StationID to_join) {
     uint numtracks = area.w;
     uint platlength = area.h;
 
@@ -1207,20 +1200,27 @@ up<Command> RailStationBuildTool::DragNDropPlacementHandler::GetCommand(TileArea
     return cmd;
 }
 
-bool RailStationBuildTool::DragNDropPlacementHandler::Execute(TileArea area) {
+bool RailStationBuildTool::DragNDropPlacementAction::Execute(TileArea area) {
     return ExecuteBuildCommand(this, &CcStation, area);
 }
 
-std::optional<ObjectHighlight> RailStationBuildTool::DragNDropPlacementHandler::GetObjectHighlight(TileArea area) {
-    return this->tool.GetStationObjectHighlight(area.tile, area.CMGetEndTile());
+std::optional<ObjectHighlight> RailStationBuildTool::DragNDropPlacementAction::GetObjectHighlight(TileArea area) {
+    return ObjectHighlight::make_rail_station(area.tile, area.CMGetEndTile(), _railstation.orientation);
 }
 
-std::optional<ObjectHighlight> RailStationBuildTool::SizedPlacementHandler::GetObjectHighlight(TileIndex tile) {
-    return this->tool.GetStationObjectHighlight(tile, INVALID_TILE);
+std::optional<ObjectHighlight> RailStationBuildTool::SizedPlacementAction::GetObjectHighlight(TileIndex tile) {
+    TileIndex end_tile;
+    if (_railstation.orientation == AXIS_X)
+        end_tile = TILE_ADDXY(tile, _settings_client.gui.station_platlength - 1, _settings_client.gui.station_numtracks - 1);
+    else
+        end_tile = TILE_ADDXY(tile, _settings_client.gui.station_numtracks - 1, _settings_client.gui.station_platlength - 1);
+    return ObjectHighlight::make_rail_station(tile, end_tile, _railstation.orientation);
 }
+
+// --- RailStationBuildTool implementation ---
 
 RailStationBuildTool::RailStationBuildTool() : mode(Mode::SIZED) {
-    this->action = make_up<SizedPlacementAction<SizedPlacementHandler>>(*this);
+    this->action = make_sp<RailStationBuildTool::SizedPlacementAction>();
 }
 
 void RailStationBuildTool::Update(Point pt, TileIndex tile) {
@@ -1237,16 +1237,16 @@ void RailStationBuildTool::Update(Point pt, TileIndex tile) {
     if (new_mode != this->mode) {
         switch (new_mode) {
             case Mode::REMOVE:
-                this->action = make_up<RemoveAction<RailStationBuildTool::RemoveHandler>>(*this);
+                this->action = make_sp<RailStationBuildTool::RemoveAction>();
                 break;
             case Mode::SELECT:
-                this->action = make_up<StationSelectAction<StationBuildTool::StationSelectHandler>>(*this);
+                this->action = make_sp<StationSelectAction>();
                 break;
             case Mode::DRAGDROP:
-                this->action = make_up<DragNDropPlacementAction<RailStationBuildTool::DragNDropPlacementHandler>>(*this);
+                this->action = make_sp<RailStationBuildTool::DragNDropPlacementAction>();
                 break;
             case Mode::SIZED:
-                this->action = make_up<SizedPlacementAction<RailStationBuildTool::SizedPlacementHandler>>(*this);
+                this->action = make_sp<RailStationBuildTool::SizedPlacementAction>();
                 break;
             default:
                 NOT_REACHED();
@@ -1256,56 +1256,41 @@ void RailStationBuildTool::Update(Point pt, TileIndex tile) {
     this->action->Update(pt, tile);
 }
 
-std::optional<ObjectHighlight> RailStationBuildTool::GetStationObjectHighlight(TileIndex start_tile, TileIndex end_tile) const {
-    assert(IsValidTile(start_tile));
-    assert(!IsValidTile(end_tile) || (TileX(start_tile) <= TileX(end_tile) && TileY(start_tile) <= TileY(end_tile)));
-    if (!IsValidTile(end_tile)) {
-        // Sized placement mode
-        if (_railstation.orientation == AXIS_X)
-            end_tile = TILE_ADDXY(start_tile, _settings_client.gui.station_platlength - 1, _settings_client.gui.station_numtracks - 1);
-        else
-            end_tile = TILE_ADDXY(start_tile, _settings_client.gui.station_numtracks - 1, _settings_client.gui.station_platlength - 1);
-    } else {
-
-    }
-    return ObjectHighlight::make_rail_station(start_tile, end_tile, _railstation.orientation);
-}
-
 CursorID RailStationBuildTool::GetCursor() { return SPR_CURSOR_RAIL_STATION; }
 
-// --- RoadStopBuildTool Handler Implementations ---
+// --- RoadStopBuildTool::RemoveAction ---
 
-up<Command> RoadStopBuildTool::RemoveHandler::GetCommand(TileArea area) {
+up<Command> RoadStopBuildTool::RemoveAction::GetCommand(TileArea area) {
     auto cmd = make_up<cmd::RemoveRoadStop>(
         area.tile,
         area.w,
         area.h,
-        this->tool.stop_type,
+        this->stop_type,
         _fn_mod
     );
     auto rti = GetRoadTypeInfo(_cur_roadtype);
-    cmd->with_error(rti->strings.err_remove_station[this->tool.stop_type]);
+    cmd->with_error(rti->strings.err_remove_station[this->stop_type]);
     return cmd;
 }
 
-bool RoadStopBuildTool::RemoveHandler::Execute(TileArea area) {
+bool RoadStopBuildTool::RemoveAction::Execute(TileArea area) {
     auto cmd = this->GetCommand(area);
     return cmd->post(&CcPlaySound_CONSTRUCTION_OTHER);
 }
 
-up<Command> RoadStopBuildTool::DragNDropPlacementHandler::GetCommand(TileArea area, StationID to_join) {
-    DiagDirection ddir = this->tool.ddir;
-    bool drive_through = this->tool.ddir >= DIAGDIR_END;
-    if (drive_through) ddir = static_cast<DiagDirection>(this->tool.ddir - DIAGDIR_END); // Adjust picker result to actual direction.
+up<Command> RoadStopBuildTool::DragNDropPlacementAction::GetCommand(TileArea area, StationID to_join) {
+    DiagDirection ddir = this->ddir;
+    bool drive_through = this->ddir >= DIAGDIR_END;
+    if (drive_through) ddir = static_cast<DiagDirection>(this->ddir - DIAGDIR_END); // Adjust picker result to actual direction.
 
     auto res = make_up<cmd::BuildRoadStop>(
         area.tile,
         area.w,
         area.h,
-        this->tool.stop_type,
+        this->stop_type,
         drive_through,
         ddir,
-        _cur_roadtype,
+        this->road_type,
         _roadstop_gui_settings.roadstop_class,
         _roadstop_gui_settings.roadstop_type,
         to_join,
@@ -1315,27 +1300,52 @@ up<Command> RoadStopBuildTool::DragNDropPlacementHandler::GetCommand(TileArea ar
     return res;
 }
 
-bool RoadStopBuildTool::DragNDropPlacementHandler::Execute(TileArea area) {
+bool RoadStopBuildTool::DragNDropPlacementAction::Execute(TileArea area) {
     return ExecuteBuildCommand(this, &CcRoadStop, area);
 }
 
-std::optional<ObjectHighlight> RoadStopBuildTool::DragNDropPlacementHandler::GetObjectHighlight(TileArea area) {
+std::optional<ObjectHighlight> RoadStopBuildTool::DragNDropPlacementAction::GetObjectHighlight(TileArea area) {
     return ObjectHighlight::make_road_stop(
         area.tile,
         area.CMGetEndTile(),
-        _cur_roadtype,
-        this->tool.ddir,
-        this->tool.stop_type == ROADSTOP_TRUCK,
+        this->road_type,
+        this->ddir,
+        this->stop_type == ROADSTOP_TRUCK,
         _roadstop_gui_settings.roadstop_class,
         _roadstop_gui_settings.roadstop_type
     );
 }
 
-// --- RoadStopBuildTool Implementation ---
+// --- RoadStopBuildTool implementation ---
 
 RoadStopBuildTool::RoadStopBuildTool(RoadStopType stop_type) : mode(Mode::DRAGDROP), stop_type(stop_type)
 {
-    this->action = make_up<DragNDropPlacementAction<RoadStopBuildTool::DragNDropPlacementHandler>>(*this);
+    this->action = make_sp<RoadStopBuildTool::DragNDropPlacementAction>(_cur_roadtype, this->stop_type);
+}
+
+void RoadStopBuildTool::DragNDropPlacementAction::Update(Point pt, TileIndex tile) {
+    citymania::DragNDropPlacementAction::Update(pt, tile);
+    this->ddir = DIAGDIR_NE;
+    auto area = this->GetArea();
+    if (pt.x != -1 && area.has_value()) {
+        auto ddir = _roadstop_gui_settings.orientation;
+
+        if (ddir >= DIAGDIR_END && ddir < STATIONDIR_AUTO) {
+            // When placed on road autorotate anyway
+            if (ddir == STATIONDIR_X) {
+                if (!CheckDriveThroughRoadStopDirection(area.value(), ROAD_X))
+                    ddir = STATIONDIR_Y;
+            } else {
+                if (!CheckDriveThroughRoadStopDirection(area.value(), ROAD_Y))
+                    ddir = STATIONDIR_X;
+            }
+        } else if (ddir == STATIONDIR_AUTO) {
+            ddir = AddAutodetectionRotation(AutodetectRoadObjectDirection(tile, pt, this->road_type));
+        } else if (ddir == STATIONDIR_AUTO_XY) {
+            ddir = AddAutodetectionRotation(AutodetectDriveThroughRoadStopDirection(area.value(), pt, this->road_type));
+        }
+        this->ddir = ddir;
+    }
 }
 
 void RoadStopBuildTool::Update(Point pt, TileIndex tile) {
@@ -1351,69 +1361,45 @@ void RoadStopBuildTool::Update(Point pt, TileIndex tile) {
     if (new_mode != this->mode) {
         switch (new_mode) {
             case Mode::REMOVE:
-                this->action = make_up<RemoveAction<RoadStopBuildTool::RemoveHandler>>(*this);
+                this->action = make_sp<RoadStopBuildTool::RemoveAction>(this->stop_type);
                 break;
             case Mode::SELECT:
-                this->action = make_up<StationSelectAction<StationBuildTool::StationSelectHandler>>(*this);
+                this->action = make_sp<StationSelectAction>();
                 break;
             case Mode::DRAGDROP:
-                this->action = make_up<DragNDropPlacementAction<RoadStopBuildTool::DragNDropPlacementHandler>>(*this);
+                this->action = make_sp<RoadStopBuildTool::DragNDropPlacementAction>(_cur_roadtype, this->stop_type);
                 break;
         }
         this->mode = new_mode;
     }
     this->action->Update(pt, tile);
-
-    this->ddir = DIAGDIR_NE;
-    auto area = this->action->GetArea();
-    if (pt.x != -1 && this->mode == Mode::DRAGDROP && area.has_value()) {
-        auto ddir = _roadstop_gui_settings.orientation;
-
-        if (ddir >= DIAGDIR_END && ddir < STATIONDIR_AUTO) {
-            // When placed on road autorotate anyway
-            if (ddir == STATIONDIR_X) {
-                if (!CheckDriveThroughRoadStopDirection(area.value(), ROAD_X))
-                    ddir = STATIONDIR_Y;
-            } else {
-                if (!CheckDriveThroughRoadStopDirection(area.value(), ROAD_Y))
-                    ddir = STATIONDIR_X;
-            }
-        } else if (ddir == STATIONDIR_AUTO) {
-            ddir = AddAutodetectionRotation(AutodetectRoadObjectDirection(tile, pt, _cur_roadtype));
-        } else if (ddir == STATIONDIR_AUTO_XY) {
-            ddir = AddAutodetectionRotation(AutodetectDriveThroughRoadStopDirection(area.value(), pt, _cur_roadtype));
-        }
-        this->ddir = ddir;
-    }
 }
 
 CursorID RoadStopBuildTool::GetCursor() {
     return this->stop_type == ROADSTOP_TRUCK ? SPR_CURSOR_TRUCK_STATION : SPR_CURSOR_BUS_STATION;
 }
 
-// --- DockBuildTool Handler Implementations ---
+// --- DockBuildTool::RemoveAction ---
 
-// RemoveHandler
-up<Command> DockBuildTool::RemoveHandler::GetCommand(TileArea area) {
+up<Command> DockBuildTool::RemoveAction::GetCommand(TileArea area) {
     // TODO: Implement dock removal command if available
     return nullptr;
 }
 
-bool DockBuildTool::RemoveHandler::Execute(TileArea area) {
+bool DockBuildTool::RemoveAction::Execute(TileArea area) {
     // TODO: Implement dock removal execution if available
     return false;
 }
 
-// SizedPlacementHandler
+// --- DockBuildTool::SizedPlacementAction ---
 
-std::optional<TileArea> DockBuildTool::SizedPlacementHandler::GetArea(TileIndex tile) const {
-    if (!IsValidTile(tile)) return std::nullopt;
-    DiagDirection dir = GetInclinedSlopeDirection(GetTileSlope(tile));
-    TileIndex tile_to = (dir != INVALID_DIAGDIR ? TileAddByDiagDir(tile, ReverseDiagDir(dir)) : tile);
-    return TileArea{tile, tile_to};
+std::optional<TileArea> DockBuildTool::SizedPlacementAction::GetArea() const {
+    auto ddir = this->GetDirection(this->cur_tile);
+    if (!ddir.has_value()) return std::nullopt;
+    return TileArea{this->cur_tile, TileAddByDiagDir(this->cur_tile, *ddir)};
 }
 
-up<Command> DockBuildTool::SizedPlacementHandler::GetCommand(TileIndex tile, StationID to_join) {
+up<Command> DockBuildTool::SizedPlacementAction::GetCommand(TileIndex tile, StationID to_join) {
     return make_up<cmd::BuildDock>(
         tile,
         to_join,
@@ -1422,18 +1408,26 @@ up<Command> DockBuildTool::SizedPlacementHandler::GetCommand(TileIndex tile, Sta
 }
 
 
-bool DockBuildTool::SizedPlacementHandler::Execute(TileIndex tile) {
+bool DockBuildTool::SizedPlacementAction::Execute(TileIndex tile) {
     return ExecuteBuildCommand(this, &CcBuildDocks, tile);
 }
 
-std::optional<ObjectHighlight> DockBuildTool::SizedPlacementHandler::GetObjectHighlight(TileIndex tile) {
-    return ObjectHighlight::make_dock(tile, this->tool.ddir);
+std::optional<ObjectHighlight> DockBuildTool::SizedPlacementAction::GetObjectHighlight(TileIndex tile) {
+    return ObjectHighlight::make_dock(tile, this->GetDirection(tile).value_or(DIAGDIR_SE));
 }
+
+std::optional<DiagDirection> DockBuildTool::SizedPlacementAction::GetDirection(TileIndex tile) const {
+    if (!IsValidTile(tile)) return std::nullopt;
+    auto slope_dir = GetInclinedSlopeDirection(GetTileSlope(tile));
+    if (slope_dir == INVALID_DIAGDIR) return std::nullopt;
+    return ReverseDiagDir(slope_dir);
+};
+
 
 // --- DockBuildTool Implementation ---
 
 DockBuildTool::DockBuildTool() : mode(Mode::SIZED) {
-    this->action = make_up<SizedPlacementAction<DockBuildTool::SizedPlacementHandler>>(*this);
+    this->action = make_sp<DockBuildTool::SizedPlacementAction>();
 }
 
 void DockBuildTool::Update(Point pt, TileIndex tile) {
@@ -1448,13 +1442,13 @@ void DockBuildTool::Update(Point pt, TileIndex tile) {
     if (new_mode != this->mode) {
         switch (new_mode) {
             case Mode::REMOVE:
-                this->action = make_up<RemoveAction<DockBuildTool::RemoveHandler>>(*this);
+                this->action = make_up<DockBuildTool::RemoveAction>();
                 break;
             case Mode::SELECT:
-                this->action = make_up<StationSelectAction<DockBuildTool::StationSelectHandler>>(*this);
+                this->action = make_up<StationSelectAction>();
                 break;
             case Mode::SIZED:
-                this->action = make_up<SizedPlacementAction<DockBuildTool::SizedPlacementHandler>>(*this);
+                this->action = make_up<DockBuildTool::SizedPlacementAction>();
                 break;
             default:
                 NOT_REACHED();
@@ -1462,41 +1456,34 @@ void DockBuildTool::Update(Point pt, TileIndex tile) {
         this->mode = new_mode;
     }
     this->action->Update(pt, tile);
-    this->ddir = DIAGDIR_SE;
-    if (pt.x != -1 && this->mode == Mode::SIZED) {
-        auto slope_dir = GetInclinedSlopeDirection(GetTileSlope(tile));
-        if (slope_dir != INVALID_DIAGDIR)
-            this->ddir = ReverseDiagDir(slope_dir);
-    }
- }
+}
 
 CursorID DockBuildTool::GetCursor() {
     return SPR_CURSOR_DOCK;
 }
 
-// --- AirportBuildTool Handler Implementations ---
+// --- AirportBuildTool::RemoveAction ---
 
-// RemoveHandler
-up<Command> AirportBuildTool::RemoveHandler::GetCommand(TileArea area) {
+up<Command> AirportBuildTool::RemoveAction::GetCommand(TileArea area) {
     // TODO: Implement aiport removal command if available
     return nullptr;
 }
 
-bool AirportBuildTool::RemoveHandler::Execute(TileArea area) {
+bool AirportBuildTool::RemoveAction::Execute(TileArea area) {
     // TODO: Implement airport removal execution if available
     return false;
 }
 
-// SizedPlacementHandler
+// --- AirportBuildTool::SizedPlacementAction ---
 
-std::optional<TileArea> AirportBuildTool::SizedPlacementHandler::GetArea(TileIndex tile) const {
-    if (!IsValidTile(tile)) return std::nullopt;
+std::optional<TileArea> AirportBuildTool::SizedPlacementAction::GetArea() const {
+    if (!IsValidTile(this->cur_tile)) return std::nullopt;
     auto as = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index);
     if (as == nullptr) return std::nullopt;
-    return TileArea{tile, as->size_x, as->size_y};
+    return TileArea{this->cur_tile, as->size_x, as->size_y};
 }
 
-up<Command> AirportBuildTool::SizedPlacementHandler::GetCommand(TileIndex tile, StationID to_join) {
+up<Command> AirportBuildTool::SizedPlacementAction::GetCommand(TileIndex tile, StationID to_join) {
     auto as = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index);
     if (as == nullptr) return nullptr;
     byte airport_type = as->GetIndex();
@@ -1512,27 +1499,27 @@ up<Command> AirportBuildTool::SizedPlacementHandler::GetCommand(TileIndex tile, 
     return cmd;
 }
 
-bool AirportBuildTool::SizedPlacementHandler::Execute(TileIndex tile) {
+bool AirportBuildTool::SizedPlacementAction::Execute(TileIndex tile) {
     ExecuteBuildCommand(this, &CcBuildAirport, tile);
     return false;
 }
 
-std::optional<ObjectHighlight> AirportBuildTool::SizedPlacementHandler::GetObjectHighlight(TileIndex tile) {
+std::optional<ObjectHighlight> AirportBuildTool::SizedPlacementAction::GetObjectHighlight(TileIndex tile) {
     byte airport_type = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index)->GetIndex();
     byte layout = _selected_airport_layout;
     return ObjectHighlight::make_airport(tile, airport_type, layout);
 }
 
-std::pair<StationCoverageType, uint> AirportBuildTool::SizedPlacementHandler::GetCatchmentParams() {
+std::pair<StationCoverageType, uint> AirportBuildTool::SizedPlacementAction::GetCatchmentParams() {
     auto rad = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index)->catchment;
     return {SCT_ALL, rad};
 }
 
 
-// --- AirportBuildTool Implementation ---
+// --- AirportBuildTool implementation ---
 
 AirportBuildTool::AirportBuildTool() : mode(Mode::SIZED) {
-    this->action = make_up<SizedPlacementAction<AirportBuildTool::SizedPlacementHandler>>(*this);
+    this->action = make_sp<AirportBuildTool::SizedPlacementAction>();
 }
 
 void AirportBuildTool::Update(Point pt, TileIndex tile) {
@@ -1547,13 +1534,13 @@ void AirportBuildTool::Update(Point pt, TileIndex tile) {
     if (new_mode != this->mode) {
         switch (new_mode) {
             case Mode::REMOVE:
-                this->action = make_up<RemoveAction<AirportBuildTool::RemoveHandler>>(*this);
+                this->action = make_sp<AirportBuildTool::RemoveAction>();
                 break;
             case Mode::SELECT:
-                this->action = make_up<StationSelectAction<AirportBuildTool::StationSelectHandler>>(*this);
+                this->action = make_sp<StationSelectAction>();
                 break;
             case Mode::SIZED:
-                this->action = make_up<SizedPlacementAction<AirportBuildTool::SizedPlacementHandler>>(*this);
+                this->action = make_sp<AirportBuildTool::SizedPlacementAction>();
                 break;
             default:
                 NOT_REACHED();
@@ -1566,18 +1553,5 @@ void AirportBuildTool::Update(Point pt, TileIndex tile) {
 CursorID AirportBuildTool::GetCursor() {
     return SPR_CURSOR_AIRPORT;
 }
-
-// --- Explicit template instantiations for handlers ---
-template class StationSelectAction<StationBuildTool::StationSelectHandler>;
-
-template class DragNDropPlacementAction<RailStationBuildTool::DragNDropPlacementHandler>;
-template class RemoveAction<RailStationBuildTool::RemoveHandler>;
-template class SizedPlacementAction<RailStationBuildTool::SizedPlacementHandler>;
-
-template class RemoveAction<RoadStopBuildTool::RemoveHandler>;
-template class DragNDropPlacementAction<RoadStopBuildTool::DragNDropPlacementHandler>;
-
-template class RemoveAction<DockBuildTool::RemoveHandler>;
-template class SizedPlacementAction<DockBuildTool::SizedPlacementHandler>;
 
 } // namespace citymania

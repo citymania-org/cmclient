@@ -412,7 +412,7 @@ public:
 
 class Tool {
 protected:
-    up<Action> action = nullptr;
+    sp<Action> action = nullptr;
 public:
     virtual ~Tool() = default;
     virtual void Update(Point pt, TileIndex tile) = 0;
