@@ -77,11 +77,12 @@ concept ImplementsRemoveHandler = std::derived_from<Handler, RemoveHandler>;
 template<ImplementsRemoveHandler Handler>
 class RemoveAction : public Action {
 private:
-    Handler handler;
+    sp<Handler> handler;
     TileIndex start_tile = INVALID_TILE;
     TileIndex cur_tile = INVALID_TILE;
 public:
-    RemoveAction(const Handler &handler) : handler{handler} {}
+    template<typename T>
+    RemoveAction(T &tool) { this->handler = make_sp<Handler>(tool); };
     ~RemoveAction() override = default;
     void Update(Point pt, TileIndex tile) override;
     std::optional<TileArea> GetArea() const override;
@@ -103,10 +104,11 @@ concept ImplementsStationSelectHandler = std::derived_from<Handler, StationSelec
 template<ImplementsStationSelectHandler Handler>
 class StationSelectAction : public Action {
 private:
-    Handler handler;
+    sp<Handler> handler;
     TileIndex cur_tile = INVALID_TILE;
 public:
-    StationSelectAction(const Handler &handler) : handler{handler} {}
+    template<typename T>
+    StationSelectAction(T &tool) { this->handler = make_sp<Handler>(tool); };
     ~StationSelectAction() override = default;
     void Update(Point pt, TileIndex tile) override;
     bool HandleMousePress() override;
@@ -138,13 +140,14 @@ concept ImplementsSizedPlacementHandler = std::derived_from<Handler, SizedPlacem
 template<ImplementsSizedPlacementHandler Handler>
 class SizedPlacementAction : public PlacementAction {
 private:
-    Handler handler;
+    sp<Handler> handler;
     TileIndex cur_tile = INVALID_TILE;
 public:
-    SizedPlacementAction(const Handler &handler) : handler{handler} {}
+    template<typename T>
+    SizedPlacementAction(T &tool) { this->handler = make_sp<Handler>(tool); };
     ~SizedPlacementAction() override = default;
     void Update(Point pt, TileIndex tile) override;
-    std::optional<TileArea> GetArea() const override { return this->handler.GetArea(this->cur_tile); }
+    std::optional<TileArea> GetArea() const override { return this->handler->GetArea(this->cur_tile); }
     bool HandleMousePress() override;
     void HandleMouseRelease() override;
     ToolGUIInfo GetGUIInfo() override;
@@ -168,9 +171,10 @@ class DragNDropPlacementAction : public PlacementAction {
 private:
     TileIndex start_tile = INVALID_TILE;
     TileIndex cur_tile = INVALID_TILE;
-    Handler handler;
+    sp<Handler> handler;
 public:
-    DragNDropPlacementAction(const Handler &handler) :handler{handler} {};
+    template<typename T>
+    DragNDropPlacementAction(T &tool) { this->handler = make_sp<Handler>(tool); };
     ~DragNDropPlacementAction() override = default;
     void Update(Point pt, TileIndex tile) override;
     std::optional<TileArea> GetArea() const override;
@@ -202,8 +206,6 @@ public:
         if (this->action) this->action->OnStationRemoved(station);
     }
 protected:
-    template<typename Thandler, typename Tcallback, typename Targ>
-    bool ExecuteBuildCommand(Thandler *handler, Tcallback callback, Targ arg);
 };
 
 // RailStationBuildTool
@@ -212,6 +214,7 @@ private:
     class RemoveHandler : public citymania::RemoveHandler {
     public:
         RailStationBuildTool &tool;
+        // TODO storing tools in handlers isn't safe because of shared pointers
         RemoveHandler(RailStationBuildTool &tool) : tool(tool) {}
         ~RemoveHandler() override = default;
         up<Command> GetCommand(TileArea area) override;
