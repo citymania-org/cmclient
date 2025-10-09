@@ -1038,41 +1038,57 @@ void DrawTrainStationSprite(SpriteID palette, const TileInfo *ti, RailType railt
     DrawRailTileSeq(ti, t, TO_INVALID, total_offset, 0, palette);
 }
 
-void DrawRoadStop(SpriteID palette, const TileInfo *ti, RoadType roadtype, DiagDirection orientation, bool is_truck) {
+void DrawRoadStop(SpriteID palette, const TileInfo *ti, RoadType roadtype, DiagDirection orientation, bool is_truck, RoadStopClassID spec_class, uint16_t spec_index) {
     int32 total_offset = 0;
     const RoadTypeInfo* rti = GetRoadTypeInfo(roadtype);
+    const RoadStopSpec *spec = RoadStopClass::Get(spec_class)->GetSpec(spec_index);
+    uint view = (uint)orientation;
+    StationType type = (is_truck ? STATION_TRUCK : STATION_BUS);
 
-    uint image = (uint)orientation;
-    if (image >= 4) {
+    const DrawTileSprites *dts;
+    if (spec != nullptr) {
+        RoadStopResolverObject object(spec, nullptr, INVALID_TILE, roadtype, type, view);
+        const SpriteGroup *group = object.Resolve();
+        if (group == nullptr || group->type != SGT_TILELAYOUT) return;
+        dts = ((const TileLayoutSpriteGroup *)group)->ProcessRegisters(nullptr);
+    } else {
+        dts = GetStationTileLayout(type, view);
+    }
+
+    SpriteID image = dts->ground.sprite;
+    if (GB(image, 0, SPRITE_WIDTH) != 0) {
+        AddSortableSpriteToDraw(image, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+    }
+
+    if (view >= 4) {
         /* Drive-through stop */
-        uint sprite_offset = 5 - image;
+        uint sprite_offset = 5 - view;
 
         /* Road underlay takes precedence over tram */
-        if (rti->UsesOverlay()) {
-            SpriteID ground = GetCustomRoadSprite(rti, INVALID_TILE, ROTSG_GROUND);
-            DrawSprite(ground + sprite_offset, PAL_NONE, ti->x, ti->y);
+        if (!spec || spec->draw_mode & ROADSTOP_DRAW_MODE_OVERLAY) {
+            if (rti->UsesOverlay()) {
+                SpriteID ground = GetCustomRoadSprite(rti, INVALID_TILE, ROTSG_GROUND);
+                DrawSprite(ground + sprite_offset, PAL_NONE, ti->x, ti->y);
 
-            SpriteID overlay = GetCustomRoadSprite(rti, INVALID_TILE, ROTSG_OVERLAY);
-            // if (overlay) DrawSprite(overlay + sprite_offset, PAL_NONE, x, y);
-            if (overlay) AddSortableSpriteToDraw(overlay + sprite_offset, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
-        } else if (RoadTypeIsTram(roadtype)) {
-            // DrawSprite(SPR_TRAMWAY_TRAM + sprite_offset, PAL_NONE, x, y);
-            AddSortableSpriteToDraw(SPR_TRAMWAY_TRAM + sprite_offset, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+                SpriteID overlay = GetCustomRoadSprite(rti, INVALID_TILE, ROTSG_OVERLAY);
+                // if (overlay) DrawSprite(overlay + sprite_offset, PAL_NONE, x, y);
+                if (overlay) AddSortableSpriteToDraw(overlay + sprite_offset, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+            } else if (RoadTypeIsTram(roadtype)) {
+                // DrawSprite(SPR_TRAMWAY_TRAM + sprite_offset, PAL_NONE, x, y);
+                AddSortableSpriteToDraw(SPR_TRAMWAY_TRAM + sprite_offset, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+            }
         }
     } else {
-        /* Drive-in stop */
-        if (RoadTypeIsRoad(roadtype) && rti->UsesOverlay()) {
+        /* Bay stop */
+        bool draw_mode_road = (spec != nullptr ? spec->draw_mode & ROADSTOP_DRAW_MODE_ROAD : RoadTypeIsRoad(roadtype));
+        if (draw_mode_road && rti->UsesOverlay()) {
             SpriteID ground = GetCustomRoadSprite(rti, INVALID_TILE, ROTSG_ROADSTOP);
             // DrawSprite(, PAL_NONE, x, y);
-            AddSortableSpriteToDraw(ground + image, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
+            AddSortableSpriteToDraw(ground + view, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
         }
     }
 
-    const DrawTileSprites *t = GetStationTileLayout(is_truck ? STATION_TRUCK : STATION_BUS, image);
-    AddSortableSpriteToDraw(t->ground.sprite, palette, ti->x, ti->y, 1, 1, BB_HEIGHT_UNDER_BRIDGE, ti->z);
-    DrawRailTileSeq(ti, t, TO_INVALID, total_offset, 0, palette);
-    /* Draw road, tram catenary */
-    // DrawRoadCatenary(ti);
+    DrawRailTileSeq(ti, dts, TO_INVALID, total_offset, 0, palette);
 }
 
 void DrawDockSlope(SpriteID palette, const TileInfo *ti, DiagDirection ddir) {
@@ -1618,7 +1634,7 @@ static void DrawObjectTileHighlight(const TileInfo *ti, const ObjectTileHighligh
             DrawTunnelHead(oth.palette, ti, _cur_railtype, oth.u.rail.tunnel_head.ddir);
             break;
         case ObjectTileHighlight::Type::ROAD_STOP:
-            DrawRoadStop(oth.palette, ti, oth.u.road.stop.roadtype, oth.u.road.stop.ddir, oth.u.road.stop.is_truck);
+            DrawRoadStop(oth.palette, ti, oth.u.road.stop.roadtype, oth.u.road.stop.ddir, oth.u.road.stop.is_truck, oth.u.road.stop.spec_class, oth.u.road.stop.spec_index);
             break;
         case ObjectTileHighlight::Type::ROAD_DEPOT:
             DrawRoadDepot(oth.palette, ti, oth.u.road.depot.roadtype, oth.u.road.depot.ddir);
