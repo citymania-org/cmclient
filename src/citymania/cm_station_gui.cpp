@@ -1500,8 +1500,7 @@ up<Command> AirportBuildTool::SizedPlacementAction::GetCommand(TileIndex tile, S
 }
 
 bool AirportBuildTool::SizedPlacementAction::Execute(TileIndex tile) {
-    ExecuteBuildCommand(this, &CcBuildAirport, tile);
-    return false;
+    return ExecuteBuildCommand(this, &CcBuildAirport, tile);
 }
 
 std::optional<ObjectHighlight> AirportBuildTool::SizedPlacementAction::GetObjectHighlight(TileIndex tile) {
