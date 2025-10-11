@@ -46,6 +46,10 @@
 #include "company_cmd.h"
 #include "misc_cmd.h"
 
+#if defined(WITH_ZLIB)
+#include "network/network_content.h"
+#endif /* WITH_ZLIB */
+
 #include "table/strings.h"
 
 #include "citymania/cm_console_cmds.hpp"
@@ -2178,7 +2182,6 @@ static bool ConNetworkAuthorizedKey(std::span<std::string_view> argv)
 
 /* Content downloading only is available with ZLIB */
 #if defined(WITH_ZLIB)
-#include "network/network_content.h"
 
 /** Resolve a string to a content type. */
 static ContentType StringToContentType(std::string_view str)
