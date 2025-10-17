@@ -81,7 +81,16 @@ static const int HOTKEY_BLUEPRINT_LOAD_END = 0x1030;
 static const int HOTKEY_BLUEPRINT_SAVE = 0x1030;
 static const int HOTKEY_BLUEPRINT_SAVE_END = 0x1040;
 
-citymania::RailStationGUISettings _railstation; ///< Settings of the station builder GUI
+// Moved to cm_station_gui.hpp
+// struct RailStationGUISettings {
+// 	Axis orientation;                 ///< Currently selected rail station orientation
+
+// 	bool newstations;                 ///< Are custom station definitions available?
+// 	StationClassID station_class;     ///< Currently selected custom station class (if newstations is \c true )
+// 	uint16_t station_type;            ///< %Station type within the currently selected custom station class (if newstations is \c true )
+// 	uint16_t station_count;           ///< Number of custom stations (if newstations is \c true )
+// };
+RailStationGUISettings _railstation; ///< Settings of the station builder GUI
 
 
 static void HandleStationPlacement(TileIndex start, TileIndex end);
@@ -205,7 +214,7 @@ static void PlaceRail_Station(TileIndex tile)
 		int h = _settings_client.gui.station_platlength;
 		if (!_railstation.orientation) Swap(w, h);
 
-		citymania::RailStationGUISettings params = _railstation;
+		RailStationGUISettings params = _railstation;
 		RailType rt = _cur_railtype;
 		byte numtracks = _settings_client.gui.station_numtracks;
 		byte platlength = _settings_client.gui.station_platlength;
@@ -1120,7 +1129,7 @@ static void HandleStationPlacement(TileIndex start, TileIndex end)
 
 	if (_railstation.orientation == AXIS_X) Swap(numtracks, platlength);
 
-	citymania::RailStationGUISettings params = _railstation;
+	RailStationGUISettings params = _railstation;
 	RailType rt = _cur_railtype;
 	bool adjacent = citymania::_fn_mod;
 

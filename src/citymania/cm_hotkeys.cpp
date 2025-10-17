@@ -2,7 +2,7 @@
 
 #include "cm_hotkeys.hpp"
 #include "cm_settings.hpp"
-#include "cm_station_gui.hpp"
+#include "cm_station_gui.hpp"  // RailStationGUISettings
 
 #include "../newgrf_station.h"
 #include "../settings_type.h"
@@ -21,7 +21,7 @@
 
 #include "../safeguards.h"
 
-extern citymania::RailStationGUISettings _railstation; ///< Settings of the station builder GUI
+extern RailStationGUISettings _railstation; ///< Settings of the station builder GUI
 extern bool _generating_world;
 
 namespace citymania {

@@ -58,17 +58,9 @@ extern int _selected_airport_index;
 extern byte _selected_airport_layout;
 extern RailType _cur_railtype;  // rail_gui.cpp
 extern RoadType _cur_roadtype;  // road_gui.cpp
-extern void GetStationLayout(byte *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
-extern citymania::RailStationGUISettings _railstation; ///< Settings of the station builder GUI
 
-struct RoadStopGUISettings {
-    DiagDirection orientation;
-
-    RoadStopClassID roadstop_class;
-    uint16_t roadstop_type;
-    uint16_t roadstop_count;
-};
-extern RoadStopGUISettings _roadstop_gui_settings;
+extern RailStationGUISettings _railstation;  // rail_gui.cpp
+extern RoadStopGUISettings _roadstop_gui_settings;  // road_gui.cpp
 
 extern AirportClassID _selected_airport_class; ///< the currently visible airport class
 extern int _selected_airport_index;            ///< the index of the selected airport in the current class or -1
@@ -1205,7 +1197,8 @@ bool RailStationBuildTool::DragNDropPlacementAction::Execute(TileArea area) {
 }
 
 std::optional<ObjectHighlight> RailStationBuildTool::DragNDropPlacementAction::GetObjectHighlight(TileArea area) {
-    return ObjectHighlight::make_rail_station(area.tile, area.CMGetEndTile(), _railstation.orientation);
+    // Debug(misc, 0, "GetObjectHighlight {} {} ", _railstation.station_class, _railstation.station_type);
+    return ObjectHighlight::make_rail_station(area.tile, area.CMGetEndTile(), _railstation.orientation, _railstation.station_class, _railstation.station_type);
 }
 
 std::optional<ObjectHighlight> RailStationBuildTool::SizedPlacementAction::GetObjectHighlight(TileIndex tile) {
@@ -1214,7 +1207,7 @@ std::optional<ObjectHighlight> RailStationBuildTool::SizedPlacementAction::GetOb
         end_tile = TILE_ADDXY(tile, _settings_client.gui.station_platlength - 1, _settings_client.gui.station_numtracks - 1);
     else
         end_tile = TILE_ADDXY(tile, _settings_client.gui.station_numtracks - 1, _settings_client.gui.station_platlength - 1);
-    return ObjectHighlight::make_rail_station(tile, end_tile, _railstation.orientation);
+    return ObjectHighlight::make_rail_station(tile, end_tile, _railstation.orientation, _railstation.station_class, _railstation.station_type);
 }
 
 // --- RailStationBuildTool implementation ---
