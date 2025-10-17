@@ -965,7 +965,7 @@ bool TownNeedsFunding(Town *t) {
 	bool fund_regularly = t->cm.fund_regularly.Test(_local_company);
 	bool do_powerfund = t->cm.do_powerfund.Test(_local_company);
 
-	if (do_powerfund && (_settings_client.gui.cm_powerfund_money > Company::Get(_local_company)->money ||
+	if (do_powerfund && ((Money)_settings_client.gui.cm_powerfund_money > Company::Get(_local_company)->money ||
 		    _settings_client.gui.cm_powerfund_houses < t->cache.num_houses)) {
 	    do_powerfund = false;
 	}
