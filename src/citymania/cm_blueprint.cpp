@@ -4,12 +4,14 @@
 
 #include "cm_commands.hpp"
 #include "cm_highlight.hpp"
+#include "cm_station_gui.hpp"  // RailStationGUISettings
 
 #include "../console_func.h"
 #include "../command_func.h"
 #include "../error.h"
 #include "../debug.h"
 #include "../direction_type.h"
+#include "../newgrf_station.h"
 #include "../rail_map.h"
 #include "../station_cmd.h"
 #include "../station_map.h"
@@ -25,15 +27,6 @@ extern TileHighlightData _thd;
 extern RailType _cur_railtype;
 extern void GetStationLayout(byte *layout, uint numtracks, uint plat_len, const StationSpec *statspec);
 
-// from rail_gui.cpp
-struct RailStationGUISettings {
-    Axis orientation;                 ///< Currently selected rail station orientation
-
-    bool newstations;                 ///< Are custom station definitions available?
-    StationClassID station_class;     ///< Currently selected custom station class (if newstations is \c true )
-    byte station_type;                ///< %Station type within the currently selected custom station class (if newstations is \c true )
-    byte station_count;               ///< Number of custom stations (if newstations is \c true )
-};
 extern RailStationGUISettings _railstation; ///< Settings of the station builder GUI
 
 namespace citymania {
@@ -257,6 +250,8 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
                 break;
             case Item::Type::RAIL_STATION_PART: {
                 std::vector<byte> layouts(o.u.rail.station_part.numtracks * o.u.rail.station_part.plat_len);
+                TileArea area{tile, o.u.rail.station_part.numtracks, o.u.rail.station_part.plat_len};
+                if (o.u.rail.station_part.axis == AXIS_X) std::swap(area.w, area.h);
                 byte *layout_ptr = layouts.data();
                 GetStationLayout(layout_ptr, o.u.rail.station_part.numtracks, o.u.rail.station_part.plat_len, nullptr);
                 if (palette == CM_PALETTE_TINT_WHITE && can_build_station_sign.find(o.u.rail.station_part.id) == can_build_station_sign.end())
@@ -264,7 +259,8 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
                 IterateStation(otile, o.u.rail.station_part.axis, o.u.rail.station_part.numtracks, o.u.rail.station_part.plat_len,
                     [&](TileIndex tile) {
                         byte layout = *layout_ptr++;
-                        add_tile(tile, ObjectTileHighlight::make_rail_station(palette, o.u.rail.station_part.axis, layout & ~1));
+                        // , o.u.rail.station_part.spec_class, o.u.rail.station_part.spec_index
+                        add_tile(tile, ObjectTileHighlight::make_rail_station(palette, o.u.rail.station_part.axis, layout & ~1, STAT_CLASS_DFLT, 0, area));
                     }
                 );
                 break;

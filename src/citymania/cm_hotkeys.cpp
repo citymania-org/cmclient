@@ -2,6 +2,7 @@
 
 #include "cm_hotkeys.hpp"
 #include "cm_settings.hpp"
+#include "cm_station_gui.hpp"  // RailStationGUISettings
 
 #include "../newgrf_station.h"
 #include "../settings_type.h"
@@ -20,14 +21,6 @@
 
 #include "../safeguards.h"
 
-struct RailStationGUISettings {
-    Axis orientation;                 ///< Currently selected rail station orientation
-
-    bool newstations;                 ///< Are custom station definitions available?
-    StationClassID station_class;     ///< Currently selected custom station class (if newstations is \c true )
-    byte station_type;                ///< %Station type within the currently selected custom station class (if newstations is \c true )
-    byte station_count;               ///< Number of custom stations (if newstations is \c true )
-};
 extern RailStationGUISettings _railstation; ///< Settings of the station builder GUI
 extern bool _generating_world;
 

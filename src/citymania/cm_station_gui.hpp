@@ -13,14 +13,6 @@
 #include <concepts>
 #include <optional>
 
-namespace citymania {
-
-const DiagDirection DEPOTDIR_AUTO = DIAGDIR_END;
-const DiagDirection STATIONDIR_X = DIAGDIR_END;
-const DiagDirection STATIONDIR_Y = (DiagDirection)((uint)DIAGDIR_END + 1);
-const DiagDirection STATIONDIR_AUTO = (DiagDirection)((uint)DIAGDIR_END + 2);
-const DiagDirection STATIONDIR_AUTO_XY = (DiagDirection)((uint)DIAGDIR_END + 3);
-
 struct RailStationGUISettings {
     Axis orientation;                 ///< Currently selected rail station orientation
 
@@ -29,6 +21,22 @@ struct RailStationGUISettings {
     uint16_t station_type;            ///< %Station type within the currently selected custom station class (if newstations is \c true )
     uint16_t station_count;           ///< Number of custom stations (if newstations is \c true )
 };
+
+struct RoadStopGUISettings {
+    DiagDirection orientation;
+
+    RoadStopClassID roadstop_class;
+    uint16_t roadstop_type;
+    uint16_t roadstop_count;
+};
+
+namespace citymania {
+
+const DiagDirection DEPOTDIR_AUTO = DIAGDIR_END;
+const DiagDirection STATIONDIR_X = DIAGDIR_END;
+const DiagDirection STATIONDIR_Y = (DiagDirection)((uint)DIAGDIR_END + 1);
+const DiagDirection STATIONDIR_AUTO = (DiagDirection)((uint)DIAGDIR_END + 2);
+const DiagDirection STATIONDIR_AUTO_XY = (DiagDirection)((uint)DIAGDIR_END + 3);
 
 // void SetStationTileSelectSize(int w, int h, int catchment);
 bool UseImprovedStationJoin();

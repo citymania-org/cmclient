@@ -72,14 +72,15 @@ static bool _place_road_end_half;
 
 /* CM static */ DiagDirection _road_depot_orientation;
 
-struct RoadStopGUISettings {
-	DiagDirection orientation;
+// Moved to cm_station_gui.hpp
+// struct RoadStopGUISettings {
+// 	DiagDirection orientation;
 
-	RoadStopClassID roadstop_class;
-	uint16_t roadstop_type;
-	uint16_t roadstop_count;
-};
-/* CM static */ RoadStopGUISettings _roadstop_gui_settings;
+// 	RoadStopClassID roadstop_class;
+// 	uint16_t roadstop_type;
+// 	uint16_t roadstop_count;
+// };
+RoadStopGUISettings _roadstop_gui_settings;
 
 /**
  * Check whether a road stop type can be built.
