@@ -2548,3 +2548,10 @@ void ShowSelectRoadWaypointIfNeeded(TileArea ta, StationPickerCmdProc proc)
 {
 	ShowSelectBaseStationIfNeeded<RoadWaypointTypeFilter>(ta, std::move(proc));
 }
+
+namespace citymania {
+	void ShowSelectStationWindow(TileArea ta, StationPickerCmdProc&& proc) {
+		if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
+		new SelectStationWindow<StationTypeFilter>(_select_station_desc, ta, std::move(proc));
+	}
+}

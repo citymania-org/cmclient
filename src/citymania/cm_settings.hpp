@@ -11,13 +11,13 @@
 
 namespace citymania {
 
-enum class ModKey : uint8 {
-    NONE = 0,
-    SHIFT = 1,
-    CTRL = 2,
-    ALT = 3,
-    COMMAND = 4,
-    END,
+enum class ModKey : uint8_t {
+    None = 0,
+    Shift = 1,
+    Ctrl = 2,
+    Alt = 3,
+    Command = 4,
+    End,
 };
 
 struct EconomySettings {

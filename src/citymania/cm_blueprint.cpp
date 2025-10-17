@@ -4,13 +4,14 @@
 
 #include "cm_commands.hpp"
 #include "cm_highlight.hpp"
+#include "cm_station_gui.hpp"  // RailStationGUISettings, IterateStation
 
 #include "../console_func.h"
 #include "../command_func.h"
 #include "../error.h"
 #include "../debug.h"
 #include "../direction_type.h"
-#include "../map_func.h"
+
 #include "../rail_map.h"
 #include "../station_cmd.h"
 #include "../station_map.h"
@@ -27,12 +28,6 @@
 extern TileHighlightData _thd;
 extern RailType _cur_railtype;
 
-// from rail_gui.cpp
-struct StationPickerSelection {
-    StationClassID sel_class; ///< Selected station class.
-    uint16_t sel_type; ///< Selected station type within the class.
-    Axis axis; ///< Selected orientation of the station.
-};
 extern StationPickerSelection _station_gui; ///< Settings of the station picker.
 
 namespace citymania {
@@ -55,22 +50,6 @@ bool operator!=(const TileIndexDiffC &a, const TileIndexDiffC &b) {
     return a.x != b.x || a.y != b.y;
 }
 
-template<typename Func>
-void IterateStation(TileIndex start_tile, Axis axis, uint8_t numtracks, uint8_t plat_len, Func visitor) {
-    auto plat_delta = (axis == AXIS_X ? TileDiffXY(1, 0) : TileDiffXY(0, 1));
-    auto track_delta = (axis == AXIS_Y ? TileDiffXY(1, 0) : TileDiffXY(0, 1));
-    TileIndex tile_track = start_tile;
-    do {
-        TileIndex tile = tile_track;
-        int w = plat_len;
-        do {
-            visitor(tile);
-            tile += plat_delta;
-        } while (--w);
-        tile_track += track_delta;
-    } while (--numtracks);
-}
-
 void Blueprint::Add(TileIndex source_tile, Blueprint::Item item) {
     this->items.push_back(item);
     switch (item.type) {
@@ -85,7 +64,7 @@ void Blueprint::Add(TileIndex source_tile, Blueprint::Item item) {
         }
         case Item::Type::RAIL_STATION_PART:
             IterateStation(source_tile, item.u.rail.station_part.axis, item.u.rail.station_part.numtracks, item.u.rail.station_part.plat_len,
-                [&](TileIndex tile) {
+                [&](TileIndex tile, int, int) {
                     this->source_tiles.insert(tile);
                 }
             );
@@ -257,12 +236,14 @@ std::multimap<TileIndex, ObjectTileHighlight> Blueprint::GetTiles(TileIndex tile
             case Item::Type::RAIL_STATION_PART: {
                 RailStationTileLayout stl{nullptr, o.u.rail.station_part.numtracks, o.u.rail.station_part.plat_len};  // TODO statspec
                 auto it = stl.begin();
+                TileArea area{tile, o.u.rail.station_part.numtracks, o.u.rail.station_part.plat_len};
+                if (o.u.rail.station_part.axis == AXIS_X) std::swap(area.w, area.h);
 
                 if (palette == CM_PALETTE_TINT_WHITE && can_build_station_sign.find(o.u.rail.station_part.id) == can_build_station_sign.end())
                     palette = CM_PALETTE_TINT_ORANGE_DEEP;
                 IterateStation(otile, o.u.rail.station_part.axis, o.u.rail.station_part.numtracks, o.u.rail.station_part.plat_len,
-                    [&](TileIndex tile) {
-                        add_tile(tile, ObjectTileHighlight::make_rail_station(palette, o.u.rail.station_part.axis, *it++));
+                    [&](TileIndex tile, int, int) {
+                        add_tile(tile, ObjectTileHighlight::make_rail_station(palette, o.u.rail.station_part.axis, *it++, STAT_CLASS_DFLT, 0, area));
                     }
                 );
                 break;

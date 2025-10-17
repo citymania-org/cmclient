@@ -181,82 +181,6 @@ static const StringID _order_conditional_condition[] = {
 	STR_ORDER_CONDITIONAL_COMPARATOR_IS_FALSE,
 };
 
-enum class FeederOrderMod{
-	NONE,
-	LOAD,
-	UNLOAD
-};
-
-struct OrdersFromSettings {
-	OrderLoadFlags load;
-	OrderUnloadFlags unload;
-	FeederOrderMod mod;
-};
-
-enum  GetOrderFromSettingsTypes {
-	GOFS_NONE = 0,
-	GOFS_FULL,
-	GOFS_XFER,
-	GOFS_UNLOAD,
-	GOFS_FEEDLOAD,
-	GOFS_FEEDUNLOAD,
-	GOFS_NOLOAD
-};
-
-#define GOFSFEEDER_ORDERMOD_RESET gofsfeeder_ordermod = GOFS_FEEDER_NULL
-
-
-/* fetch and compute orders set from settings */
-
-static OrdersFromSettings GetOrdersFromSettings(const Vehicle *v, uint8 setting)
-{
-	OrdersFromSettings res = {
-		OLF_LOAD_IF_POSSIBLE,
-		OUF_UNLOAD_IF_POSSIBLE,
-		FeederOrderMod::NONE
-	};
-
-	switch(setting) {
-
-	case GOFS_FEEDLOAD:
-		if (v->GetNumOrders() > 0) res.mod = FeederOrderMod::LOAD;
-		res.unload = OUFB_NO_UNLOAD;
-		res.load = OLF_FULL_LOAD_ANY;
-		break;
-	case GOFS_FULL:
-		res.load = OLF_FULL_LOAD_ANY;
-		break;
-
-	case GOFS_UNLOAD:
-		res.unload = OUFB_UNLOAD;
-		if (_settings_client.gui.cm_no_loading_on_unload_order)
-			res.load = OLFB_NO_LOAD;
-		break;
-
-	case GOFS_FEEDUNLOAD:
-		if (v->GetNumOrders() > 0) res.mod = FeederOrderMod::UNLOAD;
-		res.unload = OUFB_TRANSFER;
-		res.load = OLFB_NO_LOAD;
-		break;
-
-	case GOFS_XFER:
-		res.unload = OUFB_TRANSFER;
-		if (_settings_client.gui.cm_no_loading_on_transfer_order)
-			res.load = OLFB_NO_LOAD;
-		break;
-
-	case GOFS_NOLOAD:
-		res.load = OLFB_NO_LOAD;
-		break;
-
-	case GOFS_NONE:
-		break;
-
-	default: NOT_REACHED();
-	}
-	return res;
-}
-
 extern uint ConvertSpeedToDisplaySpeed(uint speed, VehicleType type);
 extern uint ConvertDisplaySpeedToSpeed(uint speed, VehicleType type);
 
@@ -454,7 +378,7 @@ void DrawOrderString(const Vehicle *v, const Order *order, VehicleOrderID order_
  * @param tile Tile being queried.
  * @return The order associated to vehicle v in given tile (or empty order if vehicle can do nothing in the tile).
  */
-static std::pair<Order, FeederOrderMod> GetOrderCmdFromTile(const Vehicle *v, TileIndex tile)
+static std::pair<Order, citymania::FeederOrderMod> GetOrderCmdFromTile(const Vehicle *v, TileIndex tile)
 {
 	Order order{};
 
@@ -464,18 +388,10 @@ static std::pair<Order, FeederOrderMod> GetOrderCmdFromTile(const Vehicle *v, Ti
 				ODTFB_PART_OF_ORDERS,
 				(_settings_client.gui.new_nonstop && v->IsGroundVehicle()) ? ONSF_NO_STOP_AT_INTERMEDIATE_STATIONS : ONSF_STOP_EVERYWHERE);
 
-		uint8 os = 0;
-		if (_ctrl_pressed) {
-			if (_shift_pressed) os = _settings_client.gui.cm_ctrl_shift_depot_mod;
-			else os = _settings_client.gui.cm_ctrl_depot_mod;
-		} else if (_shift_pressed) {
-			os = _settings_client.gui.cm_shift_depot_mod;
-		}
-
-		switch (os) {
-			case 1: order.SetDepotOrderType((OrderDepotTypeFlags)(order.GetDepotOrderType() | ODTFB_SERVICE)); break;
-			case 2: order.SetDepotActionType(ODATFB_HALT); break;
-			case 3: order.SetDepotActionType(ODATFB_UNBUNCH); break;
+		switch (citymania::GetDepotOrderModAction()) {
+			case citymania::DepotOrderModAction::Service: order.SetDepotOrderType((OrderDepotTypeFlags)(order.GetDepotOrderType() | ODTFB_SERVICE)); break;
+			case citymania::DepotOrderModAction::Stop: order.SetDepotActionType(ODATFB_HALT); break;
+			case citymania::DepotOrderModAction::Unbunch: order.SetDepotActionType(ODATFB_UNBUNCH); break;
 			default: break;
 		}
 
@@ -499,14 +415,14 @@ static std::pair<Order, FeederOrderMod> GetOrderCmdFromTile(const Vehicle *v, Ti
 			/* Return an empty order to bail out. */
 			if (failed) {
 				order.Free();
-				return {order, FeederOrderMod::NONE};;
+				return {order, citymania::FeederOrderMod::None};
 			}
 
 			/* Now we are allowed to set the action type. */
 			// order.SetDepotActionType(ODATFB_UNBUNCH);
 		}
 
-		return {order, FeederOrderMod::NONE};
+		return {order, citymania::FeederOrderMod::None};
 	}
 
 	/* check rail waypoint */
@@ -515,7 +431,7 @@ static std::pair<Order, FeederOrderMod> GetOrderCmdFromTile(const Vehicle *v, Ti
 			IsTileOwner(tile, _local_company)) {
 		order.MakeGoToWaypoint(GetStationIndex(tile));
 		if (_settings_client.gui.new_nonstop != citymania::_fn_mod) order.SetNonStopType(ONSF_NO_STOP_AT_ANY_STATION);
-		return std::make_pair(order, FeederOrderMod::NONE);
+		return {order, citymania::FeederOrderMod::None};
 	}
 
 	/* check road waypoint */
@@ -524,13 +440,13 @@ static std::pair<Order, FeederOrderMod> GetOrderCmdFromTile(const Vehicle *v, Ti
 			IsTileOwner(tile, _local_company)) {
 		order.MakeGoToWaypoint(GetStationIndex(tile));
 		if (_settings_client.gui.new_nonstop != _ctrl_pressed) order.SetNonStopType(ONSF_NO_STOP_AT_ANY_STATION);
-		return std::make_pair(order, FeederOrderMod::NONE);
+		return std::make_pair(order, citymania::FeederOrderMod::None);
 	}
 
 	/* check buoy (no ownership) */
 	if (IsBuoyTile(tile) && v->type == VEH_SHIP) {
 		order.MakeGoToWaypoint(GetStationIndex(tile));
-		return std::make_pair(order, FeederOrderMod::NONE);
+		return std::make_pair(order, citymania::FeederOrderMod::None);
 	}
 
 	/* check for station or industry with neutral station */
@@ -555,44 +471,22 @@ static std::pair<Order, FeederOrderMod> GetOrderCmdFromTile(const Vehicle *v, Ti
 			if (st->facilities.Any(facil)) {
 				order.MakeGoToStation(st->index);
 
-				uint8 os = 0xff;
-				if (_ctrl_pressed) {
-					if (_shift_pressed)
-						os = _settings_client.gui.cm_ctrl_shift_station_mod;
-					else if (_alt_pressed)
-						os = _settings_client.gui.cm_alt_ctrl_station_mod;
-					else
-						os = _settings_client.gui.cm_ctrl_station_mod;
-				}
-				else if (_shift_pressed) {
-					if (_alt_pressed)
-						os = _settings_client.gui.cm_alt_shift_station_mod;
-					else
-						os = _settings_client.gui.cm_shift_station_mod;
-				}
-				else if (_alt_pressed)
-					os = _settings_client.gui.cm_alt_station_mod;
-
-				auto feeder_mod = FeederOrderMod::NONE;
-				if (os != 0xff) {
-					auto ofs = GetOrdersFromSettings(v, os);
-					if (ofs.load != (enum OrderLoadFlags)-1)
-						order.SetLoadType(ofs.load);
-					if (ofs.unload != (enum OrderUnloadFlags)-1)
-					order.SetUnloadType(ofs.unload);
-					feeder_mod = ofs.mod;
-				}
+				auto feeder_mod = citymania::FeederOrderMod::None;
+				auto ofs = citymania::GetStationModOrders(v);
+				order.SetLoadType(ofs.load);
+				order.SetUnloadType(ofs.unload);
+				feeder_mod = ofs.mod;
 
 				if (_settings_client.gui.new_nonstop && v->IsGroundVehicle()) order.SetNonStopType(ONSF_NO_STOP_AT_INTERMEDIATE_STATIONS);
 				order.SetStopLocation(v->type == VEH_TRAIN ? (OrderStopLocation)(_settings_client.gui.stop_location) : OSL_PLATFORM_FAR_END);
-				return std::make_pair(order, feeder_mod);
+				return {order, feeder_mod};
 			}
 		}
 	}
 
 	/* not found */
 	order.Free();
-	return std::make_pair(order, FeederOrderMod::NONE);
+	return {order, citymania::FeederOrderMod::None};
 }
 
 /** Hotkeys for order window. */
@@ -1622,8 +1516,8 @@ public:
 			auto feeder_mod = res.second;
 			if (cmd.IsType(OT_NOTHING)) return;
 
-			if (feeder_mod != FeederOrderMod::NONE) {
-				if (feeder_mod == FeederOrderMod::LOAD) {
+			if (feeder_mod != citymania::FeederOrderMod::None) {
+				if (feeder_mod == citymania::FeederOrderMod::Load) {
 					if (citymania::cmd::InsertOrder(this->vehicle->tile, this->vehicle->index, 1, cmd)
 							.with_error(STR_ERROR_CAN_T_INSERT_NEW_ORDER)
 							.set_auto()
@@ -1634,7 +1528,7 @@ public:
 							.post();
 					}
 
-				} else if (feeder_mod == FeederOrderMod::UNLOAD) { // still flushes the whole order table
+				} else if (feeder_mod == citymania::FeederOrderMod::Unload) { // still flushes the whole order table
 					if (citymania::cmd::InsertOrder(this->vehicle->tile, this->vehicle->index, this->vehicle->GetNumOrders(), cmd)
 							.with_error(STR_ERROR_CAN_T_INSERT_NEW_ORDER)
 							.set_auto()
