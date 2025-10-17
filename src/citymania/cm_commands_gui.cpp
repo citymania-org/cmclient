@@ -786,6 +786,8 @@ static const NWidgetPart _nested_login_window_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY), SetToolTip(CM_STR_LOGIN_WINDOW_CAPTION),
+		NWidget(WWT_SHADEBOX, COLOUR_GREY),
+		NWidget(WWT_DEFSIZEBOX, COLOUR_GREY),
 		NWidget(WWT_STICKYBOX, COLOUR_GREY),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY), SetResize(1, 0),
@@ -839,7 +841,7 @@ static const NWidgetPart _nested_login_window_widgets[] = {
 };
 
 static WindowDesc _login_window_desc(
-	WDP_CENTER, {}, 0, 0,
+	WDP_CENTER, "cm_commands", 0, 0,
 	CM_WC_LOGIN_WINDOW, WC_NONE,
 	WindowDefaultFlag::Construction,
 	_nested_login_window_widgets

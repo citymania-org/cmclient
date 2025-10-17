@@ -2045,7 +2045,7 @@ static constexpr NWidgetPart _nested_build_depot_widgets[] = {
 };
 
 static WindowDesc _build_depot_desc(
-	WDP_AUTO, "cm_build_rail_depot", 0, 0,
+	WDP_AUTO, {}, 0, 0,
 	WC_BUILD_DEPOT, WC_BUILD_TOOLBAR,
 	WindowDefaultFlag::Construction,
 	_nested_build_depot_widgets,
