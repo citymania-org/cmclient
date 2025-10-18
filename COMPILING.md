@@ -94,8 +94,9 @@ cmake ..
 make
 ```
 
-For more information on how to use CMake (including how to make Release builds),
-we urge you to read [their excellent manual](https://cmake.org/cmake/help/latest/guide/user-interaction/index.html).
+Unlike vanilla OpenTTD this will make a Release build of CityMania patchpack by default. If you want debug one use `cmake -DCMAKE_BUILD_TYPE=Debug -DOPTION_USE_ASSERTS=ON ..`
+
+For more information on how to use CMake, we urge you to read [their excellent manual](https://cmake.org/cmake/help/latest/guide/user-interaction/index.html).
 
 ## CMake Options
 
@@ -107,9 +108,8 @@ builds.
    in case of a crash.
 - `-DOPTION_DEDICATED=ON`: build OpenTTD without a GUI. Useful if you are
    running a headless server, as it requires less libraries to operate.
-- `-DOPTION_USE_ASSERTS=OFF`: disable asserts. Use with care, as assert
-   statements capture early signs of trouble. Release builds have them
-   disabled by default.
+- `-DOPTION_USE_ASSERTS=ON`: enable asserts. Useful for debugging, as assert
+   statements capture early signs of trouble. 
 - `-DOPTION_TOOLS_ONLY=ON`: only build tools like `strgen`. Does not build
    the game itself. Useful for cross-compiling.
 
