@@ -101,7 +101,8 @@ jobs:
         arch: ${{ matrix.host }}
 
     - name: Build (with installer)
-      if: inputs.is_tag == 'true'
+      if: ${{ false }}  # CM doesn't do installer
+      # if: inputs.is_tag == 'true'
       shell: bash
       run: |
         mkdir build
@@ -131,7 +132,7 @@ jobs:
         AZURE_CODESIGN_PROFILE_NAME: ${{ secrets.AZURE_CODESIGN_PROFILE_NAME }}
 
     - name: Build (without installer)
-      if: inputs.is_tag != 'true'
+      # if: inputs.is_tag != 'true' CM always builds without
       shell: bash
       run: |
         mkdir build
@@ -192,7 +193,8 @@ jobs:
         echo "::endgroup::"
 
     - name: Sign installer
-      if: inputs.is_tag == 'true'
+      if: ${{ false }}  # CM doesn't do installer
+      #  if: inputs.is_tag == 'true'
       shell: bash
       run: |
         ${GITHUB_WORKSPACE}/os/windows/sign.bat "${GITHUB_WORKSPACE}/build/bundles"
