@@ -64,8 +64,8 @@
 #include "table/town_land.h"
 
 #include "citymania/cm_commands.hpp"
+#include "citymania/cm_event.hpp"
 #include "citymania/cm_highlight.hpp"
-#include "citymania/cm_main.hpp"
 
 #include "safeguards.h"
 #include <optional>
