@@ -283,5 +283,5 @@ void ShowStatusBar()
 
 void CM_RedrawStatusBar() {
 	StatusBarWindow *w = dynamic_cast<StatusBarWindow*>(FindWindowById(WC_STATUS_BAR, 0));
-	w->ReInit();
+	if (w != nullptr) w->ReInit();
 }
