@@ -232,7 +232,9 @@ bool SettingEntry::UpdateFilterState(SettingFilter &filter, bool force_visible)
 	}
 
 	if (visible) {
-		if (filter.type != ST_ALL && sd->GetType() != filter.type) {
+		if (filter.type != ST_ALL &&
+				((filter.type != CM_ST_CITYMANIA || !sd->flags.Test(SettingFlag::CityMania)) &&
+				sd->GetType() != filter.type)) {
 			filter.type_hides = true;
 			visible = false;
 		}
@@ -645,6 +647,7 @@ SettingsContainer &GetSettingsTree()
 			graphics->Add(new SettingEntry("gui.smallmap_land_colour"));
 			graphics->Add(new SettingEntry("gui.linkgraph_colours"));
 			graphics->Add(new SettingEntry("gui.graph_line_thickness"));
+			graphics->Add(new SettingEntry("gui.cm_shaded_trees"));
 		}
 
 		SettingsPage *sound = main->Add(new SettingsPage(STR_CONFIG_SETTING_SOUND));
@@ -670,6 +673,11 @@ SettingsContainer &GetSettingsTree()
 				general->Add(new SettingEntry("gui.window_soft_limit"));
 				general->Add(new SettingEntry("gui.right_click_wnd_close"));
 				general->Add(new SettingEntry("gui.toolbar_dropdown_autoselect"));
+				general->Add(new SettingEntry("gui.cm_pause_after_load"));
+				general->Add(new SettingEntry("gui.cm_fn_mod"));
+				general->Add(new SettingEntry("gui.cm_remove_mod"));
+				general->Add(new SettingEntry("gui.cm_estimate_mod"));
+				general->Add(new SettingEntry("gui.cm_show_apm"));
 			}
 
 			SettingsPage *viewports = interface->Add(new SettingsPage(STR_CONFIG_SETTING_INTERFACE_VIEWPORTS));
@@ -692,6 +700,9 @@ SettingsContainer &GetSettingsTree()
 				viewports->Add(new SettingEntry("gui.measure_tooltip"));
 				viewports->Add(new SettingEntry("gui.loading_indicators"));
 				viewports->Add(new SettingEntry("gui.show_track_reservation"));
+				viewports->Add(new SettingEntry("gui.cm_land_tooltips_for_industries"));
+				viewports->Add(new SettingEntry("gui.cm_land_tooltips_for_stations"));
+				viewports->Add(new SettingEntry("gui.cm_land_tooltips_for_houses"));
 			}
 
 			SettingsPage *construction = interface->Add(new SettingsPage(STR_CONFIG_SETTING_INTERFACE_CONSTRUCTION));
@@ -704,6 +715,12 @@ SettingsContainer &GetSettingsTree()
 				construction->Add(new SettingEntry("gui.cycle_signal_types"));
 				construction->Add(new SettingEntry("gui.drag_signals_fixed_distance"));
 				construction->Add(new SettingEntry("gui.auto_remove_signals"));
+				construction->Add(new SettingEntry("gui.cm_keep_depot_tools"));
+				construction->Add(new SettingEntry("gui.cm_open_vehicle_for_shared_clone"));
+				construction->Add(new SettingEntry("gui.cm_open_orders_for_new_vehicles"));
+				construction->Add(new SettingEntry("gui.cm_use_improved_station_join"));
+				construction->Add(new SettingEntry("gui.cm_enable_polyrail_terraform"));
+				construction->Add(new SettingEntry("gui.cm_invert_fn_for_signal_drag"));
 			}
 
 			interface->Add(new SettingEntry("gui.toolbar_pos"));
@@ -714,6 +731,9 @@ SettingsContainer &GetSettingsTree()
 			interface->Add(new SettingEntry("gui.timetable_arrival_departure"));
 			interface->Add(new SettingEntry("gui.show_newgrf_name"));
 			interface->Add(new SettingEntry("gui.show_cargo_in_vehicle_lists"));
+			interface->Add(new SettingEntry("gui.cm_powerfund_money"));
+			interface->Add(new SettingEntry("gui.cm_powerfund_houses"));
+			interface->Add(new SettingEntry("gui.cm_graph_background"));
 		}
 
 		SettingsPage *advisors = main->Add(new SettingsPage(STR_CONFIG_SETTING_ADVISORS));
@@ -740,6 +760,7 @@ SettingsContainer &GetSettingsTree()
 			advisors->Add(new SettingEntry("news_display.production_player"));
 			advisors->Add(new SettingEntry("news_display.production_other"));
 			advisors->Add(new SettingEntry("news_display.production_nobody"));
+			advisors->Add(new SettingEntry("gui.cm_runway_too_short_warning"));
 		}
 
 		SettingsPage *company = main->Add(new SettingsPage(STR_CONFIG_SETTING_COMPANY));
@@ -797,6 +818,17 @@ SettingsContainer &GetSettingsTree()
 				orders->Add(new SettingEntry("gui.new_nonstop"));
 				orders->Add(new SettingEntry("gui.quick_goto"));
 				orders->Add(new SettingEntry("gui.stop_location"));
+				orders->Add(new SettingEntry("gui.cm_no_loading_on_transfer_order"));
+				orders->Add(new SettingEntry("gui.cm_no_loading_on_unload_order"));
+				orders->Add(new SettingEntry("gui.cm_ctrl_station_mod"));
+				orders->Add(new SettingEntry("gui.cm_shift_station_mod"));
+				orders->Add(new SettingEntry("gui.cm_ctrl_shift_station_mod"));
+				orders->Add(new SettingEntry("gui.cm_alt_station_mod"));
+				orders->Add(new SettingEntry("gui.cm_alt_shift_station_mod"));
+				orders->Add(new SettingEntry("gui.cm_alt_ctrl_station_mod"));
+				orders->Add(new SettingEntry("gui.cm_ctrl_depot_mod"));
+				orders->Add(new SettingEntry("gui.cm_shift_depot_mod"));
+				orders->Add(new SettingEntry("gui.cm_ctrl_shift_depot_mod"));
 			}
 		}
 

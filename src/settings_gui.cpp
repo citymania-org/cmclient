@@ -584,6 +584,7 @@ struct GameOptionsWindow : Window {
 				list.push_back(MakeDropDownListStringItem(_game_mode == GM_MENU ? STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU : STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME, ST_GAME));
 				list.push_back(MakeDropDownListStringItem(_game_mode == GM_MENU ? STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU : STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME, ST_COMPANY));
 				list.push_back(MakeDropDownListStringItem(STR_CONFIG_SETTING_TYPE_DROPDOWN_CLIENT, ST_CLIENT));
+				list.push_back(MakeDropDownListStringItem(CM_STR_CONFIG_SETTING_TYPE_DROPDOWN_CITYMANIA, CM_ST_CITYMANIA));
 				break;
 		}
 
@@ -644,6 +645,7 @@ struct GameOptionsWindow : Window {
 					case ST_GAME:    return GetString(_game_mode == GM_MENU ? STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU : STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME);
 					case ST_COMPANY: return GetString(_game_mode == GM_MENU ? STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU : STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME);
 					case ST_CLIENT:  return GetString(STR_CONFIG_SETTING_TYPE_DROPDOWN_CLIENT);
+					case CM_ST_CITYMANIA: return GetString(CM_STR_CONFIG_SETTING_TYPE_DROPDOWN_CITYMANIA);
 					default:         return GetString(STR_CONFIG_SETTING_TYPE_DROPDOWN_ALL);
 				}
 				break;
