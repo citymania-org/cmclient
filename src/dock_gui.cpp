@@ -350,7 +350,7 @@ struct BuildDocksToolbarWindow : Window {
  * Nested widget parts of docks toolbar, game version.
  * Position of #WID_DT_RIVER widget has changed.
  */
-static constexpr NWidgetPart _nested_build_docks_toolbar_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_build_docks_toolbar_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetStringTip(STR_WATERWAYS_TOOLBAR_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -395,7 +395,7 @@ Window *ShowBuildDocksToolbar()
  * Nested widget parts of docks toolbar, scenario editor version.
  * Positions of #WID_DT_DEPOT, #WID_DT_STATION, and #WID_DT_BUOY widgets have changed.
  */
-static constexpr NWidgetPart _nested_build_docks_scen_toolbar_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_build_docks_scen_toolbar_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetStringTip(STR_WATERWAYS_TOOLBAR_CAPTION_SE, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -501,7 +501,7 @@ public:
 };
 
 /** Nested widget parts of a build dock station window. */
-static constexpr NWidgetPart _nested_build_dock_station_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_build_dock_station_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetStringTip(STR_STATION_BUILD_DOCK_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -602,7 +602,7 @@ public:
 	}
 };
 
-static constexpr NWidgetPart _nested_build_docks_depot_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_build_docks_depot_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetStringTip(STR_DEPOT_BUILD_SHIP_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),

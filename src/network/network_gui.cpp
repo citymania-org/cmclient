@@ -887,7 +887,7 @@ static std::unique_ptr<NWidgetBase> MakeResizableHeader()
 	return std::make_unique<NWidgetServerListHeader>();
 }
 
-static constexpr NWidgetPart _nested_network_game_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_network_game_widgets = {
 	/* TOP */
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_LIGHT_BLUE),
@@ -1172,7 +1172,7 @@ struct NetworkStartServerWindow : public Window {
 	}
 };
 
-static constexpr NWidgetPart _nested_network_start_server_window_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_network_start_server_window_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_LIGHT_BLUE),
 		NWidget(WWT_CAPTION, COLOUR_LIGHT_BLUE), SetStringTip(STR_NETWORK_START_SERVER_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -1260,7 +1260,7 @@ static void ShowNetworkStartServerWindow()
 
 // CM extern void DrawCompanyIcon(CompanyID cid, int x, int y);
 
-static constexpr NWidgetPart _nested_client_list_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_client_list_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY), SetStringTip(STR_NETWORK_CLIENT_LIST_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -2202,7 +2202,7 @@ struct NetworkJoinStatusWindow : Window {
 	}
 };
 
-static constexpr NWidgetPart _nested_network_join_status_window_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_network_join_status_window_widgets = {
 	NWidget(WWT_CAPTION, COLOUR_GREY), SetStringTip(STR_NETWORK_CONNECTING_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 	NWidget(WWT_PANEL, COLOUR_GREY),
 		NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_wide, 0), SetPadding(WidgetDimensions::unscaled.modalpopup),
@@ -2303,7 +2303,7 @@ struct NetworkAskRelayWindow : public Window {
 	}
 };
 
-static constexpr NWidgetPart _nested_network_ask_relay_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_network_ask_relay_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_RED),
 		NWidget(WWT_CAPTION, COLOUR_RED, WID_NAR_CAPTION), SetStringTip(STR_NETWORK_ASK_RELAY_CAPTION),
@@ -2398,7 +2398,7 @@ struct NetworkAskSurveyWindow : public Window {
 	}
 };
 
-static constexpr NWidgetPart _nested_network_ask_survey_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_network_ask_survey_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_NAS_CAPTION), SetStringTip(STR_NETWORK_ASK_SURVEY_CAPTION),

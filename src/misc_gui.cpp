@@ -61,8 +61,10 @@ enum OskActivation : uint8_t {
 	OSKA_IMMEDIATELY,        ///< Focusing click already opens OSK.
 };
 
-static const NWidgetPart _nested_land_info_widgets[] = {
-	NWidget(WWT_PANEL, COLOUR_GREY, WID_LI_BACKGROUND), SetMinimalSize(64, 32),	EndContainer(),
+static std::initializer_list<NWidgetPart> _nested_land_info_widgets = {
+	NWidget(WWT_PANEL, COLOUR_GREY, WID_LI_BACKGROUND),
+		SetMinimalSize(64, 32),
+	EndContainer(),
 };
 
 static WindowDesc _land_info_desc(
@@ -356,7 +358,7 @@ void ShowLandInfo(TileIndex tile, TileIndex end_tile)
 	new LandInfoWindow(tile, end_tile);
 }
 
-static constexpr NWidgetPart _nested_about_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_about_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY), SetStringTip(STR_ABOUT_OPENTTD, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -623,7 +625,7 @@ void HideFillingPercent(TextEffectID *te_id)
 	*te_id = INVALID_TE_ID;
 }
 
-static constexpr NWidgetPart _nested_tooltips_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_tooltips_widgets = {
 	NWidget(WWT_EMPTY, INVALID_COLOUR, WID_TT_BACKGROUND),
 };
 
@@ -1012,7 +1014,7 @@ struct QueryStringWindow : public Window
 	}
 };
 
-static constexpr NWidgetPart _nested_query_string_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_query_string_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_QS_CAPTION), SetTextStyle(TC_WHITE),
@@ -1150,7 +1152,7 @@ struct QueryWindow : public Window {
 	}
 };
 
-static constexpr NWidgetPart _nested_query_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_query_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_RED),
 		NWidget(WWT_CAPTION, COLOUR_RED, WID_Q_CAPTION),

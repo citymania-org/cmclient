@@ -934,7 +934,7 @@ struct BuildRoadToolbarWindow : Window {
 	}, TramToolbarGlobalHotkeys};
 };
 
-static constexpr NWidgetPart _nested_build_road_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_build_road_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN, WID_ROT_CAPTION), SetTextStyle(TC_WHITE),
@@ -981,7 +981,7 @@ static WindowDesc _build_road_desc(
 	&BuildRoadToolbarWindow::road_hotkeys
 );
 
-static constexpr NWidgetPart _nested_build_tramway_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_build_tramway_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN, WID_ROT_CAPTION), SetTextStyle(TC_WHITE),
@@ -1044,7 +1044,7 @@ Window *ShowBuildRoadToolbar(RoadType roadtype)
 	return AllocateWindowDescFront<BuildRoadToolbarWindow>(RoadTypeIsRoad(_cur_roadtype) ? _build_road_desc : _build_tramway_desc, TRANSPORT_ROAD);
 }
 
-static constexpr NWidgetPart _nested_build_road_scen_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_build_road_scen_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN, WID_ROT_CAPTION), SetTextStyle(TC_WHITE),
@@ -1083,7 +1083,7 @@ static WindowDesc _build_road_scen_desc(
 	&BuildRoadToolbarWindow::road_hotkeys
 );
 
-static constexpr NWidgetPart _nested_build_tramway_scen_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_build_tramway_scen_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN, WID_ROT_CAPTION), SetTextStyle(TC_WHITE),
@@ -1236,7 +1236,7 @@ public:
 
 };
 
-static constexpr NWidgetPart _nested_build_road_depot_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_build_road_depot_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN, WID_BROD_CAPTION), SetStringTip(STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -1634,7 +1634,7 @@ public:
 };
 
 /** Widget definition of the build road station window */
-static constexpr NWidgetPart _nested_road_station_picker_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_road_station_picker_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION,  COLOUR_DARK_GREEN, WID_BROS_CAPTION),
@@ -1703,7 +1703,7 @@ static WindowDesc _road_station_picker_desc(
 );
 
 /** Widget definition of the build tram station window */
-static constexpr NWidgetPart _nested_tram_station_picker_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_tram_station_picker_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION,  COLOUR_DARK_GREEN, WID_BROS_CAPTION),
@@ -1848,7 +1848,7 @@ struct BuildRoadWaypointWindow : public PickerWindow {
 };
 
 /** Nested widget definition for the build NewGRF road waypoint window */
-static constexpr NWidgetPart _nested_build_road_waypoint_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_build_road_waypoint_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetStringTip(STR_WAYPOINT_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
