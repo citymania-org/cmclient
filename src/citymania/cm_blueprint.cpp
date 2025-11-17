@@ -426,16 +426,16 @@ void BlueprintCopyArea(TileIndex start, TileIndex end) {
 
             case MP_RAILWAY:
                 switch (GetRailTileType(tile)) {
-                    case RAIL_TILE_DEPOT: {
+                    case RailTileType::Depot: {
                         Blueprint::Item bi(Blueprint::Item::Type::RAIL_DEPOT, td);
                         bi.u.rail.depot.ddir = GetRailDepotDirection(tile);
                         blueprint->Add(tile, bi);
                         break;
                     }
-                    case RAIL_TILE_SIGNALS:
+                    case RailTileType::Signals:
                         BlueprintAddSignals(blueprint, tile, td);
                         [[fallthrough]];
-                    case RAIL_TILE_NORMAL:
+                    case RailTileType::Normal:
                         BlueprintAddTracks(blueprint, tile, td, ta, track_tiles);
                         break;
                     default:

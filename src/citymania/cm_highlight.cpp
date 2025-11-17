@@ -551,7 +551,7 @@ ObjectHighlight ObjectHighlight::make_dock(TileIndex tile, DiagDirection orienta
  */
 void ObjectHighlight::PlaceExtraDepotRail(TileIndex tile, DiagDirection dir, Track track)
 {
-    if (GetRailTileType(tile) != RAIL_TILE_NORMAL) return;
+    if (GetRailTileType(tile) != RailTileType::Normal) return;
     if ((GetTrackBits(tile) & DiagdirReachesTracks(dir)) == 0) return;
 
     this->AddTile(tile, ObjectTileHighlight::make_rail_track(CM_PALETTE_TINT_WHITE, track));
