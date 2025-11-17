@@ -278,7 +278,7 @@ static RoadBits FindRoadsToConnect(TileIndex tile, RoadType roadtype) {
     for (ddir = DIAGDIR_BEGIN; ddir < DIAGDIR_END; ddir++) {
         TileIndex cur_tile = TileAddByDiagDir(tile,  ddir);
         if (GetTileType(cur_tile) == MP_ROAD && HasTileRoadType(cur_tile, cur_rtt) &&
-                (GetRoadTileType(cur_tile) == ROAD_TILE_NORMAL)) {
+                (GetRoadTileType(cur_tile) == RoadTileType::Normal)) {
             bits |= DiagDirToRoadBits(ddir);
         }
     }
@@ -288,7 +288,7 @@ static RoadBits FindRoadsToConnect(TileIndex tile, RoadType roadtype) {
 bool CheckDriveThroughRoadStopDirection(TileArea area, RoadBits r) {
     for (TileIndex tile : area) {
         if (GetTileType(tile) != MP_ROAD) continue;
-        if (GetRoadTileType(tile) != ROAD_TILE_NORMAL) continue;
+        if (GetRoadTileType(tile) != RoadTileType::Normal) continue;
         if (GetAllRoadBits(tile) & ~r) return false;
     }
     return true;
