@@ -279,13 +279,13 @@ struct BuildDocksToolbarWindow : Window {
 					break;
 				case DDSP_CREATE_WATER:
 					if (_game_mode == GM_EDITOR) {
-						Command<CMD_BUILD_CANAL>::Post(STR_ERROR_CAN_T_BUILD_CANALS, CcPlaySound_CONSTRUCTION_WATER, end_tile, start_tile, citymania::_fn_mod ? WATER_CLASS_SEA : WATER_CLASS_CANAL, false);
+						Command<CMD_BUILD_CANAL>::Post(STR_ERROR_CAN_T_BUILD_CANALS, CcPlaySound_CONSTRUCTION_WATER, end_tile, start_tile, citymania::_fn_mod ? WaterClass::Sea : WaterClass::Canal, false);
 					} else {
-						Command<CMD_BUILD_CANAL>::Post(STR_ERROR_CAN_T_BUILD_CANALS, CcPlaySound_CONSTRUCTION_WATER, end_tile, start_tile, WATER_CLASS_CANAL, citymania::_fn_mod);
+						Command<CMD_BUILD_CANAL>::Post(STR_ERROR_CAN_T_BUILD_CANALS, CcPlaySound_CONSTRUCTION_WATER, end_tile, start_tile, WaterClass::Canal, citymania::_fn_mod);
 					}
 					break;
 				case DDSP_CREATE_RIVER:
-					Command<CMD_BUILD_CANAL>::Post(STR_ERROR_CAN_T_PLACE_RIVERS, CcPlaySound_CONSTRUCTION_WATER, end_tile, start_tile, WATER_CLASS_RIVER, citymania::_fn_mod);
+					Command<CMD_BUILD_CANAL>::Post(STR_ERROR_CAN_T_PLACE_RIVERS, CcPlaySound_CONSTRUCTION_WATER, end_tile, start_tile, WaterClass::River, citymania::_fn_mod);
 					break;
 
 				default: break;
@@ -583,8 +583,8 @@ public:
 					int y = (ir.Height() - ScaleSpriteTrad(64)) / 2;
 					int x1 = ScaleSpriteTrad(63);
 					int x2 = ScaleSpriteTrad(31);
-					DrawShipDepotSprite(x + (axis == AXIS_X ? x1 : x2), y + ScaleSpriteTrad(17), axis, DEPOT_PART_NORTH);
-					DrawShipDepotSprite(x + (axis == AXIS_X ? x2 : x1), y + ScaleSpriteTrad(33), axis, DEPOT_PART_SOUTH);
+					DrawShipDepotSprite(x + (axis == AXIS_X ? x1 : x2), y + ScaleSpriteTrad(17), axis, DepotPart::North);
+					DrawShipDepotSprite(x + (axis == AXIS_X ? x2 : x1), y + ScaleSpriteTrad(33), axis, DepotPart::South);
 				}
 				break;
 			}
