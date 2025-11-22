@@ -123,7 +123,7 @@ struct LandTooltipsWindow : public Window
                             ge.GetData().cargo.TotalCount(),
                             ToPercent8(ge.rating)
                         );
-                        size.width = std::max(GetStringBoundingBox(CM_STR_LAND_TOOLTIPS_STATION_CARGO).width + icons_width, size.width);
+                        size.width = std::max(GetStringBoundingBox(str).width + icons_width, size.width);
                     }
                 }
                 break;
