@@ -219,6 +219,7 @@ enum ViewportDragDropSelectionProcess : uint8_t {
 	CM_DDSP_RAIL_BLUEPRINT,
 	CM_DDSP_BLUEPRINT_AREA,       ///< Blueprint area to copy selection	
 	CM_DDSP_BUILD_HOUSE,
+	CM_DDSP_MOVE_SIGN,
 };
 
 
