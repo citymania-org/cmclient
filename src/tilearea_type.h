@@ -69,6 +69,11 @@ struct OrthogonalTileArea {
 		return TILE_ADDXY(this->tile, this->w - 1, this->h - 1);
 	}
 
+	bool CMIsEmpty() const
+	{
+		return this->tile >= Map::Size() || this->w == 0 || this->h == 0;
+	}
+
 	OrthogonalTileIterator begin() const;
 
 	OrthogonalTileIterator end() const;

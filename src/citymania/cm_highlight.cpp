@@ -155,6 +155,38 @@ struct std::hash<citymania::ObjectTileHighlight> {
 };
 
 namespace citymania {
+
+TileArea ClampToVisibleMap(const TileArea &area) {
+    if (area.tile >= Map::Size()) return {};
+    auto x = TileX(area.tile);
+    auto y = TileY(area.tile);
+    uint16_t w = area.w;
+    uint16_t h = area.h;
+    uint16_t border = 0;
+    if (_settings_game.construction.freeform_edges) {
+        if (x == 0) {
+            x = 1;
+            if (w == 0) return {};
+            w -= 1;
+        } else if (x >= Map::SizeX() - 1)
+            return {};
+
+        if (y == 0) {
+            y = 1;
+            if (h == 0) return {};
+            h -= 1;
+        } else if (y >= Map::SizeY() - 1)
+            return {};
+
+        border = 1;
+    }
+    return TileArea{
+        TileXY(x, y),
+        std::min<uint16_t>(w, Map::SizeX() - border - x),
+        std::min<uint16_t>(h, Map::SizeY() - border - y)
+    };
+}
+
 extern CargoArray GetProductionAroundTiles(TileIndex tile, int w, int h, int rad);
 
 extern void (*DrawTileSelectionRect)(const TileInfo *ti, PaletteID pal);
@@ -436,20 +468,22 @@ ObjectHighlight ObjectHighlight::make_rail_depot(TileIndex tile, DiagDirection d
     return oh;
 }
 
-ObjectHighlight ObjectHighlight::make_rail_station(TileIndex start_tile, TileIndex end_tile, Axis axis, StationClassID station_class, uint16_t station_type) {
+ObjectHighlight ObjectHighlight::make_rail_station(TileIndex start_tile, uint16_t w, uint16_t h, Axis axis, StationClassID station_class, uint16_t station_type) {
     auto oh = ObjectHighlight{ObjectHighlight::Type::RAIL_STATION};
     oh.tile = start_tile;
-    oh.end_tile = end_tile;
+    oh.w = w;
+    oh.h = h;
     oh.axis = axis;
     oh.rail_station_class = station_class;
     oh.rail_station_type = station_type;
     return oh;
 }
 
-ObjectHighlight ObjectHighlight::make_road_stop(TileIndex start_tile, TileIndex end_tile, RoadType roadtype, DiagDirection orientation, bool is_truck, RoadStopClassID spec_class, uint16_t spec_index) {
+ObjectHighlight ObjectHighlight::make_road_stop(TileIndex start_tile, uint16_t w, uint16_t h, RoadType roadtype, DiagDirection orientation, bool is_truck, RoadStopClassID spec_class, uint16_t spec_index) {
     auto oh = ObjectHighlight{ObjectHighlight::Type::ROAD_STOP};
     oh.tile = start_tile;
-    oh.end_tile = end_tile;
+    oh.w = w;
+    oh.h = h;
     oh.ddir = orientation;
     oh.roadtype = roadtype;
     oh.is_truck = is_truck;
@@ -539,6 +573,13 @@ static const DiagDirection _place_depot_extra_dir[12] = {
 
 void ObjectHighlight::AddTile(TileIndex tile, ObjectTileHighlight &&oh) {
     if (tile >= Map::Size()) return;
+    if (_settings_game.construction.freeform_edges) {
+        auto x = TileX(tile);
+        auto y = TileY(tile);
+        if (x == 0 || x >= Map::SizeX() - 1) return;
+        if (y == 0 || y >= Map::SizeY() - 1) return;
+    }
+
     this->tiles.insert(std::make_pair(tile, std::move(oh)));
 }
 
@@ -547,6 +588,9 @@ uint16_t GetPurchaseStationCallback(CallbackID callback, uint32_t param1, uint32
 
 std::map<std::tuple<const StationSpec *, Axis, TileIndex, int16_t, int16_t>, std::vector<byte>> _station_layout_cache;
 std::vector<byte> &GetPreviewStationLayout(const StationSpec *statspec, Axis axis, TileArea area) {
+    static std::vector<byte> _empty_layout;
+    if (area.CMIsEmpty()) return _empty_layout;
+
     std::tuple<const StationSpec *, Axis, TileIndex, int16_t, int16_t> key{statspec, axis, area.tile, area.w, area.h};
     auto it = _station_layout_cache.find(key);
     if (it != _station_layout_cache.end()) return it->second;
@@ -625,7 +669,7 @@ void ObjectHighlight::UpdateTiles() {
             break;
         }
         case Type::RAIL_STATION: {
-            auto ta = OrthogonalTileArea(this->tile, this->end_tile);
+            auto ta = OrthogonalTileArea(this->tile, this->w, this->h);
             auto numtracks = ta.w;
             auto plat_len = ta.h;
             if (this->axis == AXIS_X) Swap(numtracks, plat_len);
@@ -645,6 +689,8 @@ void ObjectHighlight::UpdateTiles() {
 
             const StationSpec *statspec = StationClass::Get(this->rail_station_class)->GetSpec(this->rail_station_type);
 
+            ta = ClampToVisibleMap(ta);
+            /* Note: since ta is clamped to map preview may not be accurate, but it's even worse with wrapping. */
             auto layout = GetPreviewStationLayout(statspec, this->axis, ta);
             auto layout_ptr = layout.data();
             for (auto tile : ta) {
@@ -661,7 +707,7 @@ void ObjectHighlight::UpdateTiles() {
             break;
         }
         case Type::ROAD_STOP: {
-            auto ta = OrthogonalTileArea(this->tile, this->end_tile);
+            auto ta = OrthogonalTileArea(this->tile, this->w, this->h);
             this->cost = cmd::BuildRoadStop(
                 this->tile,
                 ta.w,
@@ -676,6 +722,7 @@ void ObjectHighlight::UpdateTiles() {
                 true
             ).test();
             auto palette = (this->cost.Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP);
+            ta = ClampToVisibleMap(ta);
             for (TileIndex tile : ta) {
                 this->AddTile(tile, ObjectTileHighlight::make_road_stop(palette, this->roadtype, this->ddir, this->is_truck, this->road_stop_spec_class, this->road_stop_spec_index));
             }
@@ -706,10 +753,12 @@ void ObjectHighlight::UpdateTiles() {
             const AirportSpec *as = AirportSpec::Get(this->airport_type);
             if (!as->IsAvailable() || this->airport_layout >= as->num_table) break;
             Direction rotation = as->rotation[this->airport_layout];
-            int w = as->size_x;
-            int h = as->size_y;
+            uint16_t w = as->size_x;
+            uint16_t h = as->size_y;
             if (rotation == DIR_E || rotation == DIR_W) Swap(w, h);
+            auto ta = ClampToVisibleMap(TileArea{this->tile, w, h});
             for (AirportTileTableIterator iter(as->table[this->airport_layout], this->tile); iter != INVALID_TILE; ++iter) {
+                if (!ta.Contains(iter)) continue;
                 this->AddTile(iter, ObjectTileHighlight::make_airport_tile(palette, iter.GetStationGfx()));
             }
             break;
@@ -1141,7 +1190,7 @@ struct PreviewStationScopeResolver : public StationScopeResolver {
 
             case 0x68: { // Station info of nearby tiles
                 TileIndex tile = GetNearbyTile(parameter, this->tile, true, this->axis);
-                auto diff = TileIndexToTileIndexDiffC(tile, this->tile);
+                // auto diff = TileIndexToTileIndexDiffC(tile, this->tile);
                 // Debug(misc, 0, "Var68 tile={},{} area={},{} contains={}", diff.x, diff.y, this->area.w, this->area.h, this->area.Contains(tile));
                 if (!this->area.Contains(tile)) return 0xFFFFFFFF;
 
@@ -1237,7 +1286,7 @@ SpriteID GetCustomPreviewStationRelocation(const StationSpec *statspec, uint32_t
 
 void DrawTrainStationSprite(SpriteID palette, const TileInfo *ti, RailType railtype, Axis axis, byte section, StationClassID spec_class, uint16_t spec_index, TileArea area) {
     int32 total_offset = 0;
-    StationGfx gfx = section + (axis == AXIS_X ? 0 : 1);
+    StationGfx gfx = (section & ~1) + (axis == AXIS_X ? 0 : 1);
     const StationSpec *statspec = StationClass::Get(spec_class)->GetSpec(spec_index);
     const NewGRFSpriteLayout *layout = nullptr;
     const DrawTileSprites *t = nullptr;
@@ -1881,7 +1930,7 @@ std::optional<TileArea> ObjectHighlight::GetArea() {
             return TileArea{this->tile, 1, 1};
         case Type::RAIL_STATION:
         case Type::ROAD_STOP:
-            return TileArea{this->tile, this->end_tile};
+            return TileArea{this->tile, this->w, this->h};
         case Type::AIRPORT: {
             const AirportSpec *as = AirportSpec::Get(this->airport_type);
             if (!as->IsAvailable() || this->airport_layout >= as->num_table) return std::nullopt;
@@ -2422,21 +2471,20 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
                || _thd.select_proc == DDSP_BUILD_TRUCKSTOP) {  // station
         if (_thd.size.x >= (int)TILE_SIZE && _thd.size.y >= (int)TILE_SIZE) {
             auto start_tile = TileXY(_thd.new_pos.x / TILE_SIZE, _thd.new_pos.y / TILE_SIZE);
-            auto end_tile = TileXY(
-                std::min((_thd.new_pos.x + _thd.new_size.x) / TILE_SIZE, Map::SizeX()) - 1,
-                std::min((_thd.new_pos.y + _thd.new_size.y) / TILE_SIZE, Map::SizeY()) - 1
-            );
+            auto w = _thd.new_size.x / TILE_SIZE;
+            auto h = _thd.new_size.y / TILE_SIZE;
             if (_thd.select_proc == DDSP_BUILD_STATION)
                 _thd.cm_new = ObjectHighlight::make_rail_station(
                     start_tile,
-                    end_tile,
+                    w,
+                    h,
                     _railstation.orientation,
                     _railstation.station_class,
                     _railstation.station_type
                 );
             else if (_thd.select_proc == DDSP_BUILD_BUSSTOP || _thd.select_proc == DDSP_BUILD_TRUCKSTOP) {
                 auto ddir = _roadstop_gui_settings.orientation;
-                auto ta = TileArea(start_tile, end_tile);
+                auto ta = TileArea(start_tile, w, h);
                 if (pt.x != -1) {
                     if (ddir >= DIAGDIR_END && ddir < STATIONDIR_AUTO) {
                         // When placed on road autorotate anyway
@@ -2455,7 +2503,8 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
                 }
                 _thd.cm_new = ObjectHighlight::make_road_stop(
                     start_tile,
-                    end_tile,
+                    w,
+                    h,
                     _cur_roadtype,
                     ddir,
                     _thd.select_proc == DDSP_BUILD_TRUCKSTOP,

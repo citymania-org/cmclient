@@ -42,6 +42,7 @@ enum ZoningBorder: uint8 {
 };
 DECLARE_ENUM_AS_BIT_SET(ZoningBorder);
 
+TileArea ClampToVisibleMap(const TileArea &area);
 
 class TileHighlight {
 public:
@@ -350,6 +351,8 @@ public:
     RoadType roadtype = INVALID_ROADTYPE;
     bool is_truck = false;
     RoadStopClassID road_stop_spec_class;
+    uint16_t w;
+    uint16_t h;
     uint16_t road_stop_spec_index;
     StationClassID rail_station_class;
     uint16_t rail_station_type;
@@ -377,8 +380,8 @@ public:
     bool operator!=(const ObjectHighlight& oh) const;
 
     static ObjectHighlight make_rail_depot(TileIndex tile, DiagDirection ddir);
-    static ObjectHighlight make_rail_station(TileIndex start_tile, TileIndex end_tile, Axis axis, StationClassID station_class, uint16_t station_type);
-    static ObjectHighlight make_road_stop(TileIndex start_tile, TileIndex end_tile, RoadType roadtype, DiagDirection orientation, bool is_truck, RoadStopClassID spec_class, uint16_t spec_index);
+    static ObjectHighlight make_rail_station(TileIndex start_tile, uint16_t w, uint16_t h, Axis axis, StationClassID station_class, uint16_t station_type);
+    static ObjectHighlight make_road_stop(TileIndex start_tile, uint16_t w, uint16_t h, RoadType roadtype, DiagDirection orientation, bool is_truck, RoadStopClassID spec_class, uint16_t spec_index);
     static ObjectHighlight make_road_depot(TileIndex tile, RoadType roadtype, DiagDirection orientation);
     static ObjectHighlight make_airport(TileIndex start_tile, int airport_type, byte airport_layout);
     static ObjectHighlight make_blueprint(TileIndex tile, sp<Blueprint> blueprint);

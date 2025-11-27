@@ -649,14 +649,14 @@ static HighlightMap PrepareHighilightMap(Station *st_join, std::optional<ObjectH
     if (!_settings_game.station.modified_catchment) rad = CA_UNMODIFIED;
     std::optional<TileArea> rad_area = std::nullopt;
     if (area.has_value()) {
-        auto xarea = area.value();
+        auto xarea = *area;
         xarea.Expand(rad);
-        xarea.ClampToMap();
+        xarea = ClampToVisibleMap(xarea);
         rad_area = xarea;
     }
     if (show_coverage && add_current && rad_area.has_value()) {
         // Add current station coverage
-        for (auto t : rad_area.value()) {
+        for (auto t : *rad_area) {
             auto pal = join_area.Contains(t) ? CM_PALETTE_TINT_CYAN_WHITE : CM_PALETTE_TINT_WHITE;
             hlmap.Add(t, ObjectTileHighlight::make_tint(pal));
             coverage_area.insert(t);
@@ -1132,6 +1132,7 @@ std::optional<TileArea> RailStationBuildTool::SizedPlacementAction::GetArea() co
     auto w = _settings_client.gui.station_numtracks;
     auto h = _settings_client.gui.station_platlength;
     if (_railstation.orientation == AXIS_X) std::swap(w, h);
+    Debug(misc, 0, "GetArea: {} {}", w, h);
     return TileArea{this->cur_tile, w, h};
 }
 
@@ -1185,16 +1186,14 @@ bool RailStationBuildTool::DragNDropPlacementAction::Execute(TileArea area) {
 
 std::optional<ObjectHighlight> RailStationBuildTool::DragNDropPlacementAction::GetObjectHighlight(TileArea area) {
     // Debug(misc, 0, "GetObjectHighlight {} {} ", _railstation.station_class, _railstation.station_type);
-    return ObjectHighlight::make_rail_station(area.tile, area.CMGetEndTile(), _railstation.orientation, _railstation.station_class, _railstation.station_type);
+    return ObjectHighlight::make_rail_station(area.tile, area.w, area.h, _railstation.orientation, _railstation.station_class, _railstation.station_type);
 }
 
 std::optional<ObjectHighlight> RailStationBuildTool::SizedPlacementAction::GetObjectHighlight(TileIndex tile) {
-    TileIndex end_tile;
-    if (_railstation.orientation == AXIS_X)
-        end_tile = TILE_ADDXY(tile, _settings_client.gui.station_platlength - 1, _settings_client.gui.station_numtracks - 1);
-    else
-        end_tile = TILE_ADDXY(tile, _settings_client.gui.station_numtracks - 1, _settings_client.gui.station_platlength - 1);
-    return ObjectHighlight::make_rail_station(tile, end_tile, _railstation.orientation, _railstation.station_class, _railstation.station_type);
+    uint16_t w = _settings_client.gui.station_numtracks;
+    uint16_t h = _settings_client.gui.station_platlength;
+    if (_railstation.orientation == AXIS_X) std::swap(w, h);
+    return ObjectHighlight::make_rail_station(tile, w, h, _railstation.orientation, _railstation.station_class, _railstation.station_type);
 }
 
 // --- RailStationBuildTool implementation ---
@@ -1287,7 +1286,8 @@ bool RoadStopBuildTool::DragNDropPlacementAction::Execute(TileArea area) {
 std::optional<ObjectHighlight> RoadStopBuildTool::DragNDropPlacementAction::GetObjectHighlight(TileArea area) {
     return ObjectHighlight::make_road_stop(
         area.tile,
-        area.CMGetEndTile(),
+        area.w,
+        area.h,
         this->road_type,
         this->ddir,
         this->stop_type == ROADSTOP_TRUCK,
