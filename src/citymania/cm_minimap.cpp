@@ -1430,6 +1430,7 @@ std::string SmallMapWindow::GetWidgetString(WidgetID widget, StringID stringid) 
 
 				switch (this->map_type) {
 					case SMT_INDUSTRY:
+					case CM_SMT_IMBA:
 						/* Industry name must be formatted, since it's not in tiny font in the specs.
 						 * So, draw with a parameter and use the STR_SMALLMAP_INDUSTRY string, which is tiny font */
 						params[0] = tbl->legend;
