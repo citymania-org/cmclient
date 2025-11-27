@@ -1324,12 +1324,11 @@ std::string SmallMapWindow::GetWidgetString(WidgetID widget, StringID stringid) 
 					num_columns++;
 				}
 				height++;
-				// TODO
-				// if (i == SMT_CONTOUR) {
-				// 	str = GetString(tbl->legend, tbl->height * TILE_HEIGHT_STEP);
-				// } else {
-				str = GetString(tbl->legend);
-				// }
+				if (i == SMT_CONTOUR) {
+					str = GetString(tbl->legend, tbl->height * TILE_HEIGHT_STEP);
+				} else {
+					str = GetString(tbl->legend);
+				}
 			}
 			min_width = std::max(GetStringBoundingBox(str).width, min_width);
 		}
