@@ -624,6 +624,69 @@ bool HasSelectedStationHighlight() {
     return _station_highlight_mode != StationHighlightMode::None;
 }
 
+static void UpdateStationAction(std::optional<TileArea> area, up<Command> cmdptr) {
+    if (UseImprovedStationJoin()) return;
+
+    _station_action = StationAction::Create{};
+
+    if (!area.has_value()) return;
+
+    if (_fn_mod) {
+        if (!_settings_game.station.distant_join_stations) return;
+        // TODO ctrl with overbuilding errors out in vanilla, shows empty picker here
+        _station_action = StationAction::Picker{};
+        return;
+    }
+
+    auto cmd = dynamic_cast<cmd::BuildRailStation *>(cmdptr.get());
+    if (cmd == nullptr) return;
+
+    cmd->station_to_join = NEW_STATION;
+    bool new_valid = cmd->test().Succeeded(); // TODO rarely needed
+
+    std::set<StationID> checked_joins;
+    std::vector<StationID> valid_joins; // TODO probably don't need the whole vector
+    area->Expand(1);
+    area->ClampToMap();
+    for (auto tile : *area) {
+        if (IsTileType(tile, MP_STATION) && GetTileOwner(tile) == _local_company) {
+            Station *st = Station::GetByTile(tile);
+
+            auto it = checked_joins.find(st->index);
+            if (st == nullptr || it != checked_joins.end()) continue;
+            checked_joins.insert(it, st->index);
+
+            cmd->station_to_join = st->index;
+            if (cmd->test().Succeeded()) valid_joins.push_back(st->index);
+        }
+    }
+
+    // TODO w/o distant join and no ctrl -> adjacent=false
+
+    // No nearby stations -> create new (default)
+    if (checked_joins.empty()) return;
+
+    if (valid_joins.empty()) {
+        if (_settings_game.station.distant_join_stations && new_valid) {
+            // We can build a new one but require a picker for that
+            _station_action = StationAction::Picker{};
+        }
+        // Error out, create action will do that
+        return;
+    }
+
+    if (valid_joins.size() > 1) {
+        if (_settings_game.station.distant_join_stations) {
+            _station_action = StationAction::Picker{};
+        }
+        // W/o distant join just error out, create action will do that
+        return;
+    }
+
+    // Only one valid join -> do it
+    _station_action = StationAction::Join{valid_joins[0]};
+}
+
 static HighlightMap PrepareHighilightMap(Station *st_join, std::optional<ObjectHighlight> ohl, SpriteID pal, bool show_join_area, bool show_coverage, uint rad) {
     bool add_current = true;  // FIXME
 
@@ -745,21 +808,34 @@ ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, 
     ohl.value().UpdateTiles();
     auto palette = CM_PALETTE_TINT_WHITE;
     auto area = ohl.value().GetArea();
+    StationID to_join = INVALID_STATION;
 
-    auto cost = cmd->test();
-    if (std::holds_alternative<StationAction::Picker>(_station_action)) {
-        palette = CM_PALETTE_TINT_YELLOW;
-    } else {
+    std::visit(Overload{
+        [&](StationAction::Join &a) {
+            to_join = a.station;
+        },
+        [&](StationAction::Create &) {
+            to_join = NEW_STATION;
+        },
+        [&](StationAction::Picker &) {
+            palette = CM_PALETTE_TINT_YELLOW;
+        }
+    }, _station_action);
+
+    if (to_join != INVALID_STATION) {
+        auto station_cmd = dynamic_cast<StationBuildCommand *>(cmd.get());
+        if (station_cmd != nullptr) station_cmd->station_to_join = to_join;
+    }
+
+    CommandCost cost = cmd->test();
+    if (palette != CM_PALETTE_TINT_YELLOW) {
         palette = cost.Succeeded() ? CM_PALETTE_TINT_WHITE : CM_PALETTE_TINT_RED_DEEP;
     }
 
     bool show_coverage = _settings_client.gui.station_show_coverage;
 
-    Station *to_join = nullptr;
-    if (auto mode = std::get_if<StationAction::Join>(&_station_action))
-        to_join = Station::GetIfValid(mode->station);
     auto hlmap = PrepareHighilightMap(
-        to_join,
+        Station::GetIfValid(to_join),
         ohl.value(),
         palette,
         true,
@@ -880,57 +956,7 @@ ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, 
 
 void SizedPlacementAction::Update(Point, TileIndex tile) {
     this->cur_tile = tile;
-    if (UseImprovedStationJoin()) return;
-
-    _station_action = StationAction::Create{};
-
-    auto area = this->GetArea();
-    if (!area.has_value()) return;
-    auto cmdptr = this->GetCommand(tile, INVALID_STATION);
-    auto cmd = dynamic_cast<cmd::BuildRailStation *>(cmdptr.get());
-    if (cmd == nullptr) return;
-
-    if (!_settings_game.station.distant_join_stations && _fn_mod) return;
-
-    area->Expand(1);
-    area->ClampToMap();
-    StationID to_join = INVALID_STATION;
-    bool ambigous_join = false;
-    for (auto tile : area.value()) {
-        if (IsTileType(tile, MP_STATION) && GetTileOwner(tile) == _local_company) {
-            Station *st = Station::GetByTile(tile);
-            if (st == nullptr || st->index == to_join) continue;
-            if (to_join != INVALID_STATION) {
-                to_join = INVALID_STATION;
-                if (_settings_game.station.distant_join_stations)
-                    ambigous_join = true;
-                break;
-            }
-            to_join = st->index;
-            // TODO check for command to return multiple? but also check each to
-            // see if they can be built
-            // if (this->GetCommand(true, st->index)->test().Succeeded()) {
-            //     if (this->station_to_join != INVALID_STATION) {
-            //         this->station_to_join = INVALID_STATION;
-            //         this->palette = CM_PALETTE_TINT_YELLOW;
-            //         break;
-            //     } else this->station_to_join = st->index;
-            // }
-        }
-    }
-
-    if (!_settings_game.station.distant_join_stations) return;
-
-    if (ambigous_join) _station_action = StationAction::Picker{};
-    else if (to_join != INVALID_STATION) _station_action = StationAction::Join{to_join};
-    else _station_action = StationAction::Create{};
-
-    // cmd->station_to_join = NEW_STATION;
-    // cmd->adjacent = true;
-
-    // if (StationBuildTool::station_to_join == INVALID_STATION && !cmd->test().Succeeded()) {
-    //     StationBuildTool::ambigous_join = false;
-    // }
+    UpdateStationAction(this->GetArea(), std::move(this->GetCommand(tile, INVALID_STATION)));
 }
 
 bool SizedPlacementAction::HandleMousePress() {
@@ -966,6 +992,9 @@ std::optional<TileArea> DragNDropPlacementAction::GetArea() const {
 
 void DragNDropPlacementAction::Update(Point, TileIndex tile) {
     this->cur_tile = tile;
+    auto area = this->GetArea();
+    if (!area.has_value()) return;
+    UpdateStationAction(area, std::move(this->GetCommand(*area, INVALID_STATION)));
 }
 
 bool DragNDropPlacementAction::HandleMousePress() {
@@ -1068,17 +1097,14 @@ template<typename Taction, typename Tcallback, typename Targ>
 bool ExecuteBuildCommand(Taction *action, Tcallback callback, Targ arg) {
     std::visit(Overload{
         [&](StationAction::Join &a) {
-            Debug(misc, 0, "Join to {}", a.station);
             auto cmd = action->GetCommand(arg, a.station);
             return cmd ? cmd->post(callback) : false;
         },
         [&](StationAction::Create &) {
-            Debug(misc, 0, "Create new station");
             auto cmd = action->GetCommand(arg, NEW_STATION);
             return cmd ? cmd->post(callback) : false;
         },
         [&](StationAction::Picker &) {
-            Debug(misc, 0, "Show picker");
             auto cmd = action->GetCommand(arg, INVALID_STATION);
             auto proc = [cmd=sp<Command>{std::move(cmd)}, callback](bool test, StationID to_join) -> bool {
                 if (!cmd) return false;
@@ -1132,7 +1158,6 @@ std::optional<TileArea> RailStationBuildTool::SizedPlacementAction::GetArea() co
     auto w = _settings_client.gui.station_numtracks;
     auto h = _settings_client.gui.station_platlength;
     if (_railstation.orientation == AXIS_X) std::swap(w, h);
-    Debug(misc, 0, "GetArea: {} {}", w, h);
     return TileArea{this->cur_tile, w, h};
 }
 
@@ -1185,7 +1210,6 @@ bool RailStationBuildTool::DragNDropPlacementAction::Execute(TileArea area) {
 }
 
 std::optional<ObjectHighlight> RailStationBuildTool::DragNDropPlacementAction::GetObjectHighlight(TileArea area) {
-    // Debug(misc, 0, "GetObjectHighlight {} {} ", _railstation.station_class, _railstation.station_type);
     return ObjectHighlight::make_rail_station(area.tile, area.w, area.h, _railstation.orientation, _railstation.station_class, _railstation.station_type);
 }
 
