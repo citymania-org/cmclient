@@ -702,7 +702,7 @@ static HighlightMap PrepareHighilightMap(Station *st_join, std::optional<ObjectH
     if (show_coverage && st_join != nullptr) {
         // Add joining station coverage
         for (auto t : st_join->catchment_tiles) {
-            auto pal = join_area.Contains(t) ? CM_PALETTE_TINT_CYAN_WHITE : CM_PALETTE_TINT_WHITE;
+            auto pal = join_area.Contains(t) ? MixTints(CM_PALETTE_TINT_CYAN, CM_PALETTE_TINT_WHITE) : CM_PALETTE_TINT_WHITE;
             hlmap.Add(t, ObjectTileHighlight::make_tint(pal));
             coverage_area.insert(t);
         }
@@ -720,7 +720,7 @@ static HighlightMap PrepareHighilightMap(Station *st_join, std::optional<ObjectH
     if (show_coverage && add_current && rad_area.has_value()) {
         // Add current station coverage
         for (auto t : *rad_area) {
-            auto pal = join_area.Contains(t) ? CM_PALETTE_TINT_CYAN_WHITE : CM_PALETTE_TINT_WHITE;
+            auto pal = join_area.Contains(t) ? MixTints(CM_PALETTE_TINT_CYAN, CM_PALETTE_TINT_WHITE) : CM_PALETTE_TINT_WHITE;
             hlmap.Add(t, ObjectTileHighlight::make_tint(pal));
             coverage_area.insert(t);
         }

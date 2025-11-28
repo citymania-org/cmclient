@@ -1035,12 +1035,44 @@ void HighlightMap::AddTilesBorder(const std::set<TileIndex> &tiles, SpriteID pal
     }
 }
 
+SpriteID MixTints(SpriteID bottom, SpriteID top) {
+    if (top == PAL_NONE) return bottom;
+    if (bottom == PAL_NONE) return top;
+    assert (bottom >= CM_PALETTE_TINT_BASE && bottom < CM_PALETTE_TINT_END);
+    assert (top >= CM_PALETTE_TINT_BASE && top < CM_PALETTE_TINT_MIXES);
+    if (bottom < CM_PALETTE_TINT_MIXES) {
+        // Single tint -> use mixed
+        return (
+            CM_PALETTE_TINT_MIXES +
+            (bottom - CM_PALETTE_TINT_BASE) * CM_PALETTE_TINT_BASE_COUNT +
+            (top - CM_PALETTE_TINT_BASE)
+        );
+    }
+    // White mix can't be mixed again
+    if (bottom >= CM_PALETTE_TINT_MIXES_WHITE) {
+        Debug(misc, 0, "White highlights can't be stacked");
+        return bottom;
+    }
+    if (top == CM_PALETTE_TINT_WHITE) {
+        // Use same mix but in the white range
+        return bottom - CM_PALETTE_TINT_MIXES + CM_PALETTE_TINT_MIXES_WHITE;
+    }
+
+    // Mix two last tints
+    auto last_mixed = (bottom - CM_PALETTE_TINT_MIXES) % CM_PALETTE_TINT_BASE_COUNT;
+    return (
+        CM_PALETTE_TINT_MIXES +
+        last_mixed * CM_PALETTE_TINT_BASE_COUNT +
+        (top - CM_PALETTE_TINT_BASE)
+    );
+}
+
 SpriteID GetTintBySelectionColour(SpriteID colour, bool deep=false) {
     switch(colour) {
         case CM_SPR_PALETTE_ZONING_RED: return (deep ? CM_PALETTE_TINT_RED_DEEP : CM_PALETTE_TINT_RED);
         case CM_SPR_PALETTE_ZONING_ORANGE: return (deep ? CM_PALETTE_TINT_ORANGE_DEEP : CM_PALETTE_TINT_ORANGE);
-        case CM_SPR_PALETTE_ZONING_GREEN: return (deep ? CM_PALETTE_TINT_GREEN_DEEP : CM_PALETTE_TINT_GREEN);
-        case CM_SPR_PALETTE_ZONING_LIGHT_BLUE: return (deep ? CM_PALETTE_TINT_CYAN_DEEP : CM_PALETTE_TINT_CYAN);
+        case CM_SPR_PALETTE_ZONING_GREEN: return CM_PALETTE_TINT_GREEN;
+        case CM_SPR_PALETTE_ZONING_LIGHT_BLUE: return CM_PALETTE_TINT_CYAN;
         case CM_SPR_PALETTE_ZONING_YELLOW: return CM_PALETTE_TINT_YELLOW;
         // case SPR_PALETTE_ZONING__: return PALETTE_TINT_YELLOW_WHITE;
         case CM_SPR_PALETTE_ZONING_WHITE: return CM_PALETTE_TINT_WHITE;
@@ -1056,10 +1088,8 @@ SpriteID GetSelectionColourByTint(SpriteID colour) {
         case CM_PALETTE_TINT_ORANGE_DEEP:
         case CM_PALETTE_TINT_ORANGE:
             return CM_SPR_PALETTE_ZONING_ORANGE;
-        case CM_PALETTE_TINT_GREEN_DEEP:
         case CM_PALETTE_TINT_GREEN:
             return CM_SPR_PALETTE_ZONING_GREEN;
-        case CM_PALETTE_TINT_CYAN_DEEP:
         case CM_PALETTE_TINT_CYAN:
             return CM_SPR_PALETTE_ZONING_LIGHT_BLUE;
         case CM_PALETTE_TINT_YELLOW:
@@ -2240,8 +2270,9 @@ TileHighlight GetTileHighlight(const TileInfo *ti, TileType tile_type) {
 
     auto hl = _at.tiles.GetForTile(ti->tile);
     if (hl.has_value()) {
-        for (auto &oth : hl.value().get()) {
+        for (auto &oth : hl->get()) {
             oth.SetTileHighlight(th, ti);
+            Debug(misc, 0, "GetTileHighlight {} {}:{}", ti->tile, oth.type, th.structure_pal == CM_PALETTE_HIDE_SPRITE);
         }
         return th;
     }
