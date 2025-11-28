@@ -366,11 +366,10 @@ static const SpriteID CM_PALETTE_TINT_MIXES_WHITE      = CM_PALETTE_TINT_BASE + 
 static const SpriteID CM_PALETTE_TINT_COUNT            = CM_PALETTE_TINT_BASE_COUNT + 2 * CM_PALETTE_TINT_BASE_COUNT * CM_PALETTE_TINT_BASE_COUNT;
 
 /* Special flag to hide sprite */
-static const SpriteID CM_PALETTE_HIDE_SPRITE           = CM_PALETTE_TINT_BASE + CM_PALETTE_TINT_COUNT;
-static const SpriteID CM_PALETTE_TINT_END              = CM_PALETTE_HIDE_SPRITE;
+static const SpriteID CM_PALETTE_TINT_END              = CM_PALETTE_TINT_BASE + CM_PALETTE_TINT_COUNT;
 
 /* From where can we start putting NewGRFs? */
-static const SpriteID SPR_NEWGRFS_BASE = CM_PALETTE_TINT_BASE + CM_PALETTE_TINT_COUNT + 1;
+static const SpriteID SPR_NEWGRFS_BASE = CM_PALETTE_TINT_END;
 
 /* Manager face sprites */
 static const SpriteID SPR_GRADIENT = 874; // background gradient behind manager face

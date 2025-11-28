@@ -221,9 +221,12 @@ BASE_TINTS = {
 for f in BASE_TINTS.values():
     remap(f)
 
-for f1 in BASE_TINTS.values():
-    for f2 in BASE_TINTS.values():
-        remap(lambda x: f2(f1(x)))
+for k1, f1 in BASE_TINTS.items():
+    for k2, f2 in BASE_TINTS.items():
+        if k1 == 'cyan' and k2 == 'white':
+            remap(gen_tint((0.5, 1.0, 1.0), 0.4))
+        else:
+            remap(lambda x: f2(f1(x)))
 
 # Only white can be mixed over any combination
 white = BASE_TINTS['white']

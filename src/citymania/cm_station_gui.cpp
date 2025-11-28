@@ -690,7 +690,7 @@ static void UpdateStationAction(std::optional<TileArea> area, up<Command> cmdptr
 static HighlightMap PrepareHighilightMap(Station *st_join, std::optional<ObjectHighlight> ohl, SpriteID pal, bool show_join_area, bool show_coverage, uint rad) {
     bool add_current = true;  // FIXME
 
-    auto hlmap = ohl.has_value() ? ohl->GetHighlightMap(pal) : HighlightMap{};
+    HighlightMap hlmap{};
     TileArea join_area;
     std::set<TileIndex> coverage_area;
 
@@ -702,8 +702,7 @@ static HighlightMap PrepareHighilightMap(Station *st_join, std::optional<ObjectH
     if (show_coverage && st_join != nullptr) {
         // Add joining station coverage
         for (auto t : st_join->catchment_tiles) {
-            auto pal = join_area.Contains(t) ? MixTints(CM_PALETTE_TINT_CYAN, CM_PALETTE_TINT_WHITE) : CM_PALETTE_TINT_WHITE;
-            hlmap.Add(t, ObjectTileHighlight::make_tint(pal));
+            hlmap.Add(t, ObjectTileHighlight::make_tint(CM_PALETTE_TINT_WHITE));
             coverage_area.insert(t);
         }
     }
@@ -720,8 +719,8 @@ static HighlightMap PrepareHighilightMap(Station *st_join, std::optional<ObjectH
     if (show_coverage && add_current && rad_area.has_value()) {
         // Add current station coverage
         for (auto t : *rad_area) {
-            auto pal = join_area.Contains(t) ? MixTints(CM_PALETTE_TINT_CYAN, CM_PALETTE_TINT_WHITE) : CM_PALETTE_TINT_WHITE;
-            hlmap.Add(t, ObjectTileHighlight::make_tint(pal));
+            if (coverage_area.find(t) != coverage_area.end()) continue;
+            hlmap.Add(t, ObjectTileHighlight::make_tint(CM_PALETTE_TINT_WHITE));
             coverage_area.insert(t);
         }
     }
@@ -738,6 +737,8 @@ static HighlightMap PrepareHighilightMap(Station *st_join, std::optional<ObjectH
             hlmap.Add(t, ObjectTileHighlight::make_struct_tint(CM_PALETTE_TINT_BLUE));
         }
     }
+
+    if (ohl.has_value()) ohl->AddToHighlightMap(hlmap, pal);
 
     return hlmap;
 }

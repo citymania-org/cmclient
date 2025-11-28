@@ -48,24 +48,54 @@ class TileHighlight {
 public:
     SpriteID ground_pal = PAL_NONE;
     SpriteID structure_pal = PAL_NONE;
-    SpriteID highlight_ground_pal = PAL_NONE;
-    SpriteID highlight_structure_pal = PAL_NONE;
+    SpriteID structure_pal_prio = PAL_NONE;
+    bool structure_hidden = false;
+    SpriteID highlight_pal = PAL_NONE;
     SpriteID sprite = 0;
     SpriteID selection = PAL_NONE;
     ZoningBorder border[4] = {};
-    SpriteID border_color[4] = {};
+    SpriteID border_colour[4] = {};
     uint border_count = 0;
 
-    void add_border(ZoningBorder border, SpriteID color) {
-        if (border == ZoningBorder::NONE || !color) return;
+    std::pair<bool, SpriteID> get_structure_pal() {
+        auto pal = this->structure_pal_prio;
+        if (pal == PAL_NONE) pal = this->structure_pal;
+        return {!this->structure_hidden, pal};
+    }
+
+    SpriteID pick_ground_pal(SpriteID colour) {
+        // TODO mix with colour?
+        if (this->structure_pal_prio != PAL_NONE) return this->structure_pal_prio;
+        if (this->ground_pal != PAL_NONE) return this->ground_pal;
+        return colour;
+    }
+
+    void add_border(ZoningBorder border, SpriteID colour) {
+        if (border == ZoningBorder::NONE || !colour) return;
         this->border[this->border_count] = border;
-        this->border_color[this->border_count] = color;
+        this->border_colour[this->border_count] = colour;
         this->border_count++;
     }
 
-    void tint_all(SpriteID color) {
-        if (!color) return;
-        this->ground_pal = this->structure_pal = color;
+    void set_old_selection(SpriteID sprite);
+    void tint_ground(SpriteID colour);
+    void tint_structure(SpriteID colour);
+    void tint_structure_prio(SpriteID colour) {
+        this->structure_pal_prio = colour;
+    }
+
+    void tint_all(SpriteID colour) {
+        this->tint_ground(colour);
+        this->tint_structure(colour);
+    }
+
+    void hide_structure() {
+        this->structure_hidden = true;
+    }
+
+    void set_structure(SpriteID colour) {
+        this->hide_structure();
+        this->highlight_pal = colour;
     }
 
     void clear_borders() {
@@ -392,7 +422,7 @@ public:
     static ObjectHighlight make_dock(TileIndex tile, DiagDirection orientation);
 
     TileHighlight GetTileHighlight(const TileInfo *ti);
-    HighlightMap GetHighlightMap(SpriteID palette);
+    void AddToHighlightMap(HighlightMap &hlmap, SpriteID palette);
     std::optional<TileArea> GetArea();
     void Draw(const TileInfo *ti);
     void DrawSelectionOverlay(DrawPixelInfo *dpi);
