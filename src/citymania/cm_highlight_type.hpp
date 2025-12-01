@@ -48,7 +48,9 @@ class TileHighlight {
 public:
     SpriteID ground_pal = PAL_NONE;
     SpriteID structure_pal = PAL_NONE;
-    SpriteID structure_pal_prio = PAL_NONE;
+    SpriteID structure_pal_prio = PAL_NONE;  // TODO rename as this is priority highlight not just structure
+    SpriteID icon = PAL_NONE;
+    SpriteID icon_pal = PAL_NONE;
     bool structure_hidden = false;
     SpriteID highlight_pal = PAL_NONE;
     SpriteID sprite = 0;
@@ -68,6 +70,11 @@ public:
         if (this->structure_pal_prio != PAL_NONE) return this->structure_pal_prio;
         if (this->ground_pal != PAL_NONE) return this->ground_pal;
         return colour;
+    }
+
+    SpriteID get_icon() {
+        if (this->structure_pal_prio != PAL_NONE) return PAL_NONE;
+        return this->icon;
     }
 
     void add_border(ZoningBorder border, SpriteID colour) {
@@ -96,6 +103,11 @@ public:
     void set_structure(SpriteID colour) {
         this->hide_structure();
         this->highlight_pal = colour;
+    }
+
+    void set_icon(SpriteID icon, SpriteID pal) {
+        this->icon = icon;
+        this->icon_pal = pal;
     }
 
     void clear_borders() {

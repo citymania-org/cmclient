@@ -2299,26 +2299,30 @@ TileHighlight GetTileHighlight(const TileInfo *ti, TileType tile_type) {
         switch (_game->get_town_growth_tile(ti->tile)) {
             // case TGTS_CB_HOUSE_REMOVED_NOGROW:
             case TownGrowthTileState::RH_REMOVED:
-                th.set_old_selection(CM_SPR_PALETTE_ZONING_LIGHT_BLUE);
+                th.set_icon(CM_SPR_TILE_ICON_HOUSE_REMOVED, CM_PALETTE_TINT_CYAN);
+                th.tint_ground(CM_PALETTE_TINT_CYAN);
                 break;
             case TownGrowthTileState::RH_REBUILT:
-                th.set_old_selection(CM_SPR_PALETTE_ZONING_WHITE);
-                th.tint_structure(CM_PALETTE_TINT_WHITE);
+                th.set_icon(CM_SPR_TILE_ICON_HOUSE_REPLACED, CM_PALETTE_TINT_BLUE);
+                th.tint_ground(CM_PALETTE_TINT_BLUE);
                 break;
             case TownGrowthTileState::NEW_HOUSE:
-                th.set_old_selection(CM_SPR_PALETTE_ZONING_GREEN);
-                th.tint_structure(CM_PALETTE_TINT_GREEN);
+                th.set_icon(CM_SPR_TILE_ICON_HOUSE_NEW, CM_PALETTE_TINT_GREEN);
+                th.tint_ground(CM_PALETTE_TINT_GREEN);
                 break;
             case TownGrowthTileState::CS:
-                th.set_old_selection(CM_SPR_PALETTE_ZONING_ORANGE);
+                th.set_icon(CM_SPR_TILE_ICON_DEAD_END, CM_PALETTE_TINT_ORANGE);
+                th.tint_ground(CM_PALETTE_TINT_ORANGE);
                 break;
             case TownGrowthTileState::HS:
-                th.set_old_selection(CM_SPR_PALETTE_ZONING_YELLOW);
+                th.set_icon(CM_SPR_TILE_ICON_ROAD, CM_PALETTE_TINT_YELLOW);
+                th.tint_ground(CM_PALETTE_TINT_YELLOW);
                 break;
             case TownGrowthTileState::HR:
-                th.set_old_selection(CM_SPR_PALETTE_ZONING_RED);
+                th.set_icon(CM_SPR_TILE_ICON_HOUSE_DENIED, CM_PALETTE_TINT_RED);
+                th.tint_ground(CM_PALETTE_TINT_RED);
                 break;
-            default: th.set_old_selection(PAL_NONE);
+            default: break;
         }
     } else if (_zoning.outer == CHECKBULUNSER) {
         if (IsTileType (ti->tile, MP_HOUSE)) {

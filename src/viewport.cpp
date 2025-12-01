@@ -63,6 +63,7 @@
 #include "stdafx.h"
 #include "core/backup_type.hpp"
 #include "landscape.h"
+#include "table/sprites.h"
 #include "viewport_func.h"
 #include "station_base.h"
 #include "waypoint_base.h"
@@ -1348,10 +1349,20 @@ static void ViewportAddLandscape()
 
 				_tile_type_procs[tile_type]->draw_tile_proc(&_cur_ti);
 
+				_vd.cm_highlight.structure_pal_prio = PAL_NONE;
+				_vd.cm_highlight.structure_hidden = false;
+
+				auto icon = _vd.cm_highlight.get_icon();
+				if (icon != PAL_NONE) {
+					_vd.cm_highlight.structure_pal = PAL_NONE;
+					AddSortableSpriteToDraw(
+						icon,
+						_vd.cm_highlight.icon_pal, _cur_ti.x, _cur_ti.y, 0x10, 0x10, 1, _cur_ti.z + 7
+					);
+				}
+
 				if (_cur_ti.tile != INVALID_TILE) {  // CM TODO why is this check here?
 				    _vd.cm_highlight.structure_pal = _vd.cm_highlight.highlight_pal;
-				    _vd.cm_highlight.structure_pal_prio = PAL_NONE;
-				    _vd.cm_highlight.structure_hidden = false;
 					citymania::DrawTileZoning(&_cur_ti);  // old zoning patch
 					citymania::DrawTileZoning(&_cur_ti, _vd.cm_highlight, tile_type);
 					DrawTileSelection(&_cur_ti);

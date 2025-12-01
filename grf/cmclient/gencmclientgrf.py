@@ -152,6 +152,15 @@ for p in TILEDATA:
 
     y += h + SPRITE_MARGIN
 
+tileicon_png = grf.ImageFile('sprites/tileicons.png')
+sprite = lambda name, *args, **kw: g.add(grf.FileSprite(tileicon_png, *args, name=name, **kw))
+sprite('icon_house_removed', 2, 2, 20, 20, xofs=-9, yofs=10)
+sprite('icon_house_replaced', 24, 2, 20, 20, xofs=-9, yofs=10)
+sprite('icon_house_new', 46, 2, 20, 20, xofs=-9, yofs=10)
+sprite('icon_dead_end', 68, 2, 20, 20, xofs=-9, yofs=10)
+sprite('icon_road', 90, 2, 20, 20, xofs=-9, yofs=10)
+sprite('icon_house_denied', 112, 2, 20, 20, xofs=-9, yofs=10)
+
 
 def gen_tint(tint, ratio):
     tint = grf.srgb_to_oklab(np.array(tint) * 255)

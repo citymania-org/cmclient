@@ -380,13 +380,6 @@ SpriteID GetTownZoneBorderColor(uint8 zone) {
 		case 4: return CM_SPR_PALETTE_ZONING_ORANGE;  // Tz3
 		case 5: return CM_SPR_PALETTE_ZONING_RED;  // Tz4 - center
 	};
-	switch (zone) {
-		default: return CM_SPR_PALETTE_ZONING_LIGHT_BLUE;  // Tz0
-		case 2: return CM_SPR_PALETTE_ZONING_RED;  // Tz1
-		case 3: return CM_SPR_PALETTE_ZONING_YELLOW;  // Tz2
-		case 4: return CM_SPR_PALETTE_ZONING_GREEN;  // Tz3
-		case 5: return CM_SPR_PALETTE_ZONING_WHITE;  // Tz4 - center
-	};
 }
 
 
