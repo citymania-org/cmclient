@@ -63,6 +63,7 @@
 #include "stdafx.h"
 #include "core/backup_type.hpp"
 #include "landscape.h"
+#include "table/sprites.h"
 #include "viewport_func.h"
 #include "station_base.h"
 #include "waypoint_base.h"
@@ -621,7 +622,7 @@ void DrawGroundSpriteAt(SpriteID image, PaletteID pal, int32_t x, int32_t y, int
 {
 	/* Switch to first foundation part, if no foundation was drawn */
 	if (_vd.foundation_part == FOUNDATION_PART_NONE) _vd.foundation_part = FOUNDATION_PART_NORMAL;
-	if (_vd.cm_highlight.ground_pal) pal = _vd.cm_highlight.ground_pal;
+	pal = _vd.cm_highlight.pick_ground_pal(pal);
 	if (_vd.foundation[_vd.foundation_part] != -1) {
 		Point pt = RemapCoords(x, y, z);
 		AddChildSpriteToFoundation(image, pal, sub, _vd.foundation_part, pt.x + extra_offs_x * ZOOM_BASE, pt.y + extra_offs_y * ZOOM_BASE);
@@ -730,10 +731,6 @@ void AddSortableSpriteToDraw(SpriteID image, PaletteID pal, int x, int y, int z,
 
 	assert((image & SPRITE_MASK) < MAX_SPRITES);
 
-	if (!ignore_highlight_pal) {
-		if (_vd.cm_highlight.structure_pal) pal = _vd.cm_highlight.structure_pal;
-	}
-	
 	/* Move to bounding box. */
 	x += bounds.origin.x;
 	y += bounds.origin.y;
@@ -743,6 +740,10 @@ void AddSortableSpriteToDraw(SpriteID image, PaletteID pal, int x, int y, int z,
 	if (transparent) {
 		SetBit(image, PALETTE_MODIFIER_TRANSPARENT);
 		pal = PALETTE_TO_TRANSPARENT;
+	} else if (!ignore_highlight_pal) {
+		auto [draw, new_pal] = _vd.cm_highlight.get_structure_pal();
+		if (!draw) return;
+		if (new_pal != PAL_NONE) pal = new_pal;
 	}
 
 	if (_vd.combine_sprites == SPRITE_COMBINE_ACTIVE) {
@@ -751,7 +752,6 @@ void AddSortableSpriteToDraw(SpriteID image, PaletteID pal, int x, int y, int z,
 	}
 
 	_vd.last_child = LAST_CHILD_NONE;
-	if (!ignore_highlight_pal && pal == CM_PALETTE_HIDE_SPRITE) return;
 
 	Point pt = RemapCoords(x + bounds.offset.x, y + bounds.offset.y, z + bounds.offset.z);
 	int tmp_left, tmp_top, tmp_x = pt.x, tmp_y = pt.y;
@@ -1367,9 +1367,17 @@ static void ViewportAddLandscape()
 
 				_tile_type_procs[tile_type]->draw_tile_proc(&_cur_ti);
 
+				_vd.cm_highlight.structure_pal_prio = PAL_NONE;
+				_vd.cm_highlight.structure_hidden = false;
+
+				auto icon = _vd.cm_highlight.get_icon();
+				if (icon != PAL_NONE) {
+					_vd.cm_highlight.structure_pal = PAL_NONE;
+					AddSortableSpriteToDraw(icon, _vd.cm_highlight.icon_pal, _cur_ti, {{}, {1, 1, BB_HEIGHT_UNDER_BRIDGE}, {}});
+				}
+
 				if (_cur_ti.tile != INVALID_TILE) {  // CM TODO why is this check here?
-				    _vd.cm_highlight.ground_pal = _vd.cm_highlight.highlight_ground_pal;
-				    _vd.cm_highlight.structure_pal = _vd.cm_highlight.highlight_structure_pal;
+				    _vd.cm_highlight.structure_pal = _vd.cm_highlight.highlight_pal;
 					citymania::DrawTileZoning(&_cur_ti);  // old zoning patch
 					citymania::DrawTileZoning(&_cur_ti, _vd.cm_highlight, tile_type);
 					DrawTileSelection(&_cur_ti);

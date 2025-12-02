@@ -1000,35 +1000,14 @@ Dimension GetSpriteSize(SpriteID sprid, Point *offset, ZoomLevel zoom)
  */
 static BlitterMode GetBlitterMode(PaletteID pal)
 {
+
+	if (pal >= CM_PALETTE_TINT_BASE && pal < CM_PALETTE_TINT_END)
+		return BlitterMode::CMTintRemap;
+
 	switch (pal) {
 		case PAL_NONE:          return BlitterMode::Normal;
 		case PALETTE_CRASH:     return BlitterMode::CrashRemap;
 		case PALETTE_ALL_BLACK: return BlitterMode::BlackRemap;
-
-		case CM_PALETTE_TINT_RED_DEEP:
-		case CM_PALETTE_TINT_ORANGE_DEEP:
-		case CM_PALETTE_TINT_GREEN_DEEP:
-		case CM_PALETTE_TINT_CYAN_DEEP:
-		case CM_PALETTE_TINT_RED:
-		case CM_PALETTE_TINT_ORANGE:
-		case CM_PALETTE_TINT_YELLOW:
-		case CM_PALETTE_TINT_YELLOW_WHITE:
-		case CM_PALETTE_TINT_WHITE:
-		case CM_PALETTE_TINT_GREEN:
-		case CM_PALETTE_TINT_CYAN:
-		case CM_PALETTE_TINT_CYAN_WHITE:
-		case CM_PALETTE_TINT_BLUE:
-		case CM_PALETTE_SHADE_N:
-		case CM_PALETTE_SHADE_NE:
-		case CM_PALETTE_SHADE_E:
-		case CM_PALETTE_SHADE_SE:
-		case CM_PALETTE_SHADE_S:
-		case CM_PALETTE_SHADE_SW:
-		case CM_PALETTE_SHADE_W:
-		case CM_PALETTE_SHADE_NW:
-		case CM_PALETTE_TINT_COUNT:
-			return BlitterMode::CMTintRemap;
-
 		default:                return BlitterMode::ColourRemap;
 	}
 }

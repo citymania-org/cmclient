@@ -572,7 +572,7 @@ void SetBlueprintHighlight(const TileInfo *ti, TileHighlight &th) {
         return;
 
     if (_active_blueprint.second->HasSourceTile(ti->tile)) {
-        th.ground_pal = th.structure_pal = CM_PALETTE_TINT_BLUE;
+        th.tint_all(CM_PALETTE_TINT_BLUE);
     }
 }
 

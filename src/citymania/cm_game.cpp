@@ -3,6 +3,7 @@
 #include "cm_game.hpp"
 
 #include "../company_base.h"
+#include "../timer/timer.h"
 
 #include "../safeguards.h"
 

@@ -351,32 +351,48 @@ static const SpriteID CM_SPR_INNER_HIGHLIGHT_COUNT     = 30;
 
 static const SpriteID CM_SPR_BORDER_HIGHLIGHT_BASE     = CM_SPR_INNER_HIGHLIGHT_BASE + CM_SPR_INNER_HIGHLIGHT_COUNT;
 static const SpriteID CM_SPR_BORDER_HIGHLIGHT_COUNT    = 19 * 19;
-static const SpriteID CM_PALETTE_TINT_BASE             = CM_SPR_BORDER_HIGHLIGHT_BASE + CM_SPR_BORDER_HIGHLIGHT_COUNT;
+
+static const SpriteID CM_SPR_TILE_ICON_BASE            = CM_SPR_BORDER_HIGHLIGHT_BASE + CM_SPR_BORDER_HIGHLIGHT_COUNT;
+static const SpriteID CM_SPR_TILE_ICON_HOUSE_REMOVED   = CM_SPR_TILE_ICON_BASE;
+static const SpriteID CM_SPR_TILE_ICON_HOUSE_REPLACED  = CM_SPR_TILE_ICON_BASE + 1;
+static const SpriteID CM_SPR_TILE_ICON_HOUSE_NEW       = CM_SPR_TILE_ICON_BASE + 2;
+static const SpriteID CM_SPR_TILE_ICON_DEAD_END        = CM_SPR_TILE_ICON_BASE + 3;
+static const SpriteID CM_SPR_TILE_ICON_ROAD            = CM_SPR_TILE_ICON_BASE + 4;
+static const SpriteID CM_SPR_TILE_ICON_HOUSE_DENIED    = CM_SPR_TILE_ICON_BASE + 5;
+static const SpriteID CM_SPR_TILE_ICON_COUNT           = 6;
+
+/* Tree shades */
+static const SpriteID CM_PALETTE_SHADE_BASE            = CM_SPR_TILE_ICON_BASE + CM_SPR_TILE_ICON_COUNT;
+static const SpriteID CM_PALETTE_SHADE_N               = CM_PALETTE_SHADE_BASE;
+static const SpriteID CM_PALETTE_SHADE_NE              = CM_PALETTE_SHADE_BASE + 1;
+static const SpriteID CM_PALETTE_SHADE_E               = CM_PALETTE_SHADE_BASE + 2;
+static const SpriteID CM_PALETTE_SHADE_SE              = CM_PALETTE_SHADE_BASE + 3;
+static const SpriteID CM_PALETTE_SHADE_S               = CM_PALETTE_SHADE_BASE + 4;
+static const SpriteID CM_PALETTE_SHADE_SW              = CM_PALETTE_SHADE_BASE + 5;
+static const SpriteID CM_PALETTE_SHADE_W               = CM_PALETTE_SHADE_BASE + 6;
+static const SpriteID CM_PALETTE_SHADE_NW              = CM_PALETTE_SHADE_BASE + 7;
+
+/* Tint remaps */
+static const SpriteID CM_PALETTE_TINT_BASE             = CM_PALETTE_SHADE_BASE + 8;
 static const SpriteID CM_PALETTE_TINT_RED_DEEP         = CM_PALETTE_TINT_BASE;
 static const SpriteID CM_PALETTE_TINT_ORANGE_DEEP      = CM_PALETTE_TINT_BASE + 1;
-static const SpriteID CM_PALETTE_TINT_GREEN_DEEP       = CM_PALETTE_TINT_BASE + 2;
-static const SpriteID CM_PALETTE_TINT_CYAN_DEEP        = CM_PALETTE_TINT_BASE + 3;
-static const SpriteID CM_PALETTE_TINT_RED              = CM_PALETTE_TINT_BASE + 4;
-static const SpriteID CM_PALETTE_TINT_ORANGE           = CM_PALETTE_TINT_BASE + 5;
-static const SpriteID CM_PALETTE_TINT_YELLOW           = CM_PALETTE_TINT_BASE + 6;
-static const SpriteID CM_PALETTE_TINT_YELLOW_WHITE     = CM_PALETTE_TINT_BASE + 7;
-static const SpriteID CM_PALETTE_TINT_WHITE            = CM_PALETTE_TINT_BASE + 8;
-static const SpriteID CM_PALETTE_TINT_GREEN            = CM_PALETTE_TINT_BASE + 9;
-static const SpriteID CM_PALETTE_TINT_CYAN             = CM_PALETTE_TINT_BASE + 10;
-static const SpriteID CM_PALETTE_TINT_CYAN_WHITE       = CM_PALETTE_TINT_BASE + 11;
-static const SpriteID CM_PALETTE_TINT_BLUE             = CM_PALETTE_TINT_BASE + 12;
-static const SpriteID CM_PALETTE_SHADE_N               = CM_PALETTE_TINT_BASE + 13;
-static const SpriteID CM_PALETTE_SHADE_NE              = CM_PALETTE_TINT_BASE + 14;
-static const SpriteID CM_PALETTE_SHADE_E               = CM_PALETTE_TINT_BASE + 15;
-static const SpriteID CM_PALETTE_SHADE_SE              = CM_PALETTE_TINT_BASE + 16;
-static const SpriteID CM_PALETTE_SHADE_S               = CM_PALETTE_TINT_BASE + 17;
-static const SpriteID CM_PALETTE_SHADE_SW              = CM_PALETTE_TINT_BASE + 18;
-static const SpriteID CM_PALETTE_SHADE_W               = CM_PALETTE_TINT_BASE + 19;
-static const SpriteID CM_PALETTE_SHADE_NW              = CM_PALETTE_TINT_BASE + 20;
-static const SpriteID CM_PALETTE_TINT_COUNT            = 13 + 8;
-static const SpriteID CM_PALETTE_HIDE_SPRITE           = CM_PALETTE_TINT_BASE + CM_PALETTE_TINT_COUNT;
+static const SpriteID CM_PALETTE_TINT_RED              = CM_PALETTE_TINT_BASE + 2;
+static const SpriteID CM_PALETTE_TINT_ORANGE           = CM_PALETTE_TINT_BASE + 3;
+static const SpriteID CM_PALETTE_TINT_YELLOW           = CM_PALETTE_TINT_BASE + 4;
+static const SpriteID CM_PALETTE_TINT_WHITE            = CM_PALETTE_TINT_BASE + 5;
+static const SpriteID CM_PALETTE_TINT_GREEN            = CM_PALETTE_TINT_BASE + 6;
+static const SpriteID CM_PALETTE_TINT_CYAN             = CM_PALETTE_TINT_BASE + 7;
+static const SpriteID CM_PALETTE_TINT_BLUE             = CM_PALETTE_TINT_BASE + 8;
+static const SpriteID CM_PALETTE_TINT_BASE_COUNT       = 9;
+static const SpriteID CM_PALETTE_TINT_MIXES            = CM_PALETTE_TINT_BASE + CM_PALETTE_TINT_BASE_COUNT;
+static const SpriteID CM_PALETTE_TINT_MIXES_WHITE      = CM_PALETTE_TINT_BASE + CM_PALETTE_TINT_BASE_COUNT + CM_PALETTE_TINT_BASE_COUNT * CM_PALETTE_TINT_BASE_COUNT;
+static const SpriteID CM_PALETTE_TINT_COUNT            = CM_PALETTE_TINT_BASE_COUNT + 2 * CM_PALETTE_TINT_BASE_COUNT * CM_PALETTE_TINT_BASE_COUNT;
+
+/* Special flag to hide sprite */
+static const SpriteID CM_PALETTE_TINT_END              = CM_PALETTE_TINT_BASE + CM_PALETTE_TINT_COUNT;
+
 /* From where can we start putting NewGRFs? */
-static const SpriteID SPR_NEWGRFS_BASE = CM_PALETTE_TINT_BASE + CM_PALETTE_TINT_COUNT + 1;
+static const SpriteID SPR_NEWGRFS_BASE = CM_PALETTE_TINT_END;
 
 /* Manager face sprites */
 static const SpriteID SPR_GRADIENT = 874; // background gradient behind manager face

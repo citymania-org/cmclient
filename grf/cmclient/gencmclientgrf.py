@@ -152,6 +152,15 @@ for p in TILEDATA:
 
     y += h + SPRITE_MARGIN
 
+tileicon_png = grf.ImageFile('sprites/tileicons.png')
+sprite = lambda name, *args, **kw: g.add(grf.FileSprite(tileicon_png, *args, name=name, **kw))
+sprite('icon_house_removed', 2, 2, 20, 20, xofs=-9, yofs=10)
+sprite('icon_house_replaced', 24, 2, 20, 20, xofs=-9, yofs=10)
+sprite('icon_house_new', 46, 2, 20, 20, xofs=-9, yofs=10)
+sprite('icon_dead_end', 68, 2, 20, 20, xofs=-9, yofs=10)
+sprite('icon_road', 90, 2, 20, 20, xofs=-9, yofs=10)
+sprite('icon_house_denied', 112, 2, 20, 20, xofs=-9, yofs=10)
+
 
 def gen_tint(tint, ratio):
     tint = grf.srgb_to_oklab(np.array(tint) * 255)
@@ -190,26 +199,9 @@ def gen_oklab_tint(tint, ratio):
 # (0.7433, 0, 0.15)
 # (0.7418, -0.09, 0.15)
 
-
 remap = lambda f: g.add(grf.PaletteRemap.oklab_from_function(f, remap_range=grf.ALL_COLOURS))
-remap(gen_tint((1, 0, 0), 0.6))  # deep red tint
-remap(gen_tint((1, 0.5, 0), 0.65))  # deep orange tint
-remap(gen_tint((0, 1, 0), 0.65))  # deep green tint
-remap(gen_tint((0, 1, 1), 0.65))  # deep cyan tint
-remap(gen_tint((1, 0, 0), 0.4))  # red tint
-remap(gen_tint((1, 0.5, 0), 0.4))  # orange tint
-remap(gen_tint((1.0, 1.0, 0), 0.4))  # yellow tint
-# remap(gen_oklab_tint((0.5498, 0.17, 0.1), 0.5))  # red tint
-# remap(gen_oklab_tint((0.7433, 0.09, 0.15), 0.5))  # orange tint
-# remap(gen_oklab_tint((0.7433, 0, 0.15), 0.5))  # yellow tint
-remap(gen_tint((1.0, 1.0, 0.5), 0.4))  # yellow white tint
-remap(gen_white_tint_contrast())  # white tint
-# remap(gen_oklab_tint((0.7418, -0.09, 0.15), 0.5))  # white tint
-remap(gen_tint((0, 1.0, 0), 0.4))  # green tint
-remap(gen_tint((0, 1.0, 1.0), 0.4))  # cyan tint
-remap(gen_tint((0.5, 1.0, 1.0), 0.4))  # cyan white tint
-remap(gen_tint((0, 0, 1.0), 0.4))  # blue tint
 
+# Tree shades
 B = 22.2
 remap(gen_brightness(21.7 - B))  # shade N
 remap(gen_brightness(24.2 - B))  # shade NE  27.2
@@ -220,7 +212,38 @@ remap(gen_brightness(18.4 - B))  # shade SW
 remap(gen_brightness(17.1 - B))  # shade W
 remap(gen_brightness(17.5 - B))  # shade NW
 
-grf.main(g, '../../bin/data/cmclient-5.grf')
+BASE_TINTS = {
+    'red_deep': gen_tint((1, 0, 0), 0.6),
+    'orange_deep': gen_tint((1, 0.5, 0), 0.65),
+    #'green_deep': gen_tint((0, 1, 0), 0.65),
+    #'cyan_deep': gen_tint((0, 1, 1), 0.65),
+    'red': gen_tint((1, 0, 0), 0.4),
+    'orange': gen_tint((1, 0.5, 0), 0.4),
+    'yellow': gen_tint((1.0, 1.0, 0), 0.4),
+    'white': gen_white_tint_contrast(),
+    'green': gen_tint((0, 1.0, 0), 0.4),
+    'cyan': gen_tint((0, 1.0, 1.0), 0.4),
+    'blue': gen_tint((0, 0, 1.0), 0.4),
+}
+# remap(gen_tint((0.5, 1.0, 1.0), 0.4))  # cyan white tint
+
+for f in BASE_TINTS.values():
+    remap(f)
+
+for k1, f1 in BASE_TINTS.items():
+    for k2, f2 in BASE_TINTS.items():
+        if k1 == 'cyan' and k2 == 'white':
+            remap(gen_tint((0.5, 1.0, 1.0), 0.4))
+        else:
+            remap(lambda x: f2(f1(x)))
+
+# Only white can be mixed over any combination
+white = BASE_TINTS['white']
+for f1 in BASE_TINTS.values():
+    for f2 in BASE_TINTS.values():
+        remap(lambda x: white(f2(f1(x))))
+
+grf.main(g, '../../bin/data/cmclient-6.grf')
 
 # func = gen_brightness(17.1 - B)
 # grf.make_palette_image([grf.oklab_to_srgb(func(x)) for x in grf.OKLAB_PALETTE]).show()

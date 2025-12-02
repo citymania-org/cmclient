@@ -29,6 +29,7 @@ namespace citymania {
 //     MEDIUM = 2,
 //     SMALL = 3,
 // };
+SpriteID MixTints(SpriteID bottom, SpriteID top);
 
 TileHighlight GetTileHighlight(const TileInfo *ti, TileType tile_type);
 void DrawTileZoning(const TileInfo *ti, const TileHighlight &th, TileType tile_type);
