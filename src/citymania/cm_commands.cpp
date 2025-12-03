@@ -107,13 +107,13 @@ void ExecuteCurrentCallback(const CommandCost &cost) {
 void BeforeNetworkCommandExecution(const CommandPacket &cp) {
     if (!cp.my_cmd) return;
     size_t hash = GetCommandHash(cp.cmd, cp.company, cp.err_msg, cp.callback, cp.data);
-    Debug(misc, 5, "CM BeforeNetworkCommandExecution: cmd={} hash={}", cp.cmd, hash);
+    Debug(misc, 5, "CM BeforeNetworkCommandExecution: cmd={}({}) hash={}", GetCommandName(cp.cmd), cp.cmd, hash);
     while (!_callback_queue.empty() && _callback_queue.front().hash != hash) {
         Debug(misc, 0, "CM Dismissing command from callback queue: hash={}", _callback_queue.front().hash);
         _callback_queue.pop();
     }
     if (_callback_queue.empty()) {
-        Debug(misc, 0, "CM Received unexpected network command: cmd={}", cp.cmd);
+        Debug(misc, 0, "CM Received unexpected network command: cmd={}({})", GetCommandName(cp.cmd), cp.cmd);
         return;
     }
     auto &cbdata = _callback_queue.front();
@@ -130,7 +130,7 @@ void AfterNetworkCommandExecution(const CommandPacket &cp) {
 
 void AddCommandCallback(const CommandPacket *cp) {
     size_t hash = GetCommandHash(cp->cmd, cp->company, cp->err_msg, cp->callback, cp->data);
-    Debug(misc, 5, "CM Added callback: cmd={} hash={}", cp->cmd, hash);
+    Debug(misc, 5, "CM Added callback: cmd={}({}) hash={}", GetCommandName(cp->cmd), cp->cmd, hash);
     _callback_queue.emplace(hash, _current_callback);
     _current_callback = nullptr;
 }
