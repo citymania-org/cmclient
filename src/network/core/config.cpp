@@ -12,6 +12,7 @@
 #include "../../stdafx.h"
 
 #include "../../string_func.h"
+#include "../../rev.h"
 
 #include "../../safeguards.h"
 

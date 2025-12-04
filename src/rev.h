@@ -18,6 +18,9 @@ extern const byte _openttd_revision_modified;
 extern const byte _openttd_revision_tagged;
 extern const char _openttd_content_version[];
 extern const uint32_t _openttd_newgrf_version;
+extern const std::string _citymania_survey_key;
+extern const std::string _citymania_revision_hash;
+extern const uint8_t _citymania_revision_modified;
 
 bool IsReleasedVersion();
 
