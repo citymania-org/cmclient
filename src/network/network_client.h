@@ -35,6 +35,10 @@ private:
 
 	ServerStatus status; ///< Status of the connection with the server.
 
+    std::chrono::steady_clock::time_point cm_map_begin;
+    std::chrono::steady_clock::time_point cm_map_done;
+    std::chrono::steady_clock::time_point cm_map_loaded;
+
 protected:
 	friend void NetworkExecuteLocalCommandQueue();
 	friend void NetworkClose(bool close_admins);
