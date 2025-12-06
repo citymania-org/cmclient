@@ -1348,8 +1348,7 @@ struct BuildVehicleWindow : Window {
 		// CM calls this in constructor
 	 	// this->SetCargoFilterArray();
 
-		auto container = this->GetWidget<NWidgetContainer>(WID_BV_BADGE_FILTER);
-		this->badge_filters = AddBadgeDropdownFilters(*container, WID_BV_BADGE_FILTER, COLOUR_GREY, static_cast<GrfSpecFeature>(GSF_TRAINS + this->vehicle_type));
+		this->badge_filters = AddBadgeDropdownFilters(this, WID_BV_BADGE_FILTER, WID_BV_BADGE_FILTER, COLOUR_GREY, static_cast<GrfSpecFeature>(GSF_TRAINS + this->vehicle_type));
 
 		this->widget_lookup.clear();
 		this->nested_root->FillWidgetLookup(this->widget_lookup);
