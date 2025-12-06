@@ -313,8 +313,8 @@ DepotOrderModAction GetDepotOrderModAction() {
 StationModOrders GetStationModOrders(const Vehicle *v)
 {
     StationModOrders res = {
-        OLF_LOAD_IF_POSSIBLE,
-        OUF_UNLOAD_IF_POSSIBLE,
+        OrderLoadType::LoadIfPossible,
+        OrderUnloadType::UnloadIfPossible,
         FeederOrderMod::None,
     };
 
@@ -323,39 +323,39 @@ StationModOrders GetStationModOrders(const Vehicle *v)
             break;
 
         case StationOrderModAction::FullLoad:
-            res.load = OLF_FULL_LOAD_ANY;
+            res.load = OrderLoadType::FullLoadAny;
             break;
 
         case StationOrderModAction::Transfer:
-            res.unload = OUFB_TRANSFER;
+            res.unload = OrderUnloadType::Transfer;
             if (_settings_client.gui.cm_no_loading_on_transfer_order)
-                res.load = OLFB_NO_LOAD;
+                res.load = OrderLoadType::NoLoad;
             break;
 
         case StationOrderModAction::UnloadAll:
-            res.unload = OUFB_UNLOAD;
+            res.unload = OrderUnloadType::Unload;
             if (_settings_client.gui.cm_no_loading_on_unload_order)
-                res.load = OLFB_NO_LOAD;
+                res.load = OrderLoadType::NoLoad;
             break;
 
         case StationOrderModAction::FeederLoad:
             if (v->GetNumOrders() > 0) res.mod = FeederOrderMod::Load;
-            res.unload = OUFB_NO_UNLOAD;
-            res.load = OLF_FULL_LOAD_ANY;
+            res.unload = OrderUnloadType::NoUnload;
+            res.load = OrderLoadType::FullLoadAny;
             break;
 
         case StationOrderModAction::FeederUnload:
             if (v->GetNumOrders() > 0) res.mod = FeederOrderMod::Unload;
-            res.unload = OUFB_TRANSFER;
-            res.load = OLFB_NO_LOAD;
+            res.unload = OrderUnloadType::Transfer;
+            res.load = OrderLoadType::NoLoad;
             break;
 
         case StationOrderModAction::NoLoad:
-            res.load = OLFB_NO_LOAD;
+            res.load = OrderLoadType::NoLoad;
             break;
 
         case StationOrderModAction::NoUnload:
-            res.unload = OUFB_NO_UNLOAD;
+            res.unload = OrderUnloadType::NoUnload;
             break;
 
         default: NOT_REACHED();

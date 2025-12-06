@@ -61,8 +61,8 @@ enum class DepotOrderModAction : uint8_t {
 };
 
 struct StationModOrders {
-    OrderLoadFlags load;
-    OrderUnloadFlags unload;
+    OrderLoadType load;
+    OrderUnloadType unload;
     FeederOrderMod mod;
 };
 
