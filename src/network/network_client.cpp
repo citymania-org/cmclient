@@ -308,7 +308,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::SendIdentify()
 	auto p = std::make_unique<Packet>(my_client, PACKET_CLIENT_IDENTIFY);
 	p->Send_string(_settings_client.network.client_name); // Client name
 	p->Send_uint8 (_network_join.company);     // PlayAs
-	p->Send_uint8 (citymania::GetAvailableLoadFormats());  // Compressnion formats that we can decompress
+	p->Send_uint8 (citymania::GetAvailableLoadFormats());  // Compression formats that we can decompress
 	my_client->SendPacket(std::move(p));
 	return NETWORK_RECV_STATUS_OKAY;
 }

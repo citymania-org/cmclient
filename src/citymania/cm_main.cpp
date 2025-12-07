@@ -8,6 +8,10 @@ namespace citymania {
 
 up<Game> _game = nullptr;
 
+static IntervalTimer<TimerGameCalendar> _event_new_month({TimerGameCalendar::MONTH, TimerGameCalendar::Priority::NONE}, [](auto) {
+    Emit(event::NewMonth{});
+});
+
 void ResetGame() {
     _game = make_up<Game>();
 }
