@@ -1,6 +1,7 @@
 #include "../stdafx.h"
 
 #include "cm_main.hpp"
+#include "../timer/timer.h"
 
 #include "../safeguards.h"
 
