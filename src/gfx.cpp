@@ -28,7 +28,6 @@
 #include "framerate_type.h"  // CM
 #include "transparency.h"  // CM
 #include "core/backup_type.hpp"
-#include "core/container_func.hpp"
 #include "core/geometry_func.hpp"
 #include "viewport_func.h"
 
