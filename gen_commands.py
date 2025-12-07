@@ -5,7 +5,7 @@ from pathlib import Path
 from pprint import pprint
 
 RX_COMMAND = re.compile(r'(?P<returns>CommandCost|std::tuple<CommandCost, [^>]*>) (?P<name>Cmd\w*)\((?P<args>[^)]*)\);')
-RX_DEF_TRAIT = re.compile(r'DEF_CMD_TRAIT\((?P<constant>\w+),\s+(?P<function>\w+),\s+(?P<flags>[^,()]+(?:\([^)]+\))?),\s+(?P<category>\w+)\)')
+RX_DEF_TRAIT = re.compile(r'DEF_CMD_TRAIT\((?P<constant>\w+),\s+(?P<function>\w+),\s+(?P<flags>[^,()]+(?:\([^)]+\))?),\s+(?P<category>[\w:]+)\)')
 RX_ARG = re.compile(r'(?P<type>(:?const |)[\w:]* &?)(?P<name>\w*)')
 RX_CALLBACK = re.compile(r'void\s+(?P<name>Cc\w+)\(Commands')
 RX_CALLBACK_REF = re.compile(r'CommandCallback(?:Data|)\s+(?P<name>Cc\w+);')

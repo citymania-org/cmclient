@@ -22,6 +22,8 @@ static constexpr auto _callback_tuple = std::make_tuple(
     (::CommandCallback *)nullptr, // Make sure this is actually a pointer-to-function.
     &CcBuildDocks,
     &CcPlaySound_CONSTRUCTION_WATER,
+    &CcMoveWaypointName,
+    &CcMoveStationName,
     &CcRoadDepot,
     &CcRoadStop,
     &CcPlaySound_CONSTRUCTION_OTHER,
@@ -242,6 +244,15 @@ CommandCost RenameWaypoint::_do(DoCommandFlags flags) {
     return (::Command<CMD_RENAME_WAYPOINT>::Do(flags, waypoint_id, text));
 }
 
+Commands MoveWaypointName::get_command() { return CMD_MOVE_WAYPOINT_NAME; }
+static constexpr auto _MoveWaypointName_dispatch = MakeDispatchTable<CMD_MOVE_WAYPOINT_NAME, StationID, TileIndex>();
+bool MoveWaypointName::_post(::CommandCallback *callback) {
+    return _MoveWaypointName_dispatch[FindCallbackIndex(callback)](this->error, this->waypoint_id, this->tile);
+}
+CommandCost MoveWaypointName::_do(DoCommandFlags flags) {
+    return std::get<0>(::Command<CMD_MOVE_WAYPOINT_NAME>::Do(flags, waypoint_id, tile));
+}
+
 Commands BuildAirport::get_command() { return CMD_BUILD_AIRPORT; }
 static constexpr auto _BuildAirport_dispatch = MakeDispatchTable<CMD_BUILD_AIRPORT, TileIndex, uint8_t, uint8_t, StationID, bool>();
 bool BuildAirport::_post(::CommandCallback *callback) {
@@ -303,6 +314,15 @@ bool RenameStation::_post(::CommandCallback *callback) {
 }
 CommandCost RenameStation::_do(DoCommandFlags flags) {
     return (::Command<CMD_RENAME_STATION>::Do(flags, station_id, text));
+}
+
+Commands MoveStationName::get_command() { return CMD_MOVE_STATION_NAME; }
+static constexpr auto _MoveStationName_dispatch = MakeDispatchTable<CMD_MOVE_STATION_NAME, StationID, TileIndex>();
+bool MoveStationName::_post(::CommandCallback *callback) {
+    return _MoveStationName_dispatch[FindCallbackIndex(callback)](this->error, this->station_id, this->tile);
+}
+CommandCost MoveStationName::_do(DoCommandFlags flags) {
+    return std::get<0>(::Command<CMD_MOVE_STATION_NAME>::Do(flags, station_id, tile));
 }
 
 Commands OpenCloseAirport::get_command() { return CMD_OPEN_CLOSE_AIRPORT; }
@@ -692,6 +712,15 @@ CommandCost RenameSign::_do(DoCommandFlags flags) {
     return (::Command<CMD_RENAME_SIGN>::Do(flags, sign_id, text));
 }
 
+Commands MoveSign::get_command() { return CMD_MOVE_SIGN; }
+static constexpr auto _MoveSign_dispatch = MakeDispatchTable<CMD_MOVE_SIGN, SignID, TileIndex>();
+bool MoveSign::_post(::CommandCallback *callback) {
+    return _MoveSign_dispatch[FindCallbackIndex(callback)](this->error, this->sign_id, this->tile);
+}
+CommandCost MoveSign::_do(DoCommandFlags flags) {
+    return (::Command<CMD_MOVE_SIGN>::Do(flags, sign_id, tile));
+}
+
 Commands BuildVehicle::get_command() { return CMD_BUILD_VEHICLE; }
 static constexpr auto _BuildVehicle_dispatch = MakeDispatchTable<CMD_BUILD_VEHICLE, TileIndex, EngineID, bool, CargoType, ClientID>();
 bool BuildVehicle::_post(::CommandCallback *callback) {
@@ -1071,12 +1100,12 @@ CommandCost DeleteTown::_do(DoCommandFlags flags) {
 }
 
 Commands PlaceHouse::get_command() { return CMD_PLACE_HOUSE; }
-static constexpr auto _PlaceHouse_dispatch = MakeDispatchTable<CMD_PLACE_HOUSE, TileIndex, HouseID, bool>();
+static constexpr auto _PlaceHouse_dispatch = MakeDispatchTable<CMD_PLACE_HOUSE, TileIndex, HouseID, bool, bool>();
 bool PlaceHouse::_post(::CommandCallback *callback) {
-    return _PlaceHouse_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->house, this->house_protected);
+    return _PlaceHouse_dispatch[FindCallbackIndex(callback)](this->error, this->tile, this->house, this->house_protected, this->replace);
 }
 CommandCost PlaceHouse::_do(DoCommandFlags flags) {
-    return (::Command<CMD_PLACE_HOUSE>::Do(flags, tile, house, house_protected));
+    return (::Command<CMD_PLACE_HOUSE>::Do(flags, tile, house, house_protected, replace));
 }
 
 Commands TurnRoadVeh::get_command() { return CMD_TURN_ROADVEH; }

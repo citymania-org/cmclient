@@ -271,6 +271,20 @@ public:
     Commands get_command() override;
 };
 
+class MoveWaypointName: public Command {
+public:
+    StationID waypoint_id;
+    TileIndex tile;
+
+    MoveWaypointName(StationID waypoint_id, TileIndex tile)
+        :waypoint_id{waypoint_id}, tile{tile} {}
+    ~MoveWaypointName() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlags flags) override;
+    Commands get_command() override;
+};
+
 class BuildAirport: public StationBuildCommand {
 public:
     TileIndex tile;
@@ -379,6 +393,20 @@ public:
     RenameStation(StationID station_id, const std::string & text)
         :station_id{station_id}, text{text} {}
     ~RenameStation() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlags flags) override;
+    Commands get_command() override;
+};
+
+class MoveStationName: public Command {
+public:
+    StationID station_id;
+    TileIndex tile;
+
+    MoveStationName(StationID station_id, TileIndex tile)
+        :station_id{station_id}, tile{tile} {}
+    ~MoveStationName() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlags flags) override;
@@ -1030,6 +1058,20 @@ public:
     RenameSign(SignID sign_id, const std::string & text)
         :sign_id{sign_id}, text{text} {}
     ~RenameSign() override {}
+
+    bool _post(::CommandCallback * callback) override;
+    CommandCost _do(DoCommandFlags flags) override;
+    Commands get_command() override;
+};
+
+class MoveSign: public Command {
+public:
+    SignID sign_id;
+    TileIndex tile;
+
+    MoveSign(SignID sign_id, TileIndex tile)
+        :sign_id{sign_id}, tile{tile} {}
+    ~MoveSign() override {}
 
     bool _post(::CommandCallback * callback) override;
     CommandCost _do(DoCommandFlags flags) override;
@@ -1688,9 +1730,10 @@ public:
     TileIndex tile;
     HouseID house;
     bool house_protected;
+    bool replace;
 
-    PlaceHouse(TileIndex tile, HouseID house, bool house_protected)
-        :tile{tile}, house{house}, house_protected{house_protected} {}
+    PlaceHouse(TileIndex tile, HouseID house, bool house_protected, bool replace)
+        :tile{tile}, house{house}, house_protected{house_protected}, replace{replace} {}
     ~PlaceHouse() override {}
 
     bool _post(::CommandCallback * callback) override;
