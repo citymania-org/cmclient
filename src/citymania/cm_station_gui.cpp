@@ -983,7 +983,7 @@ ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, 
 
 void SizedPlacementAction::Update(Point, TileIndex tile) {
     this->cur_tile = tile;
-    UpdateStationAction(this->GetArea(), std::move(this->GetCommand(tile, StationID::Invalid())));
+    UpdateStationAction(this->GetArea(), this->GetCommand(tile, StationID::Invalid()));
 }
 
 bool SizedPlacementAction::HandleMousePress() {
@@ -1021,7 +1021,7 @@ void DragNDropPlacementAction::Update(Point, TileIndex tile) {
     this->cur_tile = tile;
     auto area = this->GetArea();
     if (!area.has_value()) return;
-    UpdateStationAction(area, std::move(this->GetCommand(*area, StationID::Invalid())));
+    UpdateStationAction(area, this->GetCommand(*area, StationID::Invalid()));
 }
 
 bool DragNDropPlacementAction::HandleMousePress() {
