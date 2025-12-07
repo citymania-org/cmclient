@@ -106,6 +106,7 @@ namespace StationAction {
 };
 
 StationAction::Mode _station_action = StationAction::Create{};
+StationID _selected_join_station = StationID::Invalid();
 
 static const int MAX_TILE_EXTENT_LEFT   = ZOOM_BASE * TILE_PIXELS;                     ///< Maximum left   extent of tile relative to north corner.
 static const int MAX_TILE_EXTENT_RIGHT  = ZOOM_BASE * TILE_PIXELS;                     ///< Maximum right  extent of tile relative to north corner.
@@ -155,9 +156,9 @@ void OnStationDeleted(const Station *station) {
     // }
 }
 
-// const Station *_last_built_station;
+const Station *_last_built_station;
 void OnStationPartBuilt(const Station *station) {
-    // _last_built_station = station;
+    _last_built_station = station;
     // CheckRedrawStationCoverage();
 }
 
@@ -651,11 +652,15 @@ bool HasSelectedStationHighlight() {
 }
 
 static void UpdateStationAction(std::optional<TileArea> area, up<Command> cmdptr) {
-    if (UseImprovedStationJoin()) return;
-
     _station_action = StationAction::Create{};
-
     if (!area.has_value()) return;
+
+    if (UseImprovedStationJoin()) {
+        auto join_area = GetStationJoinArea(_selected_join_station);
+        if (!join_area.Intersects(*area)) return;
+        _station_action = StationAction::Join{_selected_join_station};
+        return;
+    }
 
     if (_fn_mod) {
         if (!_settings_game.station.distant_join_stations) return;
@@ -1061,9 +1066,13 @@ void StationSelectAction::HandleMouseRelease() {
     // TODO station sign click
     if (!IsValidTile(this->cur_tile)) return;
     _station_action = StationAction::Create{};
+    _selected_join_station = StationID::Invalid();
     if (IsTileType(this->cur_tile, MP_STATION)) {
         auto st = Station::GetByTile(this->cur_tile);
-        if (st) _station_action = StationAction::Join{st->index};
+        if (st) {
+            _station_action = StationAction::Join{st->index};
+            _selected_join_station = st->index;
+        }
     }
 }
 
@@ -1115,15 +1124,27 @@ StationBuildTool::StationBuildTool() {
 extern void ShowSelectStationWindow(TileArea ta, StationPickerCmdProc&& proc);
 
 template<typename Taction, typename Tcallback, typename Targ>
+bool PostBuildStationCommand(Taction *action, Tcallback callback, Targ arg, StationID join_to) {
+    auto cmd = action->GetCommand(arg, join_to);
+    if (UseImprovedStationJoin()) {
+        cmd->with_callback([](bool res)->bool {
+            if (!res) return false;
+            if (_last_built_station == nullptr) return false;
+            _selected_join_station = _last_built_station->index;
+            return true;
+        });
+    }
+    return cmd ? cmd->post(callback) : false;
+}
+
+template<typename Taction, typename Tcallback, typename Targ>
 bool ExecuteBuildCommand(Taction *action, Tcallback callback, Targ arg) {
     std::visit(Overload{
         [&](StationAction::Join &a) {
-            auto cmd = action->GetCommand(arg, a.station);
-            return cmd ? cmd->post(callback) : false;
+            return PostBuildStationCommand(action, callback, arg, a.station);
         },
         [&](StationAction::Create &) {
-            auto cmd = action->GetCommand(arg, NEW_STATION);
-            return cmd ? cmd->post(callback) : false;
+            return PostBuildStationCommand(action, callback, arg, NEW_STATION);
         },
         [&](StationAction::Picker &) {
             auto cmd = action->GetCommand(arg, StationID::Invalid());

@@ -96,3 +96,7 @@ const std::string_view _openttd_content_version = "15.0";
  * have to adjust the major by 16.
  */
 const uint32_t _openttd_newgrf_version = (15 + 16) << 24 | 0 << 20 | 0 << 19 | 28004;
+
+const std::string _citymania_survey_key = "cmclient";
+const std::string _citymania_revision_hash = "${REV_HASH}";
+const uint8_t _citymania_revision_modified = ${REV_MODIFIED};

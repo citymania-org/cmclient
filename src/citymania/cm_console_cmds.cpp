@@ -221,12 +221,12 @@ bool ConLoadCommands(std::span<std::string_view> argv) {
     return true;
 }
 
-bool ConStartRecord(std::span<std::string_view> argv) {
+bool ConStartRecord(std::span<std::string_view> /* argv */) {
     StartRecording();
     return true;
 }
 
-bool ConStopRecord(std::span<std::string_view> argv) {
+bool ConStopRecord(std::span<std::string_view> /* argv */) {
     StopRecording();
     return true;
 }

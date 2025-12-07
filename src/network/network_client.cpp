@@ -316,7 +316,17 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::SendIdentify()
 	auto p = std::make_unique<Packet>(my_client, PACKET_CLIENT_IDENTIFY);
 	p->Send_string(_settings_client.network.client_name); // Client name
 	p->Send_uint8 (_network_join.company);     // PlayAs
-	p->Send_uint8 (citymania::GetAvailableLoadFormats());  // Compressnion formats that we can decompress
+
+	/* CityMania additional fields, vanilla servers just ignore them */
+	p->Send_uint8 (citymania::GetAvailableLoadFormats());  // Compressinon formats that we can decompress
+	p->Send_uint8 ('C'); // CMclient join marker
+	p->Send_uint8 ('M'); // CMclient join marker
+	p->Send_string(_citymania_survey_key);
+	p->Send_string(_openttd_build_date);
+	p->Send_string(_citymania_revision_hash);
+	p->Send_uint8 (_citymania_revision_modified);
+	/* End CityMania fields */
+
 	my_client->SendPacket(std::move(p));
 	return NETWORK_RECV_STATUS_OKAY;
 }
@@ -359,6 +369,11 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::SendGetMap()
 	return NETWORK_RECV_STATUS_OKAY;
 }
 
+static uint32_t u32_duration(const std::chrono::steady_clock::time_point &begin, const std::chrono::steady_clock::time_point &end) {
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+    return ClampTo<uint32_t>(ms);
+}
+
 /** Tell the server we received the complete map. */
 NetworkRecvStatus ClientNetworkGameSocketHandler::SendMapOk()
 {
@@ -368,6 +383,8 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::SendMapOk()
 	my_client->status = STATUS_ACTIVE;
 
 	auto p = std::make_unique<Packet>(my_client, PACKET_CLIENT_MAP_OK);
+	p->Send_uint32(u32_duration(my_client->cm_map_begin, my_client->cm_map_done));
+	p->Send_uint32(u32_duration(my_client->cm_map_done, my_client->cm_map_loaded));
 	my_client->SendPacket(std::move(p));
 	return NETWORK_RECV_STATUS_OKAY;
 }
@@ -773,6 +790,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_MAP_BEGIN(Packe
 
 	if (this->savegame != nullptr) return NETWORK_RECV_STATUS_MALFORMED_PACKET;
 
+	this->cm_map_begin = std::chrono::steady_clock::now();
 	this->savegame = std::make_shared<PacketReader>();
 
 	_frame_counter = _frame_counter_server = _frame_counter_max = p.Recv_uint32();
@@ -829,6 +847,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_MAP_DONE(Packet
 	SetWindowDirty(WC_NETWORK_STATUS_WINDOW, WN_NETWORK_STATUS_WINDOW_JOIN);
 
 	this->savegame->Reset();
+    this->cm_map_done = std::chrono::steady_clock::now();
 
 	/* The map is done downloading, load it */
 	ClearErrorMessages();
@@ -838,6 +857,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_MAP_DONE(Packet
 
 	bool load_success = SafeLoad({}, SLO_LOAD, DFT_GAME_FILE, GM_NORMAL, NO_DIRECTORY, this->savegame);
 	this->savegame = nullptr;
+    this->cm_map_loaded = std::chrono::steady_clock::now();
 
 	/* Long savegame loads shouldn't affect the lag calculation! */
 	this->last_packet = std::chrono::steady_clock::now();
