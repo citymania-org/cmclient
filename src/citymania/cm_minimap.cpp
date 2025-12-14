@@ -1030,6 +1030,7 @@ void SmallMapWindow::DrawIndustryProduction(const DrawPixelInfo *dpi) const
 		[this] (auto &e) {
 			auto ind = Industry::GetIfValid(e.index);
 			if (ind == nullptr) return;
+			if (!_legend_from_industries[_industry_to_list_pos[ind->type]].show_on_map) return;
 			auto pt = this->TileToPixel(
 				TileX(ind->location.tile) * TILE_SIZE + ind->location.w * TILE_SIZE / 2,
 				TileY(ind->location.tile) * TILE_SIZE + ind->location.h * TILE_SIZE / 2
