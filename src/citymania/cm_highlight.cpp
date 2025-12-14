@@ -2500,9 +2500,12 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
     } else if (_thd.select_proc == CM_DDSP_BUILD_AIRPORT) {
         auto tile = TileXY(_thd.new_pos.x / TILE_SIZE, _thd.new_pos.y / TILE_SIZE);
         if (_selected_airport_index != -1) {
-            const AirportSpec *as = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index);
-            _thd.cm_new = ObjectHighlight::make_airport(tile, as->GetIndex(), _selected_airport_layout);
-            new_drawstyle = HT_RECT;
+            auto ac = AirportClass::Get(_selected_airport_class);
+            auto as = (ac != nullptr ? ac->GetSpec(_selected_airport_index) : nullptr);
+            if (as != nullptr) {
+                _thd.cm_new = ObjectHighlight::make_airport(tile, as->GetIndex(), _selected_airport_layout);
+                new_drawstyle = HT_RECT;
+            }
         }
     } else if (_thd.select_proc == DDSP_BUILD_STATION || _thd.select_proc == DDSP_BUILD_BUSSTOP
                || _thd.select_proc == DDSP_BUILD_TRUCKSTOP) {  // station

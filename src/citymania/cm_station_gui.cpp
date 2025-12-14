@@ -800,7 +800,7 @@ ToolGUIInfo RemoveAction::GetGUIInfo() {
     if (area.has_value()) {
         hlmap.AddTileAreaWithBorder(area.value(), CM_PALETTE_TINT_RED_DEEP);
         auto cmd = this->GetCommand(area.value());
-        if (cmd) cost = cmd->test();
+        if (cmd != nullptr) cost = cmd->test();
     }
     return {hlmap, data, cost};
 }
@@ -810,7 +810,7 @@ void RemoveAction::OnStationRemoved(const Station *) {}
 // --- PlacementAction ---
 
 ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, up<Command> cmd, StationCoverageType sct, uint rad) {
-    if (!cmd || !ohl.has_value()) return {};
+    if (cmd == nullptr || !ohl.has_value()) return {};
     ohl.value().UpdateTiles();
     auto palette = CM_PALETTE_TINT_WHITE;
     auto area = ohl.value().GetArea();
@@ -1106,6 +1106,7 @@ extern void ShowSelectStationWindow(TileArea ta, StationPickerCmdProc&& proc);
 template<typename Taction, typename Tcallback, typename Targ>
 bool PostBuildStationCommand(Taction *action, Tcallback callback, Targ arg, StationID join_to) {
     auto cmd = action->GetCommand(arg, join_to);
+    if (cmd == nullptr) return false;
     if (UseImprovedStationJoin()) {
         cmd->with_callback([](bool res)->bool {
             if (!res) return false;
@@ -1114,7 +1115,7 @@ bool PostBuildStationCommand(Taction *action, Tcallback callback, Targ arg, Stat
             return true;
         });
     }
-    return cmd ? cmd->post(callback) : false;
+    return cmd->post(callback);
 }
 
 template<typename Taction, typename Tcallback, typename Targ>
@@ -1129,7 +1130,7 @@ bool ExecuteBuildCommand(Taction *action, Tcallback callback, Targ arg) {
         [&](StationAction::Picker &) {
             auto cmd = action->GetCommand(arg, INVALID_STATION);
             auto proc = [cmd=sp<Command>{std::move(cmd)}, callback](bool test, StationID to_join) -> bool {
-                if (!cmd) return false;
+                if (cmd == nullptr) return false;
                 auto station_cmd = dynamic_cast<StationBuildCommand *>(cmd.get());
                 if (station_cmd == nullptr) return false;
                 station_cmd->station_to_join = to_join;
@@ -1169,6 +1170,7 @@ up<Command> RailStationBuildTool::RemoveAction::GetCommand(TileArea area) {
 
 bool RailStationBuildTool::RemoveAction::Execute(TileArea area) {
     auto cmd = this->GetCommand(area);
+    if (cmd == nullptr) return false;
     return cmd->post(&CcPlaySound_CONSTRUCTION_RAIL);
 }
 
@@ -1300,6 +1302,7 @@ up<Command> RoadStopBuildTool::RemoveAction::GetCommand(TileArea area) {
 
 bool RoadStopBuildTool::RemoveAction::Execute(TileArea area) {
     auto cmd = this->GetCommand(area);
+    if (cmd == nullptr) return false;
     return cmd->post(&CcPlaySound_CONSTRUCTION_OTHER);
 }
 
@@ -1504,13 +1507,17 @@ bool AirportBuildTool::RemoveAction::Execute(TileArea area) {
 
 std::optional<TileArea> AirportBuildTool::SizedPlacementAction::GetArea() const {
     if (!IsValidTile(this->cur_tile)) return std::nullopt;
-    auto as = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index);
+    auto ac = AirportClass::Get(_selected_airport_class);
+    if (ac == nullptr) return std::nullopt;
+    auto as = ac->GetSpec(_selected_airport_index);
     if (as == nullptr) return std::nullopt;
     return TileArea{this->cur_tile, as->size_x, as->size_y};
 }
 
 up<Command> AirportBuildTool::SizedPlacementAction::GetCommand(TileIndex tile, StationID to_join) {
-    auto as = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index);
+    auto ac = AirportClass::Get(_selected_airport_class);
+    if (ac == nullptr) return nullptr;
+    auto as = ac->GetSpec(_selected_airport_index);
     if (as == nullptr) return nullptr;
     byte airport_type = as->GetIndex();
     byte layout = _selected_airport_layout;
@@ -1530,14 +1537,21 @@ bool AirportBuildTool::SizedPlacementAction::Execute(TileIndex tile) {
 }
 
 std::optional<ObjectHighlight> AirportBuildTool::SizedPlacementAction::GetObjectHighlight(TileIndex tile) {
-    byte airport_type = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index)->GetIndex();
+    auto ac = AirportClass::Get(_selected_airport_class);
+    if (ac == nullptr) return std::nullopt;
+    auto as = ac->GetSpec(_selected_airport_index);
+    if (as == nullptr) return std::nullopt;
+    byte airport_type = as->GetIndex();
     byte layout = _selected_airport_layout;
     return ObjectHighlight::make_airport(tile, airport_type, layout);
 }
 
 std::pair<StationCoverageType, uint> AirportBuildTool::SizedPlacementAction::GetCatchmentParams() {
-    auto rad = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index)->catchment;
-    return {SCT_ALL, rad};
+    auto ac = AirportClass::Get(_selected_airport_class);
+    if (ac == nullptr) return {SCT_ALL, 0};
+    auto as = ac->GetSpec(_selected_airport_index);
+    if (as == nullptr) return {SCT_ALL, 0};
+    return {SCT_ALL, as->catchment};
 }
 
 
