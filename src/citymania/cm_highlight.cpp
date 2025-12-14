@@ -2893,8 +2893,6 @@ bool HandlePlacePushButton(Window *w, WidgetID widget, up<Tool> tool) {
         return false;
     }
 
-    w->LowerWidget(widget);
-
     auto icon = tool->GetCursor();
     if ((icon & ANIMCURSOR_FLAG) != 0) {
         SetAnimatedMouseCursor(_animcursors[icon & ~ANIMCURSOR_FLAG]);
@@ -2904,9 +2902,9 @@ bool HandlePlacePushButton(Window *w, WidgetID widget, up<Tool> tool) {
     citymania::SetActiveTool(std::move(tool));
     _thd.window_class = w->window_class;
     _thd.window_number = w->window_number;
+    w->LowerWidget(widget);
 
     return true;
-
 }
 
 }  // namespace citymania
