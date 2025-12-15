@@ -303,6 +303,16 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::SendJoin()
 	auto p = std::make_unique<Packet>(my_client, PACKET_CLIENT_JOIN);
 	p->Send_string(GetNetworkRevisionString());
 	p->Send_uint32(_openttd_newgrf_version);
+
+	/* CityMania additional fields, vanilla servers just ignore them */
+	p->Send_uint8 ('C'); // CMclient join marker
+	p->Send_uint8 ('M'); // CMclient join marker
+	p->Send_string(_citymania_survey_key);
+	p->Send_string(_openttd_build_date);
+	p->Send_string(_citymania_revision_hash);
+	p->Send_uint8 (_citymania_revision_modified);
+	/* End CityMania fields */
+
 	my_client->SendPacket(std::move(p));
 
 	return NETWORK_RECV_STATUS_OKAY;
@@ -318,12 +328,6 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::SendIdentify()
 
 	/* CityMania additional fields, vanilla servers just ignore them */
 	p->Send_uint8 (citymania::GetAvailableLoadFormats());  // Compressinon formats that we can decompress
-	p->Send_uint8 ('C'); // CMclient join marker
-	p->Send_uint8 ('M'); // CMclient join marker
-	p->Send_string(_citymania_survey_key);
-	p->Send_string(_openttd_build_date);
-	p->Send_string(_citymania_revision_hash);
-	p->Send_uint8 (_citymania_revision_modified);
 	/* End CityMania fields */
 
 	my_client->SendPacket(std::move(p));
