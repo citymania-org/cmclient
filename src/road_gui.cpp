@@ -1532,6 +1532,10 @@ public:
 				size.height = ScaleGUITrad(PREVIEW_HEIGHT) + WidgetDimensions::scaled.fullbevel.Vertical();
 				break;
 
+			case WID_BROS_ACCEPTANCE:
+				size.height = this->coverage_height;
+				break;
+
 			default:
 				this->PickerWindow::UpdateWidgetSize(widget, size, padding, fill, resize);
 				break;
