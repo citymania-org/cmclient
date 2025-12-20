@@ -2476,9 +2476,12 @@ HighLightStyle UpdateTileSelection(HighLightStyle new_drawstyle) {
     } else if (_thd.select_proc == CM_DDSP_BUILD_AIRPORT) {
         auto tile = TileXY(_thd.new_pos.x / TILE_SIZE, _thd.new_pos.y / TILE_SIZE);
         if (_selected_airport_index != -1) {
-            const AirportSpec *as = AirportClass::Get(_selected_airport_class)->GetSpec(_selected_airport_index);
-            _thd.cm_new = ObjectHighlight::make_airport(tile, as->GetIndex(), _selected_airport_layout);
-            new_drawstyle = HT_RECT;
+            auto ac = AirportClass::Get(_selected_airport_class);
+            auto as = (ac != nullptr ? ac->GetSpec(_selected_airport_index) : nullptr);
+            if (as != nullptr) {
+                _thd.cm_new = ObjectHighlight::make_airport(tile, as->GetIndex(), _selected_airport_layout);
+                new_drawstyle = HT_RECT;
+            }
         }
     } else if (_thd.select_proc == DDSP_BUILD_STATION || _thd.select_proc == DDSP_BUILD_BUSSTOP
                || _thd.select_proc == DDSP_BUILD_TRUCKSTOP) {  // station
@@ -2862,8 +2865,6 @@ bool HandlePlacePushButton(Window *w, WidgetID widget, up<Tool> tool) {
         return false;
     }
 
-    w->LowerWidget(widget);
-
     auto icon = tool->GetCursor();
     if ((icon & ANIMCURSOR_FLAG) != 0) {
         SetAnimatedMouseCursor(_animcursors[icon & ~ANIMCURSOR_FLAG]);
@@ -2873,9 +2874,9 @@ bool HandlePlacePushButton(Window *w, WidgetID widget, up<Tool> tool) {
     citymania::SetActiveTool(std::move(tool));
     _thd.window_class = w->window_class;
     _thd.window_number = w->window_number;
+    w->LowerWidget(widget);
 
     return true;
-
 }
 
 }  // namespace citymania

@@ -613,8 +613,7 @@ struct BuildRoadToolbarWindow : Window {
 			default: NOT_REACHED();
 		}
 		citymania::RoadToolbar_UpdateOptionWidgetStatus(this, widget, _remove_button_clicked, RoadTypeIsRoad(this->roadtype));
-		// this->UpdateOptionWidgetStatus((RoadToolbarWidgets)widget);
-		// if (citymania::_remove_mod) RoadToolbar_CtrlChanged(this);
+		//this->UpdateOptionWidgetStatus((RoadToolbarWidgets)widget);
 	}
 
 	EventState OnHotkey(int hotkey) override
