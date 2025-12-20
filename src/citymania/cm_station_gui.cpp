@@ -148,14 +148,6 @@ void OnStationTileSetChange(const Station *station, bool /* adding */, StationTy
     // if (station == _viewport_highlight_station) MarkCoverageAreaDirty(_viewport_highlight_station);
 }
 
-void OnStationDeleted(const Station *station) {
-    // TODO
-    // if (_highlight_station_to_join == station) {
-    //     MarkCoverageAreaDirty(station);
-    //     _highlight_station_to_join = nullptr;
-    // }
-}
-
 const Station *_last_built_station;
 void OnStationPartBuilt(const Station *station) {
     _last_built_station = station;
@@ -617,7 +609,7 @@ bool IsHighlightCoverageStation(const Station *station) {
 }
 
 void OnStationRemoved(const Station *station) {
-    // if (_last_built_station == station) _last_built_station = nullptr;
+    if (_last_built_station == station) _last_built_station = nullptr;
     if (auto mode = std::get_if<StationAction::Join>(&_station_action); mode && mode->station == station->index) {
         _station_action = StationAction::Create{};
         UpdateActiveTool();
@@ -656,8 +648,12 @@ static void UpdateStationAction(std::optional<TileArea> area, up<Command> cmdptr
     if (!area.has_value()) return;
 
     if (UseImprovedStationJoin()) {
-        auto join_area = GetStationJoinArea(_selected_join_station);
-        if (!join_area.Intersects(*area)) return;
+        auto st = Station::GetIfValid(_selected_join_station);
+        if (st == nullptr) return;
+        if (st->IsInUse()) {
+            auto join_area = GetStationJoinArea(_selected_join_station);
+            if (!join_area.Intersects(*area)) return;
+        }
         _station_action = StationAction::Join{_selected_join_station};
         return;
     }
@@ -1063,17 +1059,18 @@ bool StationSelectAction::HandleMousePress() {
 }
 
 void StationSelectAction::HandleMouseRelease() {
-    // TODO station sign click
-    if (!IsValidTile(this->cur_tile)) return;
     _station_action = StationAction::Create{};
     _selected_join_station = StationID::Invalid();
-    if (IsTileType(this->cur_tile, MP_STATION)) {
-        auto st = Station::GetByTile(this->cur_tile);
-        if (st) {
-            _station_action = StationAction::Join{st->index};
-            _selected_join_station = st->index;
-        }
+    auto st = CheckClickOnDeadStationSign();
+
+    if (st == nullptr && IsValidTile(this->cur_tile) && IsTileType(this->cur_tile, MP_STATION)) {
+        st = Station::GetByTile(this->cur_tile);
     }
+
+    if (st == nullptr) return;
+
+    _station_action = StationAction::Join{st->index};
+    _selected_join_station = st->index;
 }
 
 ToolGUIInfo StationSelectAction::GetGUIInfo() {
