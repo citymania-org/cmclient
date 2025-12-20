@@ -1558,8 +1558,8 @@ std::optional<ObjectHighlight> AirportBuildTool::SizedPlacementAction::GetObject
     if (ac == nullptr) return std::nullopt;
     auto as = ac->GetSpec(_selected_airport_index);
     if (as == nullptr) return std::nullopt;
-    byte airport_type = as->GetIndex();
-    byte layout = _selected_airport_layout;
+    auto airport_type = as->GetIndex();
+    auto layout = _selected_airport_layout;
     return ObjectHighlight::make_airport(tile, airport_type, layout);
 }
 
