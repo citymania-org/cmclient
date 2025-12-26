@@ -47,7 +47,7 @@ void IConsoleError(fmt::format_string<Args...> format, Args&&... args) {
 }
 
 bool ConGameSpeed(std::span<std::string_view> argv) {
-    if (argv.empty() == 0 || argv.size() > 2) {
+    if (argv.empty() || argv.size() > 2) {
         IConsoleHelp("Changes game speed. Usage: 'cmgamespeed [n]'");
         return true;
     }
