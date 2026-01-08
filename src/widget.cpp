@@ -1224,7 +1224,7 @@ void NWidgetCore::SetTextStyle(TextColour colour, FontSize size)
  */
 void NWidgetCore::SetToolTip(StringID tool_tip)
 {
-	this->tool_tip = tool_tip;
+	if (this) this->tool_tip = tool_tip;
 }
 
 /**
