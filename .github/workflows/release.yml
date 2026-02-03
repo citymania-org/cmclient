@@ -158,6 +158,7 @@ jobs:
 
     with:
       version: ${{ needs.source.outputs.version }}
+
         
   upload-windows-store:
     name: Upload (Windows Store)
