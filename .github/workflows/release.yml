@@ -173,7 +173,7 @@ jobs:
 
     steps:
     - name: Download all bundles
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
 
     - name: Release GitHub assets
       uses: softprops/action-gh-release@v2.5.0
@@ -199,7 +199,7 @@ jobs:
 
     steps:
     - name: Download all bundles
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
 
     - name: Upload to CityMania
       uses: appleboy/scp-action@master
