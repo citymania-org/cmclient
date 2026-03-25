@@ -1053,6 +1053,7 @@ void NWidgetResizeBase::SetMinimalSize(uint min_x, uint min_y)
  * Set minimal size of the widget in toolbar-icon-relative width.
  * @param toolbar_size Toolbar button size of the widget.
  */
+// CM TODO is this even needed?
 void NWidgetResizeBase::SetToolbarMinimalSize(uint8_t toolbar_size)
 {
 	this->toolbar_size = toolbar_size;
