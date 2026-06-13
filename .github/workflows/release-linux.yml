@@ -43,6 +43,7 @@ jobs:
         yum install -y \
           autoconf-archive \
           perl-IPC-Cmd \
+          perl-Time-Piece \
           wget \
           libzstd-devel \
           zip \
@@ -82,6 +83,7 @@ jobs:
         yum install -y \
           alsa-lib-devel \
           pulseaudio-libs-devel \
+          pipewire-devel \
           # EOF
         echo "::endgroup::"
 
