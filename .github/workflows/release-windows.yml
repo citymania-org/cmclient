@@ -108,6 +108,7 @@ jobs:
           -DHOST_BINARY_DIR=${GITHUB_WORKSPACE}/build-host \
           -DCMAKE_BUILD_TYPE=RelWithDebInfo \
           -DOPTION_SURVEY_KEY=${{ inputs.survey_key }} \
+          -DVCPKG_ARGUMENTS="--binarysource=clear"
           # EOF
         echo "::endgroup::"
 
