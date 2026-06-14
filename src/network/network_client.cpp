@@ -39,6 +39,7 @@
 #include "network_func.h"
 #include "../citymania/cm_client_list_gui.hpp"
 #include "../citymania/cm_commands.hpp"
+#include "../citymania/cm_identity_gui.hpp"
 #include "../citymania/cm_newgrf_revisions.hpp"
 
 #include "../safeguards.h"
@@ -722,7 +723,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_AUTH_REQUEST(Pa
 
 	if (this->authentication_handler == nullptr) {
 		this->authentication_handler = NetworkAuthenticationClientHandler::Create(std::make_shared<ClientGamePasswordRequestHandler>(),
-				_settings_client.network.client_secret_key, _settings_client.network.client_public_key);
+				citymania::GetSecretKey(), citymania::GetPublicKey());
 	}
 	switch (this->authentication_handler->ReceiveRequest(p)) {
 		case NetworkAuthenticationClientHandler::RequestResult::ReadyForResponse:

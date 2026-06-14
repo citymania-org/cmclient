@@ -59,6 +59,7 @@
 
 #include "../citymania/cm_client_list_gui.hpp"
 #include "../citymania/cm_hotkeys.hpp"
+#include "../citymania/cm_identity_gui.hpp"
 #include "../citymania/cm_watch_gui.hpp"
 /* CityMania code end */
 
@@ -593,6 +594,7 @@ public:
 		bool changed = false;
 		changed |= this->GetWidget<NWidgetStacked>(WID_NG_NEWGRF_SEL)->SetDisplayedPlane(sel == nullptr || sel->status != NGLS_ONLINE || sel->info.grfconfig.empty() ? SZSP_NONE : 0);
 		changed |= this->GetWidget<NWidgetStacked>(WID_NG_NEWGRF_MISSING_SEL)->SetDisplayedPlane(sel == nullptr || sel->status != NGLS_ONLINE || sel->info.grfconfig.empty() || !sel->info.version_compatible || sel->info.compatible ? SZSP_NONE : 0);
+		changed |= this->GetWidget<NWidgetStacked>(CM_WID_NG_IDENTITY_SEL)->SetDisplayedPlane(citymania::HasMultipleIdentities() ? 0 : SZSP_NONE);
 		if (changed) {
 			this->ReInit();
 			return;
@@ -783,6 +785,10 @@ public:
 				_network_coordinator_client.GetListing();
 				this->filter_editbox.text.Assign("TG");
 				break;
+
+			case CM_WID_NG_IDENTITY:
+				ShowDropDownList(this, citymania::BuildIdentityDropDownList(), 0, CM_WID_NG_IDENTITY);
+				break;
 		}
 	}
 
@@ -866,6 +872,19 @@ public:
 
 		_network_coordinator_client.GetListing();
 	}};
+
+	std::string GetWidgetString(WidgetID widget, StringID stringid) const override
+	{
+		if (widget != CM_WID_NG_IDENTITY) return this->Window::GetWidgetString(widget, stringid);
+		return citymania::GetSelectedIdentity();
+	}
+
+	void OnDropdownSelect(WidgetID widget, int index, int) override
+	{
+		if (widget != CM_WID_NG_IDENTITY) return;
+		citymania::SetSelectedIdentity(index);
+	}
+
 };
 
 Listing NetworkGameWindow::last_sorting = {false, 5};
@@ -950,6 +969,9 @@ static constexpr std::initializer_list<NWidgetPart> _nested_network_game_widgets
 							NWidget(NWID_SELECTION, INVALID_COLOUR, WID_NG_NEWGRF_SEL),
 								NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NG_NEWGRF), SetFill(1, 0), SetStringTip(STR_MAPGEN_NEWGRF_SETTINGS, STR_MAPGEN_NEWGRF_SETTINGS_TOOLTIP),
 							EndContainer(),
+							NWidget(NWID_SELECTION, INVALID_COLOUR, CM_WID_NG_IDENTITY_SEL),
+								NWidget(WWT_DROPDOWN, COLOUR_WHITE, CM_WID_NG_IDENTITY), SetFill(1, 0), SetToolTip(CM_STR_NETWORK_SERVER_LIST_IDENTITY_TOOLTIP),
+							EndContainer(),
 							NWidget(NWID_HORIZONTAL, NWidContainerFlag::EqualSize),
 								NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NG_JOIN), SetFill(1, 0), SetStringTip(STR_NETWORK_SERVER_LIST_JOIN_GAME),
 								NWidget(WWT_PUSHTXTBTN, COLOUR_WHITE, WID_NG_REFRESH), SetFill(1, 0), SetStringTip(STR_NETWORK_SERVER_LIST_REFRESH, STR_NETWORK_SERVER_LIST_REFRESH_TOOLTIP),
@@ -994,6 +1016,8 @@ void ShowNetworkGameWindow()
 			NetworkAddServer(iter);
 		}
 	}
+
+	citymania::LoadIdentitiesConfig();
 
 	new NetworkGameWindow(_network_game_window_desc);
 }

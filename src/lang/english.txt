@@ -6385,6 +6385,9 @@ CM_STR_NETWORK_SERVER_LIST_FILTER_REDDIT                        :{BLACK}reddit
 CM_STR_NETWORK_SERVER_LIST_FILTER_TEAMGAME                      :{BLACK}TeamGame
 CM_STR_NETWORK_SERVER_LIST_FILTER_TOOLTIP                       :{BLACK}Filter this community
 
+CM_STR_NETWORK_SERVER_LIST_IDENTITY_TOOLTIP                     :{BLACK}Identity to use when joining server
+CM_STR_NETWORK_SERVER_LIST_DEFAULT_IDENTITY                     :Default identity
+
 CM_STR_CONFIG_SETTING_ENABLE_POLYRAIL_TERRAFORM                 :Enable experimental auto-terraforming with polyrail
 CM_STR_CONFIG_SETTING_ENABLE_POLYRAIL_TERRAFORM_HELPTEXT        :Allows to use experimental auto-terraforming mode with polyrail tool (by pressing Fn modifier).
 CM_STR_NETWORK_CLIENT_LIST_WATCH_TOOLTIP                        :{BLACK}Watch this company
@@ -6447,10 +6450,10 @@ CM_STR_BULID_INFO_OVERLAY_STATION_SIZE                          :{WHITE}Size: {G
 CM_STR_VEHICLE_INFO_BUILT_VALUE_WITH_ID                         :{LTBLUE}{ENGINE} {BLACK}Built: {LTBLUE}{NUM}{BLACK} Value: {LTBLUE}{CURRENCY_LONG}{BLACK} ID: {LTBLUE}{NUM}
 
 ###length VEHICLE_TYPES
-CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN                           :{BLACK}Show hidden ({NUM})
-CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_ROAD_VEHICLE                    :{BLACK}Show hidden ({NUM})
-CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP                            :{BLACK}Show hidden ({NUM})
-CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT                        :{BLACK}Show hidden ({NUM})
+CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_TRAIN                        :{BLACK}Show hidden ({NUM})
+CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_ROAD_VEHICLE                 :{BLACK}Show hidden ({NUM})
+CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_SHIP                         :{BLACK}Show hidden ({NUM})
+CM_STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT                     :{BLACK}Show hidden ({NUM})
 
-CM_STR_SHOW_BLOCK_SIGNAL_TOOLTIP                             :Show advanced signal types
-CM_STR_HIDE_BLOCK_SIGNAL_TOOLTIP                             :Hide advanced signal types
+CM_STR_SHOW_BLOCK_SIGNAL_TOOLTIP                                :Show advanced signal types
+CM_STR_HIDE_BLOCK_SIGNAL_TOOLTIP                                :Hide advanced signal types

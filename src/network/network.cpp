@@ -48,6 +48,7 @@
 
 #include "../citymania/cm_client_list_gui.hpp"
 #include "../citymania/cm_console_cmds.hpp"
+#include "../citymania/cm_identity_gui.hpp"
 
 #include "../safeguards.h"
 
@@ -848,7 +849,7 @@ static void NetworkInitGameInfo()
 	ci->client_name = _settings_client.network.client_name;
 
 	NetworkAuthenticationClientHandler::EnsureValidSecretKeyAndUpdatePublicKey(_settings_client.network.client_secret_key, _settings_client.network.client_public_key);
-	ci->public_key = _settings_client.network.client_public_key;
+	ci->public_key = citymania::GetPublicKey();
 }
 
 /**

@@ -40,6 +40,8 @@ add_files(
     cm_highlight_type.hpp
     cm_hotkeys.hpp
     cm_hotkeys.cpp
+    cm_identity_gui.hpp
+    cm_identity_gui.cpp
     cm_locations.hpp
     cm_locations.cpp
     cm_minimap.hpp
