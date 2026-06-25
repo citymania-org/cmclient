@@ -1028,7 +1028,7 @@ static void DoRegularFunding(Town *t)
 }
 
 static void DoRegularAdvertising(Town *t) {
-	if (t->cm.advertise_regularly.Test(_local_company))
+	if (!t->cm.advertise_regularly.Test(_local_company))
 		return;
 
 	if (!t->cm.ad_ref_goods_entry.has_value()) {

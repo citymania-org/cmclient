@@ -143,7 +143,7 @@ public:
 				this->SetWidgetDirty(widget);
 				break;
 			case WID_CB_ADVERT_REGULAR:
-				if (this->town->cm.advertise_regularly.None()) {
+				if (!this->town->cm.advertise_regularly.Test(_local_company)) {
 					auto str = GetString(STR_JUST_INT, ToPercent8(this->town->cm.ad_rating_goal));
 					ShowQueryString(str, CM_STR_CB_ADVERT_REGULAR_RATING_TO_KEEP,
 					                4, this, CS_NUMERAL, QueryStringFlag::AcceptUnchanged);
@@ -160,8 +160,8 @@ public:
 
 	void OnQueryTextFinished(std::optional<std::string> str) override
 	{
-		if (!str.has_value()) this->town->cm.advertise_regularly.Set(_local_company);
-		else this->town->cm.advertise_regularly.Reset(_local_company);
+		if (!str.has_value()) this->town->cm.advertise_regularly.Reset(_local_company);
+		else this->town->cm.advertise_regularly.Set(_local_company);
 		this->town->cm.ad_ref_goods_entry = std::nullopt;
 		this->SetWidgetLoweredState(WID_CB_ADVERT_REGULAR, this->town->cm.advertise_regularly.Test(_local_company));
 		this->SetWidgetDirty(WID_CB_ADVERT_REGULAR);
