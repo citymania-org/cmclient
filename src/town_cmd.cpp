@@ -1038,7 +1038,7 @@ static void DoRegularAdvertising(Town *t) {
 			if (st->owner == _local_company && DistanceManhattan(t->xy, st->xy) <= 20) {
 				for (CargoType i = 0; i < NUM_CARGO; i++)
 					if (st->goods[i].HasRating() && (t->cm.ad_ref_goods_entry == std::nullopt ||
-					    	rating < st->goods[i].rating)) {
+						st->goods[i].rating < rating)) {
 						t->cm.ad_ref_goods_entry = {st->index, i};
 						rating = st->goods[i].rating;
 					}
