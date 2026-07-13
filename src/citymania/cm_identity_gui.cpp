@@ -10,7 +10,7 @@ namespace citymania {
 
 static const std::string CFG_IDENTITY_FILE  = "cmidentities.cfg";
 std::vector<std::tuple<std::string, std::string, std::string>> _identities;
-int _selected_identity = 0;
+size_t _selected_identity = 0;
 
 void LoadIdentitiesConfig() {
 	IniFile ini;

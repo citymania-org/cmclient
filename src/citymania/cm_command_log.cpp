@@ -55,7 +55,8 @@ void ExecuteFakeCommands(TimerGameTick::TickCounter counter) {
     while (!_fake_commands.empty() && _fake_commands.front().counter <= counter) {
         auto &x = _fake_commands.front();
 
-        fprintf(stderr, "Executing command: %s(%u) company=%u ... ", GetCommandName(x.cp.cmd), x.cp.cmd, x.cp.company);
+        auto cmd_name = GetCommandName(x.cp.cmd);
+        fprintf(stderr, "Executing command: %.*s(%u) company=%u ... ", static_cast<int>(cmd_name.length()), cmd_name.data(), x.cp.cmd, static_cast<uint>(x.cp.company.base()));
         if (x.res == 0) {
             fprintf(stderr, "REJECTED\n");
             _fake_commands.pop();

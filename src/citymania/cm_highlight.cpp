@@ -1408,13 +1408,15 @@ void DrawRoadStop(SpriteID palette, const TileInfo *ti, RoadType roadtype, DiagD
     uint view = (uint)orientation;
     StationType type = (is_truck ? StationType::Truck : StationType::Bus);
 
-    const DrawTileSprites *dts;
+    const DrawTileSprites *dts = nullptr;
+    DrawTileSpriteSpan dtsspan;
     if (spec != nullptr) {
         RoadStopResolverObject object(spec, nullptr, INVALID_TILE, roadtype, type, view);
         const auto *group = object.Resolve<TileLayoutSpriteGroup>();
         if (group == nullptr) return;
         auto processor = group->ProcessRegisters(object, nullptr);
-        auto dts = processor.GetLayout();
+        dtsspan = processor.GetLayout();
+        dts = &dtsspan;
     } else {
         dts = GetStationTileLayout(type, view);
     }
