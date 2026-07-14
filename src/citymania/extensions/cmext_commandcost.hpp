@@ -11,7 +11,7 @@ namespace ext {
 
 class CommandCost {
 public:
-    size_t industry_layout;
+    size_t industry_layout = 0;
     // std::list<std::shared_ptr<ObjectTileHighlight>> highlight;
     // void add_highlight(const ObjectTileHighlight &hl) {
 

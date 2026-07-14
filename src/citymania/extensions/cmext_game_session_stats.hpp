@@ -7,7 +7,7 @@ namespace ext {
 
 class GameSessionStats {
 public:
-    std::map<std::string, uint> hotkeys;
+    std::map<std::string, uint> hotkeys{};
 };
 
 } // namespace ext

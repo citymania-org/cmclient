@@ -29,7 +29,7 @@ struct CompanyEconomyEntry {
 	CargoArray delivered_cargo{}; ///< The amount of delivered cargo.
 	int32_t performance_history = 0;  ///< Company score (scale 0-1000)
 	Money company_value = 0;        ///< The value of the company.
-	citymania::ext::CompanyEconomyEntry cm;  ///< CityMania extra economy data.
+	citymania::ext::CompanyEconomyEntry cm{};  ///< CityMania extra economy data.
 };
 
 struct CompanyInfrastructure {
