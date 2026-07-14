@@ -60,8 +60,8 @@ public:
     uint16_t houses_demolished_this_month = 0; ///< number of houses demolished this month
     uint16_t houses_demolished_last_month = 0; ///< number of houses demolished last month
 
-    TownsGrowthTilesIndex growth_tiles_last_month;
-    TownsGrowthTilesIndex growth_tiles;
+    TownsGrowthTilesIndex growth_tiles_last_month{};
+    TownsGrowthTilesIndex growth_tiles{};
     CBTownInfo cb;
     std::optional<std::pair<StationID, CargoType>> ad_ref_goods_entry;      ///< poiter to goods entry of some station, used to check rating for regular advertisement
 
