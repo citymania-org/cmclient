@@ -171,6 +171,8 @@ static LegendAndColour _legend_linkstats[NUM_CARGO + lengthof(_linkstat_colours_
 static LegendAndColour _legend_from_industries[NUM_INDUSTRYTYPES + 1];
 /** For connecting industry type to position in industries list(small map legend) */
 static uint _industry_to_list_pos[NUM_INDUSTRYTYPES];
+/** The string bounding box width for each industry type in the smallmap */
+static uint16_t _industry_to_name_string_width[NUM_INDUSTRYTYPES];
 /** Show heightmap in industry and owner mode of smallmap window. */
 static bool _smallmap_show_heightmap = false;
 /** Highlight a specific industry type */
@@ -1053,20 +1055,21 @@ void SmallMapWindow::DrawIndustryProduction(const DrawPixelInfo *dpi) const
  * Adds town names to the smallmap.
  * @param dpi the part of the smallmap to be drawn into
  */
-void SmallMapWindow::DrawTowns(const DrawPixelInfo *dpi) const
+void SmallMapWindow::DrawTowns(const DrawPixelInfo *dpi, const int vertical_padding) const
 {
 	for (auto &[t, population, width] : this->town_cache.towns) {
+		/* Remap the town coordinate */
 		Point pt = this->TileToPixel(TileX(t->xy) * TILE_SIZE, TileY(t->xy) * TILE_SIZE);
 		int x = pt.x - width / 2;
-		int y = pt.y - GetCharacterHeight(FS_SMALL) / 2;
-
+		int y = pt.y - GetCharacterHeight(FS_SMALL) / 2 + vertical_padding;
 		/* Check if the town sign is within bounds */
-		if ((int)(x + width) > dpi->left &&
+		if (x + (int)width > dpi->left &&
 				x < dpi->left + dpi->width &&
 				y + GetCharacterHeight(FS_SMALL) > dpi->top &&
 				y < dpi->top + dpi->height) {
+
+			/* And draw it. */
 			if (this->map_type == CM_SMT_IMBA) {
-				/* And draw it. */
 				DrawString(x, x + width, y, GetString(t->larger_town ? CM_STR_SMALLMAP_POPULATION_LARGE : CM_STR_SMALLMAP_POPULATION, population));
 			} else {
 				DrawString(x, x + t->cache.sign.width_small, y, GetString(t->larger_town ? CM_STR_SMALLMAP_TOWN_LARGE : STR_SMALLMAP_TOWN, t->index));
@@ -1074,6 +1077,49 @@ void SmallMapWindow::DrawTowns(const DrawPixelInfo *dpi) const
 		}
 	}
 }
+
+/**
+ * Adds industry names to the smallmap.
+ * @param dpi the part of the smallmap to be drawn into
+ */
+void SmallMapWindow::DrawIndustryNames(const DrawPixelInfo *dpi, const int vertical_padding) const
+{
+	if (this->map_type != SMT_INDUSTRY && this->map_type != CM_SMT_IMBA) return;
+
+	for (const Industry *i : Industry::Iterate()) {
+		const LegendAndColour &tbl = _legend_from_industries[_industry_to_list_pos[i->type]];
+		if (!tbl.show_on_map) continue;
+
+		/* Industry names blink together with their blobs in the smallmap. */
+		const bool is_blinking = i->type == _smallmap_industry_highlight && _smallmap_industry_highlight_state;
+
+		if (_industry_to_name_string_width[i->type] == 0) {
+			_industry_to_name_string_width[i->type] = GetStringBoundingBox(tbl.legend, FS_SMALL).width;
+		}
+		const uint16_t &legend_text_width = _industry_to_name_string_width[i->type];
+
+		/* Remap the industry coordinate */
+		const TileIndex &tile = i->location.GetCenterTile();
+		// const Point pt = this->RemapTile(TileX(tile), TileY(tile));
+		// const int x = pt.x - this->subscroll - (legend_text_width / 2);
+		// const int y = pt.y + vertical_padding;
+
+		Point pt = this->TileToPixel(TileX(tile) * TILE_SIZE, TileY(tile) * TILE_SIZE);
+		int x = pt.x - legend_text_width / 2;
+		int y = pt.y + vertical_padding;
+
+		/* Check if the industry name is within bounds */
+		if (x + legend_text_width > dpi->left &&
+				x < dpi->left + dpi->width &&
+				y + GetCharacterHeight(FS_SMALL) > dpi->top &&
+				y < dpi->top + dpi->height) {
+
+			/* And draw it. */
+			DrawString(x, x + legend_text_width, y, tbl.legend, is_blinking ? TC_GREY : TC_WHITE, SA_LEFT, false, FS_SMALL);
+		}
+	}
+}
+
 
 /**
  * Adds map indicators to the smallmap.
@@ -1166,8 +1212,13 @@ void SmallMapWindow::DrawSmallMap(DrawPixelInfo *dpi) const
 	/* Draw link stat overlay */
 	if (this->map_type == SMT_LINKSTATS) this->overlay->Draw(dpi);
 
+	const int map_labels_vertical_padding = ScaleGUITrad(2);
+
 	/* Draw town names */
-	if (this->show_towns) this->DrawTowns(dpi);
+	if (this->show_towns) this->DrawTowns(dpi, map_labels_vertical_padding);
+
+	/* Draw industry names */
+	if (this->show_ind_names) this->DrawIndustryNames(dpi, map_labels_vertical_padding);
 
 	/* Draw map indicators */
 	this->DrawMapIndicators();
@@ -1223,7 +1274,7 @@ void SmallMapWindow::SetupWidgetData()
 	this->GetWidget<NWidgetCore>(WID_SM_LEGEND)->SetToolTip(legend_tooltip);
 	this->GetWidget<NWidgetCore>(WID_SM_ENABLE_ALL)->SetStringTip(STR_SMALLMAP_ENABLE_ALL, enable_all_tooltip);
 	this->GetWidget<NWidgetCore>(WID_SM_DISABLE_ALL)->SetStringTip(STR_SMALLMAP_DISABLE_ALL, disable_all_tooltip);
-//	TODO this->GetWidget<NWidgetStacked>(WID_SM_SHOW_IND_NAMES_SEL)->SetDisplayedPlane(industry_names_select_plane);
+	this->GetWidget<NWidgetStacked>(WID_SM_SHOW_IND_NAMES_SEL)->SetDisplayedPlane(industry_names_select_plane);
 	this->GetWidget<NWidgetStacked>(WID_SM_SELECT_BUTTONS)->SetDisplayedPlane(select_buttons_plane);
 	this->SetWidgetDisabledState(WID_SM_SHOW_HEIGHT, this->map_type == CM_SMT_IMBA);
 }
@@ -1241,6 +1292,7 @@ SmallMapWindow::SmallMapWindow(WindowDesc &desc, int window_number) : Window(des
 	this->SetWidgetLoweredState(WID_SM_SHOW_HEIGHT, _smallmap_show_heightmap);
 
 	this->SetWidgetLoweredState(WID_SM_TOGGLETOWNNAME, this->show_towns);
+	this->SetWidgetLoweredState(WID_SM_SHOW_IND_NAMES, this->show_ind_names);
 
 	this->SetupWidgetData();
 
@@ -1344,8 +1396,7 @@ std::string SmallMapWindow::GetWidgetString(WidgetID widget, StringID stringid) 
 	this->column_width = min_width + this->legend_width + WidgetDimensions::scaled.framerect.Horizontal();
 
 	/* Cached string widths of industry names in the smallmap. Calculation is deferred to DrawIndustryNames(). */
-	// TODO
-	// std::fill(std::begin(_industry_to_name_string_width), std::end(_industry_to_name_string_width), 0);
+	std::fill(std::begin(_industry_to_name_string_width), std::end(_industry_to_name_string_width), 0);
 
 	// max reasonable population is 9999999
 	this->town_cache.max_sign = GetStringBoundingBox(GetString(CM_STR_SMALLMAP_POPULATION, 9999999));
@@ -1655,6 +1706,14 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 			if (_settings_client.sound.click_beep) SndPlayFx(SND_15_BEEP);
 			break;
 
+		case WID_SM_SHOW_IND_NAMES: // Toggle industry names
+			this->show_ind_names = !this->show_ind_names;
+			this->SetWidgetLoweredState(WID_SM_SHOW_IND_NAMES, this->show_ind_names);
+
+			this->SetDirty();
+			SndClickBeep();
+			break;
+
 		case WID_SM_LEGEND: // Legend
 			if (this->map_type == SMT_INDUSTRY || this->map_type == SMT_LINKSTATS || this->map_type == SMT_OWNER || this->map_type == CM_SMT_IMBA) {
 				int click_pos = this->GetPositionOnLegend(pt);
@@ -1906,6 +1965,7 @@ void SmallMapWindow::UpdateTownCache(bool force) {
 
 SmallMapType SmallMapWindow::map_type = CM_SMT_IMBA;
 bool SmallMapWindow::show_towns = true;
+bool SmallMapWindow::show_ind_names = false;
 int SmallMapWindow::map_height_limit = -1;
 
 /**
@@ -2068,6 +2128,12 @@ static const NWidgetPart _nested_smallmap_widgets[] = {
 				NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_SM_ENABLE_ALL), SetStringTip(STR_SMALLMAP_ENABLE_ALL),
 				NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_SM_DISABLE_ALL), SetStringTip(STR_SMALLMAP_DISABLE_ALL),
 				NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_SM_SHOW_HEIGHT), SetStringTip(STR_SMALLMAP_SHOW_HEIGHT, STR_SMALLMAP_TOOLTIP_SHOW_HEIGHT),
+
+				/* 'show industry names' button and container. Only shown for the industry map type. */
+				NWidget(NWID_SELECTION, INVALID_COLOUR, WID_SM_SHOW_IND_NAMES_SEL),
+					NWidget(WWT_TEXTBTN, COLOUR_BROWN, WID_SM_SHOW_IND_NAMES), SetStringTip(STR_SMALLMAP_SHOW_INDUSTRY_NAMES, STR_SMALLMAP_TOOLTIP_SHOW_INDUSTRY_NAMES),
+				EndContainer(),
+
 				NWidget(WWT_PANEL, COLOUR_BROWN), SetFill(1, 0), SetResize(1, 0),
 				EndContainer(),
 			EndContainer(),

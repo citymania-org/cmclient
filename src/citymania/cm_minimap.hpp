@@ -93,6 +93,7 @@ protected:
 
     static SmallMapType map_type; ///< Currently displayed legends.
     static bool show_towns;       ///< Display town names in the smallmap.
+    static bool show_ind_names;   ///< Display industry names in the smallmap.
     static int map_height_limit;   ///< Currently used/cached maximum heightlevel.
 
     static const uint LEGEND_BLOB_WIDTH = 8;              ///< Width of the coloured blob in front of a line text in the #WID_SM_LEGEND widget.
@@ -214,7 +215,8 @@ protected:
     void DrawSmallMapColumn(void *dst, uint xc, uint yc, int pitch, int reps, int start_pos, int end_pos, int y, int end_y, Blitter *blitter) const;
     void DrawVehicles(const DrawPixelInfo *dpi, Blitter *blitter) const;
     void DrawIndustryProduction(const DrawPixelInfo *dpi) const;
-    void DrawTowns(const DrawPixelInfo *dpi) const;
+    void DrawTowns(const DrawPixelInfo *dpi, const int vertical_padding) const;
+    void DrawIndustryNames(const DrawPixelInfo *dpi, const int vertical_padding) const;
     void DrawSmallMap(DrawPixelInfo *dpi) const;
 
     Point TileToPixel(int tx, int ty) const;
