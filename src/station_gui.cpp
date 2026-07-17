@@ -1380,7 +1380,8 @@ struct StationViewWindow : public Window {
 		CloseWindowById(WC_SHIPS_LIST,    VehicleListIdentifier(VL_STATION_LIST, VEH_SHIP,     this->owner, this->window_number).ToWindowNumber(), false);
 		CloseWindowById(WC_AIRCRAFT_LIST, VehicleListIdentifier(VL_STATION_LIST, VEH_AIRCRAFT, this->owner, this->window_number).ToWindowNumber(), false);
 
-		SetViewportCatchmentStation(Station::Get(this->window_number), false);
+		citymania::SetHighlightCoverageStation(Station::Get(this->window_number), false);
+
 		this->Window::Close();
 	}
 

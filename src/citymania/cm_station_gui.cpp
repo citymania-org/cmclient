@@ -591,8 +591,11 @@ void ResetSelectedStationToJoin() {
 void SetHighlightCoverageStation(Station *station, bool sel) {
     if (_station_highlight_mode == StationHighlightMode::Picker) return;
     SetWindowDirty(WC_STATION_VIEW, _selected_station);
-    if (station == nullptr || !sel) {
+    if (station == nullptr) {
         _station_highlight_mode = StationHighlightMode::None;
+    } else if (!sel) {
+        if (_selected_station == station->index)
+            _station_highlight_mode = StationHighlightMode::None;
     } else {
         _selected_station = station->index;
         _station_highlight_mode = StationHighlightMode::Coverage;
