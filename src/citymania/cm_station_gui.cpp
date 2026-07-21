@@ -570,11 +570,9 @@ extern DiagDirection AddAutodetectionRotation(DiagDirection ddir);  // cm_highli
 
 enum class StationHighlightMode {
     None,
-    Picker,
     Coverage
 };
 
-std::optional<ObjectHighlight> _active_highlight_object = std::nullopt;
 StationID _selected_station = StationID::Invalid();
 StationHighlightMode _station_highlight_mode = StationHighlightMode::None;
 
@@ -583,21 +581,18 @@ void SetSelectedStationToJoin(StationID station_id) {
         ResetSelectedStationToJoin();
         return;
     }
-    // _selected_station = station_id;
     _station_action = StationAction::Join{station_id};
     _selected_join_station = station_id;
     UpdateActiveTool();
 }
 
 void ResetSelectedStationToJoin() {
-    // _station_highlight_mode = StationHighlightMode::None;
     _station_action = StationAction::Create{};
     _selected_join_station = StationID::Invalid();
     UpdateActiveTool();
 }
 
-void SetHighlightCoverageStation(Station *station, bool sel) {
-    if (_station_highlight_mode == StationHighlightMode::Picker) return;
+void SetStationHighlightCoverage(Station *station, bool sel) {
     SetWindowDirty(WC_STATION_VIEW, _selected_station);
     if (station == nullptr) {
         _station_highlight_mode = StationHighlightMode::None;
@@ -610,10 +605,6 @@ void SetHighlightCoverageStation(Station *station, bool sel) {
     }
     SetWindowDirty(WC_STATION_VIEW, _selected_station);
     UpdateActiveTool();
-}
-
-static void ResetHighlightCoverageStation() {
-    SetHighlightCoverageStation(nullptr, false);
 }
 
 bool IsHighlightCoverageStation(const Station *station) {
@@ -640,20 +631,12 @@ void OnStationRemoved(const Station *station) {
     // if (GetActiveTool() != nullptr) GetActiveTool()->OnStationRemoved(station);
 }
 
-static void SetActiveHighlightObject(std::optional<ObjectHighlight> &ohl) {
-    _active_highlight_object = ohl;
-    if (_active_highlight_object.has_value()) _active_highlight_object->UpdateTiles();
-    if (_station_highlight_mode == StationHighlightMode::Coverage)
-        SetWindowDirty(WC_STATION_VIEW, _selected_station);
-    _station_highlight_mode = StationHighlightMode::Picker;
-}
-
 void AbortStationPlacement() {
     // TODO is it necessary?
     // SetHighlightStationToJoin(station=nullptr, with_area=false);
 }
 
-bool HasSelectedStationHighlight() {
+bool HasStationHighlight() {
     return _station_highlight_mode != StationHighlightMode::None;
 }
 
@@ -729,7 +712,7 @@ static void UpdateStationAction(std::optional<TileArea> area, up<Command> cmdptr
     _station_action = StationAction::Join{valid_joins[0]};
 }
 
-static HighlightMap PrepareHighilightMap(Station *st_join, std::optional<ObjectHighlight> ohl, SpriteID pal, bool show_join_area, bool show_coverage, uint rad) {
+static HighlightMap PrepareHighlightMap(Station *st_join, std::optional<ObjectHighlight> ohl, SpriteID pal, bool show_join_area, bool show_coverage, uint rad) {
     bool add_current = true;  // FIXME
 
     HighlightMap hlmap{};
@@ -785,13 +768,13 @@ static HighlightMap PrepareHighilightMap(Station *st_join, std::optional<ObjectH
     return hlmap;
 }
 
-ToolGUIInfo GetSelectedStationGUIInfo() {
+ToolGUIInfo GetStationHighlightGUIInfo() {
     if (_station_highlight_mode == StationHighlightMode::None) return {};
     auto st = Station::GetIfValid(_selected_station);
 
-    auto hlmap = PrepareHighilightMap(
+    auto hlmap = PrepareHighlightMap(
         st,
-        _station_highlight_mode == StationHighlightMode::Picker ? _active_highlight_object : std::nullopt,
+        std::nullopt,
         CM_PALETTE_TINT_WHITE,
         false,
         _station_highlight_mode == StationHighlightMode::Coverage,
@@ -877,7 +860,7 @@ ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, 
 
     bool show_coverage = _settings_client.gui.station_show_coverage;
 
-    auto hlmap = PrepareHighilightMap(
+    auto hlmap = PrepareHighlightMap(
         Station::GetIfValid(to_join),
         ohl.value(),
         palette,
@@ -1131,7 +1114,7 @@ TileArea GetCommandArea(const up<Command> &cmd) {
 
 StationBuildTool::StationBuildTool() {
     // TODO just supress while building?
-    ResetHighlightCoverageStation();
+    SetStationHighlightCoverage(nullptr, false);
 }
 
 extern void ShowSelectStationWindow(TileArea ta, StationPickerCmdProc&& proc);
@@ -1179,7 +1162,6 @@ bool ExecuteBuildCommand(Taction *action, Tcallback callback, Targ arg) {
             if (!ohl.has_value()) return false;
             auto area = ohl->GetArea();
             if (!area.has_value()) return false;
-            // SetActiveHighlightObject(ohl);
             ShowSelectStationWindow(*area, std::move(proc));
             return true;
         }

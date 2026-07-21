@@ -1380,7 +1380,7 @@ struct StationViewWindow : public Window {
 		CloseWindowById(WC_SHIPS_LIST,    VehicleListIdentifier(VL_STATION_LIST, VEH_SHIP,     this->owner, this->window_number).ToWindowNumber(), false);
 		CloseWindowById(WC_AIRCRAFT_LIST, VehicleListIdentifier(VL_STATION_LIST, VEH_AIRCRAFT, this->owner, this->window_number).ToWindowNumber(), false);
 
-		citymania::SetHighlightCoverageStation(Station::Get(this->window_number), false);
+		citymania::SetStationHighlightCoverage(Station::Get(this->window_number), false);
 
 		this->Window::Close();
 	}
@@ -1991,7 +1991,7 @@ struct StationViewWindow : public Window {
 				break;
 
 			case WID_SV_CATCHMENT:
-				citymania::SetHighlightCoverageStation(Station::Get(this->window_number), !this->IsWidgetLowered(WID_SV_CATCHMENT));
+				citymania::SetStationHighlightCoverage(Station::Get(this->window_number), !this->IsWidgetLowered(WID_SV_CATCHMENT));
 
 				if (w != nullptr && this->IsWidgetLowered(WID_SV_CATCHMENT)) {
 					if (w->parent->window_class == WC_STATION_VIEW && w->IsWidgetLowered(WID_QS_MOVE)) SetViewportStationRect(Station::Get(w->parent->window_number), true);

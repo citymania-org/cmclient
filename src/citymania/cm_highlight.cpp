@@ -2768,8 +2768,8 @@ void UpdateActiveTool() {
     auto tile = pt.x == -1 ? INVALID_TILE : TileVirtXY(pt.x, pt.y);
 
     ToolGUIInfo info;
-    if (citymania::HasSelectedStationHighlight()) {
-        info = GetSelectedStationGUIInfo();
+    if (citymania::HasStationHighlight()) {
+        info = GetStationHighlightGUIInfo();
     } else if (_at.tool != nullptr) {
         _at.tool->Update(pt, tile);
         info = _at.tool->GetGUIInfo();

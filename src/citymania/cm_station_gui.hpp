@@ -53,11 +53,11 @@ DiagDirection AutodetectRailObjectDirection(TileIndex tile, Point pt);
 void SetSelectedStationToJoin(StationID station_id);
 void ResetSelectedStationToJoin();
 
-void SetHighlightCoverageStation(Station *station, bool sel);
+void SetStationHighlightCoverage(Station *station, bool sel);
 bool IsHighlightCoverageStation(const Station *station);
 
-bool HasSelectedStationHighlight();
-ToolGUIInfo GetSelectedStationGUIInfo();
+bool HasStationHighlight();
+ToolGUIInfo GetStationHighlightGUIInfo();
 
 std::pair<uint, uint> GetOrderDistances(VehicleOrderID prev, VehicleOrderID cur, const Vehicle *v, int conditional_depth = 0);
 
