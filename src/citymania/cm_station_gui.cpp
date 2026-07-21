@@ -579,12 +579,20 @@ StationID _selected_station = StationID::Invalid();
 StationHighlightMode _station_highlight_mode = StationHighlightMode::None;
 
 void SetSelectedStationToJoin(StationID station_id) {
-    _selected_station = station_id;
+    if (station_id == StationID::Invalid()) {
+        ResetSelectedStationToJoin();
+        return;
+    }
+    // _selected_station = station_id;
+    _station_action = StationAction::Join{station_id};
+    _selected_join_station = station_id;
     UpdateActiveTool();
 }
 
 void ResetSelectedStationToJoin() {
-    _station_highlight_mode = StationHighlightMode::None;
+    // _station_highlight_mode = StationHighlightMode::None;
+    _station_action = StationAction::Create{};
+    _selected_join_station = StationID::Invalid();
     UpdateActiveTool();
 }
 
@@ -1122,6 +1130,7 @@ TileArea GetCommandArea(const up<Command> &cmd) {
 
 
 StationBuildTool::StationBuildTool() {
+    // TODO just supress while building?
     ResetHighlightCoverageStation();
 }
 
@@ -1276,7 +1285,9 @@ RailStationBuildTool::RailStationBuildTool() : mode(Mode::SIZED) {
 
 void RailStationBuildTool::Update(Point pt, TileIndex tile) {
     Mode new_mode;
-    if (_remove_button_clicked) {
+    if (FindWindowById(WC_SELECT_STATION, 0) != nullptr) {
+        new_mode = Mode::PICKER;
+    } else if (_remove_button_clicked) {
         new_mode = Mode::REMOVE;
     } else if (citymania::UseImprovedStationJoin() && _fn_mod) {
         new_mode = Mode::SELECT;
@@ -1299,6 +1310,13 @@ void RailStationBuildTool::Update(Point pt, TileIndex tile) {
             case Mode::SIZED:
                 this->action = make_sp<RailStationBuildTool::SizedPlacementAction>();
                 break;
+            case Mode::PICKER: {
+                assert(this->mode == Mode::SIZED || this->mode == Mode::DRAGDROP);
+                auto build_action = std::dynamic_pointer_cast<PlacementAction>(this->action);
+                assert(build_action != nullptr);
+                this->action = make_sp<StationPickerAction>(build_action);
+                break;
+            }
             default:
                 NOT_REACHED();
         }
@@ -1403,7 +1421,9 @@ void RoadStopBuildTool::DragNDropPlacementAction::Update(Point pt, TileIndex til
 
 void RoadStopBuildTool::Update(Point pt, TileIndex tile) {
     Mode new_mode;
-    if (_remove_button_clicked) {
+    if (FindWindowById(WC_SELECT_STATION, 0) != nullptr) {
+        new_mode = Mode::PICKER;
+    } else if (_remove_button_clicked) {
         new_mode = Mode::REMOVE;
     } else if (UseImprovedStationJoin() && _fn_mod) {
         new_mode = Mode::SELECT;
@@ -1422,6 +1442,15 @@ void RoadStopBuildTool::Update(Point pt, TileIndex tile) {
             case Mode::DRAGDROP:
                 this->action = make_sp<RoadStopBuildTool::DragNDropPlacementAction>(_cur_roadtype, this->stop_type);
                 break;
+            case Mode::PICKER: {
+                assert(this->mode == Mode::DRAGDROP);
+                auto build_action = std::dynamic_pointer_cast<PlacementAction>(this->action);
+                assert(build_action != nullptr);
+                this->action = make_sp<StationPickerAction>(build_action);
+                break;
+            }
+            default:
+                NOT_REACHED();
         }
         this->mode = new_mode;
     }
@@ -1485,7 +1514,9 @@ DockBuildTool::DockBuildTool() : mode(Mode::SIZED) {
 
 void DockBuildTool::Update(Point pt, TileIndex tile) {
     Mode new_mode;
-    if (_remove_button_clicked) {
+    if (FindWindowById(WC_SELECT_STATION, 0) != nullptr) {
+        new_mode = Mode::PICKER;
+    } else if (_remove_button_clicked) {
         new_mode = Mode::REMOVE;
     } else if (citymania::UseImprovedStationJoin() && _fn_mod) {
         new_mode = Mode::SELECT;
@@ -1503,6 +1534,13 @@ void DockBuildTool::Update(Point pt, TileIndex tile) {
             case Mode::SIZED:
                 this->action = make_up<DockBuildTool::SizedPlacementAction>();
                 break;
+            case Mode::PICKER: {
+                assert(this->mode == Mode::SIZED);
+                auto build_action = std::dynamic_pointer_cast<PlacementAction>(this->action);
+                assert(build_action != nullptr);
+                this->action = make_sp<StationPickerAction>(build_action);
+                break;
+            }
             default:
                 NOT_REACHED();
         }
@@ -1587,7 +1625,9 @@ AirportBuildTool::AirportBuildTool() : mode(Mode::SIZED) {
 
 void AirportBuildTool::Update(Point pt, TileIndex tile) {
     Mode new_mode;
-    if (_remove_button_clicked) {
+    if (FindWindowById(WC_SELECT_STATION, 0) != nullptr) {
+        new_mode = Mode::PICKER;
+    } else if (_remove_button_clicked) {
         new_mode = Mode::REMOVE;
     } else if (citymania::UseImprovedStationJoin() && _fn_mod) {
         new_mode = Mode::SELECT;
@@ -1605,6 +1645,13 @@ void AirportBuildTool::Update(Point pt, TileIndex tile) {
             case Mode::SIZED:
                 this->action = make_sp<AirportBuildTool::SizedPlacementAction>();
                 break;
+            case Mode::PICKER: {
+                assert(this->mode == Mode::SIZED);
+                auto build_action = std::dynamic_pointer_cast<PlacementAction>(this->action);
+                assert(build_action != nullptr);
+                this->action = make_sp<StationPickerAction>(build_action);
+                break;
+            }
             default:
                 NOT_REACHED();
         }

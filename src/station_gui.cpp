@@ -2553,7 +2553,6 @@ void ShowSelectRoadWaypointIfNeeded(TileArea ta, StationPickerCmdProc proc)
 
 namespace citymania {
 	void ShowSelectStationWindow(TileArea ta, StationPickerCmdProc&& proc) {
-		if (!_settings_client.gui.persistent_buildingtools) ResetObjectToPlace();
 		FindStationsNearby<StationTypeFilter>(ta, false);
 		new SelectStationWindow<StationTypeFilter>(_select_station_desc, ta, std::move(proc));
 	}
