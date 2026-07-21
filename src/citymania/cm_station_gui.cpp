@@ -662,37 +662,59 @@ static void UpdateStationAction(std::optional<TileArea> area, up<Command> cmdptr
         return;
     }
 
-    auto cmd = dynamic_cast<cmd::BuildRailStation *>(cmdptr.get());
+    auto cmd = dynamic_cast<StationBuildCommand *>(cmdptr.get());
     if (cmd == nullptr) return;
-
-    cmd->station_to_join = NEW_STATION;
-    bool new_valid = cmd->test().Succeeded(); // TODO rarely needed
 
     std::set<StationID> checked_joins;
     std::vector<StationID> valid_joins; // TODO probably don't need the whole vector
-    area->Expand(1);
-    area->ClampToMap();
-    for (auto tile : *area) {
-        if (IsTileType(tile, MP_STATION) && GetTileOwner(tile) == _local_company) {
-            Station *st = Station::GetByTile(tile);
+    auto check_area = area;
+    check_area->Expand(1);
+    check_area->ClampToMap();
+    StationID overlap_station = StationID::Invalid();
+    for (auto tile : *check_area) {
+        if (!IsTileType(tile, MP_STATION)) continue;
+        StationID st = GetStationIndex(tile);
+        if (!Station::IsValidID(st) || Station::Get(st)->owner != _local_company) continue;
 
-            auto it = checked_joins.find(st->index);
-            if (st == nullptr || it != checked_joins.end()) continue;
-            checked_joins.insert(it, st->index);
+        auto it = checked_joins.find(st);
+        if (it != checked_joins.end()) continue;
+        checked_joins.insert(it, st);
 
-            cmd->station_to_join = st->index;
-            // Without distant join command will always fail
-            if (!_settings_game.station.distant_join_stations || cmd->test().Succeeded()) valid_joins.push_back(st->index);
+        // Command will always fail without distant join so consider it valid join
+        if (_settings_game.station.distant_join_stations) {
+            cmd->station_to_join = st;
+            if (!cmd->test().Succeeded()) continue;
+        } else if (area->Contains(tile)) {
+            overlap_station = st;
         }
-    }
 
-    // TODO w/o distant join and no ctrl -> adjacent=false
+        valid_joins.push_back(st);
+    }
 
     // No nearby stations -> create new (default)
     if (checked_joins.empty()) return;
 
+    if (!_settings_game.station.distant_join_stations) {
+        // No distant join, figure out if we're joining adjacent
+        cmd->station_to_join = StationID::Invalid();
+        cmd->adjacent = false;
+        if (cmd->test().Succeeded()) {
+            if (overlap_station != StationID::Invalid()) {
+                _station_action = StationAction::Join{overlap_station};
+            } else {
+                _station_action = StationAction::Join{valid_joins[0]};
+            }
+        } else {
+            // Nothing to join, error out by setting invalid join as creating new will succeed
+            _station_action = StationAction::Join{StationID::Invalid()};
+        }
+        return;
+    }
+
     if (valid_joins.empty()) {
-        if (_settings_game.station.distant_join_stations && new_valid) {
+        cmd->station_to_join = NEW_STATION;
+        bool new_valid = cmd->test().Succeeded();
+        if (new_valid) {
             // We can build a new one but require a picker for that
             _station_action = StationAction::Picker{};
         }
@@ -701,10 +723,7 @@ static void UpdateStationAction(std::optional<TileArea> area, up<Command> cmdptr
     }
 
     if (valid_joins.size() > 1) {
-        if (_settings_game.station.distant_join_stations) {
-            _station_action = StationAction::Picker{};
-        }
-        // W/o distant join just error out, create action will do that
+        _station_action = StationAction::Picker{};
         return;
     }
 
@@ -834,23 +853,26 @@ ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, 
     ohl.value().UpdateTiles();
     auto palette = CM_PALETTE_TINT_WHITE;
     auto area = ohl.value().GetArea();
-    StationID to_join = StationID::Invalid();
+    StationID join_to = StationID::Invalid();
 
     std::visit(Overload{
         [&](StationAction::Join &a) {
-            to_join = a.station;
+            join_to = a.station;
         },
         [&](StationAction::Create &) {
-            to_join = NEW_STATION;
+            join_to = NEW_STATION;
         },
         [&](StationAction::Picker &) {
             palette = CM_PALETTE_TINT_YELLOW;
         }
     }, _station_action);
 
-    if (to_join != StationID::Invalid()) {
+    if (join_to != StationID::Invalid() || !_settings_game.station.distant_join_stations) {
         auto station_cmd = dynamic_cast<StationBuildCommand *>(cmd.get());
-        if (station_cmd != nullptr) station_cmd->station_to_join = to_join;
+        if (station_cmd != nullptr) {
+            station_cmd->station_to_join = _settings_game.station.distant_join_stations ? join_to : StationID::Invalid();
+            station_cmd->adjacent = _settings_game.station.distant_join_stations || join_to == NEW_STATION;
+        }
     }
 
     CommandCost cost = cmd->test();
@@ -861,7 +883,7 @@ ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, 
     bool show_coverage = _settings_client.gui.station_show_coverage;
 
     auto hlmap = PrepareHighlightMap(
-        Station::GetIfValid(to_join),
+        Station::GetIfValid(join_to),
         ohl.value(),
         palette,
         true,
@@ -977,7 +999,7 @@ ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, 
 
 void SizedPlacementAction::Update(Point, TileIndex tile) {
     this->cur_tile = tile;
-    UpdateStationAction(this->GetArea(), this->GetCommand(tile, StationID::Invalid()));
+    UpdateStationAction(this->GetArea(), this->GetCommand(tile, StationID::Invalid(), true));
 }
 
 bool SizedPlacementAction::HandleMousePress() {
@@ -994,7 +1016,7 @@ ToolGUIInfo SizedPlacementAction::GetGUIInfo() {
     auto [sct, rad] = this->GetCatchmentParams();
     return this->PrepareGUIInfo(
         this->GetObjectHighlight(this->cur_tile),
-        this->GetCommand(this->cur_tile, StationID::Invalid()),
+        this->GetCommand(this->cur_tile, StationID::Invalid(), true),
         sct,
         rad
     );
@@ -1015,7 +1037,7 @@ void DragNDropPlacementAction::Update(Point, TileIndex tile) {
     this->cur_tile = tile;
     auto area = this->GetArea();
     if (!area.has_value()) return;
-    UpdateStationAction(area, this->GetCommand(*area, StationID::Invalid()));
+    UpdateStationAction(area, this->GetCommand(*area, StationID::Invalid(), true));
 }
 
 bool DragNDropPlacementAction::HandleMousePress() {
@@ -1038,7 +1060,7 @@ ToolGUIInfo DragNDropPlacementAction::GetGUIInfo() {
     auto [sct, rad] = this->GetCatchmentParams();
     return this->PrepareGUIInfo(
         this->GetObjectHighlight(area.value()),
-        this->GetCommand(area.value(), StationID::Invalid()),
+        this->GetCommand(area.value(), StationID::Invalid(), true),
         sct,
         rad
     );
@@ -1121,7 +1143,11 @@ extern void ShowSelectStationWindow(TileArea ta, StationPickerCmdProc&& proc);
 
 template<typename Taction, typename Tcallback, typename Targ>
 bool PostBuildStationCommand(Taction *action, Tcallback callback, Targ arg, StationID join_to) {
-    auto cmd = action->GetCommand(arg, join_to);
+    auto cmd = action->GetCommand(
+        arg,
+        _settings_game.station.distant_join_stations ? join_to : StationID::Invalid(),
+        _settings_game.station.distant_join_stations || join_to == NEW_STATION
+    );
     if (cmd == nullptr) return false;
     if (UseImprovedStationJoin()) {
         cmd->with_callback([](bool res)->bool {
@@ -1144,7 +1170,7 @@ bool ExecuteBuildCommand(Taction *action, Tcallback callback, Targ arg) {
             return PostBuildStationCommand(action, callback, arg, NEW_STATION);
         },
         [&](StationAction::Picker &) {
-            auto cmd = action->GetCommand(arg, StationID::Invalid());
+            auto cmd = action->GetCommand(arg, StationID::Invalid(), true);
             auto proc = [cmd=sp<Command>{std::move(cmd)}, callback](bool test, StationID to_join) -> bool {
                 if (cmd == nullptr) return false;
                 auto station_cmd = dynamic_cast<StationBuildCommand *>(cmd.get());
@@ -1200,7 +1226,7 @@ std::optional<TileArea> RailStationBuildTool::SizedPlacementAction::GetArea() co
     return TileArea{this->cur_tile, w, h};
 }
 
-up<Command> RailStationBuildTool::SizedPlacementAction::GetCommand(TileIndex tile, StationID to_join) {
+up<Command> RailStationBuildTool::SizedPlacementAction::GetCommand(TileIndex tile, StationID to_join, bool adjacent) {
     // TODO mostly same as DragNDropPlacement
     auto cmd = make_up<cmd::BuildRailStation>(
         tile,
@@ -1211,7 +1237,7 @@ up<Command> RailStationBuildTool::SizedPlacementAction::GetCommand(TileIndex til
         _station_gui.sel_class,
         _station_gui.sel_type,
         to_join,
-        true
+        adjacent
     );
     cmd->with_error(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION);
     return cmd;
@@ -1223,7 +1249,7 @@ bool RailStationBuildTool::SizedPlacementAction::Execute(TileIndex tile) {
 
 // --- RailStationBuildTool::DragNDropPlacementAction ---
 
-up<Command> RailStationBuildTool::DragNDropPlacementAction::GetCommand(TileArea area, StationID to_join) {
+up<Command> RailStationBuildTool::DragNDropPlacementAction::GetCommand(TileArea area, StationID to_join, bool adjacent) {
     uint numtracks = area.w;
     uint platlength = area.h;
 
@@ -1238,7 +1264,7 @@ up<Command> RailStationBuildTool::DragNDropPlacementAction::GetCommand(TileArea 
         _station_gui.sel_class,
         _station_gui.sel_type,
         to_join,
-        true
+        adjacent
     );
     cmd->with_error(STR_ERROR_CAN_T_BUILD_RAILROAD_STATION);
     return cmd;
@@ -1330,7 +1356,7 @@ bool RoadStopBuildTool::RemoveAction::Execute(TileArea area) {
     return cmd->post(&CcPlaySound_CONSTRUCTION_OTHER);
 }
 
-up<Command> RoadStopBuildTool::DragNDropPlacementAction::GetCommand(TileArea area, StationID to_join) {
+up<Command> RoadStopBuildTool::DragNDropPlacementAction::GetCommand(TileArea area, StationID to_join, bool adjacent) {
     DiagDirection ddir = this->ddir;
     bool drive_through = this->ddir >= DIAGDIR_END;
     if (drive_through) ddir = static_cast<DiagDirection>(this->ddir - DIAGDIR_END); // Adjust picker result to actual direction.
@@ -1346,7 +1372,7 @@ up<Command> RoadStopBuildTool::DragNDropPlacementAction::GetCommand(TileArea are
         _roadstop_gui.sel_class,
         _roadstop_gui.sel_type,
         to_join,
-        true
+        adjacent
     );
 
     return res;
@@ -1463,11 +1489,11 @@ std::optional<TileArea> DockBuildTool::SizedPlacementAction::GetArea() const {
     return TileArea{this->cur_tile, TileAddByDiagDir(this->cur_tile, *ddir)};
 }
 
-up<Command> DockBuildTool::SizedPlacementAction::GetCommand(TileIndex tile, StationID to_join) {
+up<Command> DockBuildTool::SizedPlacementAction::GetCommand(TileIndex tile, StationID to_join, bool adjacent) {
     return make_up<cmd::BuildDock>(
         tile,
         to_join,
-        true
+        adjacent
     );
 }
 
@@ -1558,7 +1584,7 @@ std::optional<TileArea> AirportBuildTool::SizedPlacementAction::GetArea() const 
     return TileArea{this->cur_tile, as->size_x, as->size_y};
 }
 
-up<Command> AirportBuildTool::SizedPlacementAction::GetCommand(TileIndex tile, StationID to_join) {
+up<Command> AirportBuildTool::SizedPlacementAction::GetCommand(TileIndex tile, StationID to_join, bool adjacent) {
     auto ac = AirportClass::Get(_selected_airport_class);
     if (ac == nullptr) return nullptr;
     auto as = ac->GetSpec(_selected_airport_index);
@@ -1570,7 +1596,7 @@ up<Command> AirportBuildTool::SizedPlacementAction::GetCommand(TileIndex tile, S
         airport_type,
         layout,
         to_join,
-        true
+        adjacent
     );
     cmd->with_error(STR_ERROR_CAN_T_BUILD_AIRPORT_HERE);
     return cmd;
