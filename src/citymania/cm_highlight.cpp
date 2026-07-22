@@ -2774,30 +2774,33 @@ void UpdateActiveTool() {
         _at.tool->Update(pt, tile);
         info = _at.tool->GetGUIInfo();
     }
-    auto [hlmap, overlay_data, cost] = info;
+    auto [hlmap, overlay_data, cc] = info;
     auto tiles_changed = _at.tiles.UpdateWithMap(hlmap);
     for (auto t : tiles_changed)
         MarkTileDirtyByTile(t);
 
-    if (cost.GetExpensesType() != INVALID_EXPENSES || cost.GetErrorMessage() != INVALID_STRING_ID) {
+    if (cc.GetExpensesType() != INVALID_EXPENSES || cc.GetErrorMessage() != INVALID_STRING_ID) {
         // Add CommandCost info
-        auto err = cost.GetErrorMessage();
-        if (cost.Succeeded()) {
-            auto money = cost.GetCost();
+        auto err = cc.GetErrorMessage();
+        if (cc.Succeeded()) {
+            auto money = cc.GetCost();
             if (money != 0) {
                 overlay_data.emplace_back(0, PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_COST_OK, money));
             }
         } else if (err == STR_ERROR_NOT_ENOUGH_CASH_REQUIRES_CURRENCY) {
-            overlay_data.emplace_back(0, PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_COST_NO_MONEY, cost.GetCost()));
+            overlay_data.emplace_back(0, PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_COST_NO_MONEY, cc.GetCost()));
         } else {
-            if (err == INVALID_STRING_ID) {
-                overlay_data.emplace_back(0, PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_ERROR_UNKNOWN));
-            } else {
-                overlay_data.emplace_back(0, PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_ERROR, err));
+            EncodedString error = std::move(cc.GetEncodedMessage());
+            if (error.empty()) error = GetEncodedStringIfValid(err);
+
+            if (!error.empty()) overlay_data.emplace_back(0, PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_ERROR, error.GetDecodedString()));
+            auto extra_msg = cc.GetExtraErrorMessage();
+            if (extra_msg != INVALID_STRING_ID) {
+                overlay_data.emplace_back(0, PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_ERROR, extra_msg));
             }
-            auto extra_err = cost.GetExtraErrorMessage();
-            if (extra_err != INVALID_STRING_ID) {
-                overlay_data.emplace_back(0, PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_ERROR, extra_err));
+
+            if (extra_msg == INVALID_STRING_ID && error.empty()) {
+                overlay_data.emplace_back(0, PAL_NONE, GetString(CM_STR_BUILD_INFO_OVERLAY_ERROR_UNKNOWN));
             }
         }
     }

@@ -6434,7 +6434,7 @@ CM_STR_BULID_INFO_OVERLAY_ACCEPTS_CARGO					        :{GOLD}{CARGO_LIST}
 CM_STR_BULID_INFO_OVERLAY_ACCEPTS                               :{WHITE}Accepts: {GOLD}{RAW_STRING}
 CM_STR_BUILD_INFO_OVERLAY_STATION_SUPPLIES                      :{WHITE}Supplies:
 CM_STR_BUILD_INFO_OVERLAY_STATION_CARGO                         :{GOLD}{CARGO_LONG}
-CM_STR_BUILD_INFO_OVERLAY_ERROR                                 :{RED}Error: {STRING}
+CM_STR_BUILD_INFO_OVERLAY_ERROR                                 :{RED}Error: {RAW_STRING}
 CM_STR_BUILD_INFO_OVERLAY_ERROR_UNKNOWN                         :{RED}Unknown Error!
 CM_STR_BULID_INFO_OVERLAY_JOIN_STATION                          :{LTBLUE}Join {STATION}
 CM_STR_BULID_INFO_OVERLAY_NEW_STATION                           :{GOLD}New station

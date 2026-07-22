@@ -75,7 +75,8 @@ public:
     }
 
     CommandCost test() {
-        return this->call({});
+        DoCommandFlags flags = CommandFlagsToDCFlags(GetCommandFlags(this->get_command()));
+        return this->call(flags);
     }
 
     Command &with_error(StringID error) {
