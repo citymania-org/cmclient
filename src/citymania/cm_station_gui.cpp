@@ -160,15 +160,15 @@ void OnStationPartBuilt(const Station *station) {
     // CheckRedrawStationCoverage();
 }
 
-const Station *CheckClickOnDeadStationSign() {
+const StationID CheckClickOnStationSign() {
     int x = _cursor.pos.x;
     int y = _cursor.pos.y;
     Window *w = FindWindowFromPt(x, y);
-    if (w == nullptr) return nullptr;
+    if (w == nullptr) return StationID::Invalid();
     Viewport *vp = IsPtInWindowViewport(w, x, y);
 
     if (!HasBit(_display_opt, DO_SHOW_STATION_NAMES) && !IsInvisibilitySet(TO_SIGNS))
-        return nullptr;
+        return StationID::Invalid();
 
     x = ScaleByZoom(x - vp->left, vp->zoom) + vp->virtual_left;
     y = ScaleByZoom(y - vp->top, vp->zoom) + vp->virtual_top;
@@ -176,13 +176,12 @@ const Station *CheckClickOnDeadStationSign() {
     Rect search_rect{ x - 1, y - 1, x + 1, y + 1 };
     search_rect = ExpandRectWithViewportSignMargins(search_rect, vp->zoom);
 
-    const Station *last_st = nullptr;
+    StationID last_st = StationID::Invalid();
     _viewport_sign_kdtree.FindContained(search_rect.left, search_rect.top, search_rect.right, search_rect.bottom, [&](const ViewportSignKdtreeItem & item) {
         if (item.type != ViewportSignKdtreeItem::VKI_STATION) return;
         auto st = Station::Get(std::get<StationID>(item.id));
-        if (st->IsInUse()) return;
         if (_local_company != st->owner) return;
-        if (CheckClickOnViewportSign(*vp, x, y, &st->sign)) last_st = st;
+        if (CheckClickOnViewportSign(*vp, x, y, &st->sign)) last_st = st->index;
     });
     return last_st;
 }
@@ -943,19 +942,22 @@ bool StationSelectAction::HandleMousePress() {
     return true;
 }
 
+StationID SelectStationToJoin(TileIndex tile) {
+    auto st = CheckClickOnStationSign();
+    if (st != StationID::Invalid()) return st;
+    if (IsValidTile(tile) && IsTileType(tile, MP_STATION)) {
+        return GetStationIndex(tile);
+    }
+    return StationID::Invalid();
+}
+
 void StationSelectAction::HandleMouseRelease() {
     _station_action = StationAction::Create{};
     _selected_join_station = StationID::Invalid();
-    auto st = CheckClickOnDeadStationSign();
-
-    if (st == nullptr && IsValidTile(this->cur_tile) && IsTileType(this->cur_tile, MP_STATION)) {
-        st = Station::GetByTile(this->cur_tile);
-    }
-
-    if (st == nullptr) return;
-
-    _station_action = StationAction::Join{st->index};
-    _selected_join_station = st->index;
+    auto st = SelectStationToJoin(this->cur_tile);
+    if (st == StationID::Invalid()) return;
+    _station_action = StationAction::Join{st};
+    _selected_join_station = st;
 }
 
 ToolGUIInfo StationSelectAction::GetGUIInfo() {
@@ -963,9 +965,10 @@ ToolGUIInfo StationSelectAction::GetGUIInfo() {
     HighlightMap hlmap;
     hlmap.Add(this->cur_tile, ObjectTileHighlight::make_border(CM_PALETTE_TINT_BLUE, ZoningBorder::FULL));
     BuildInfoOverlayData data;
-    Station *st = IsTileType(this->cur_tile, MP_STATION) ? Station::GetByTile(this->cur_tile) : nullptr;
-    if (st) {
-        data.emplace_back(0, PAL_NONE, GetString(CM_STR_BULID_INFO_OVERLAY_JOIN_STATION, st->index));
+
+    auto st = SelectStationToJoin(this->cur_tile);
+    if (st != StationID::Invalid()) {
+        data.emplace_back(0, PAL_NONE, GetString(CM_STR_BULID_INFO_OVERLAY_JOIN_STATION, st));
     } else {
         data.emplace_back(0, PAL_NONE, GetString(CM_STR_BULID_INFO_OVERLAY_NEW_STATION));
     }
