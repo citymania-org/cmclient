@@ -187,8 +187,6 @@ struct BuildAirToolbarWindow : Window {
 
 		CloseWindowById(WC_BUILD_STATION, TRANSPORT_AIR);
 		CloseWindowById(WC_SELECT_STATION, 0);
-
-		citymania::AbortStationPlacement();
 	}
 
 	/**

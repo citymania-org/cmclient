@@ -42,7 +42,6 @@ void OnStationRemoved(const Station *station);
 // void SelectStationToJoin(const Station *station);
 // const Station *GetStationToJoin();
 void MarkCoverageHighlightDirty();
-void AbortStationPlacement();
 
 std::optional<std::string> GetStationCoverageAreaText(TileIndex tile, int w, int h, int rad, StationCoverageType sct, bool supplies);
 
@@ -271,13 +270,6 @@ private:
 // --- DockBuildTool ---
 class DockBuildTool : public StationBuildTool {
 private:
-    class RemoveAction : public citymania::RemoveAction {
-    public:
-        ~RemoveAction() override = default;
-        up<Command> GetCommand(TileArea area) override;
-        bool Execute(TileArea area) override;
-    };
-
     class SizedPlacementAction : public citymania::SizedPlacementAction {
     public:
         ~SizedPlacementAction() override = default;
@@ -295,20 +287,13 @@ public:
     void Update(Point pt, TileIndex tile) override;
     CursorID GetCursor() override;
 private:
-    enum class Mode { REMOVE, SELECT, SIZED, PICKER };
+    enum class Mode { SELECT, SIZED, PICKER };
     Mode mode;
 };
 
 // --- AirportBuildTool ---
 class AirportBuildTool : public StationBuildTool {
 private:
-    class RemoveAction : public citymania::RemoveAction {
-    public:
-        ~RemoveAction() override = default;
-        up<Command> GetCommand(TileArea area) override;
-        bool Execute(TileArea area) override;
-    };
-
     class SizedPlacementAction : public citymania::SizedPlacementAction {
     public:
         ~SizedPlacementAction() override = default;
@@ -325,7 +310,7 @@ public:
     void Update(Point pt, TileIndex tile) override;
     CursorID GetCursor() override;
 private:
-    enum class Mode { REMOVE, SELECT, SIZED, PICKER };
+    enum class Mode { SELECT, SIZED, PICKER };
     Mode mode;
 };
 

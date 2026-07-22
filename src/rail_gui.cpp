@@ -963,7 +963,6 @@ struct BuildRailToolbarWindow : Window {
 		CloseWindowById(WC_SELECT_STATION, 0);
 		CloseWindowByClass(WC_BUILD_BRIDGE);
 
-		citymania::AbortStationPlacement();
 		citymania::ResetActiveBlueprint();
 	}
 
