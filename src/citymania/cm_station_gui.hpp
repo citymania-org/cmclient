@@ -51,6 +51,7 @@ DiagDirection AutodetectDriveThroughRoadStopDirection(TileArea area, Point pt, R
 DiagDirection AutodetectRailObjectDirection(TileIndex tile, Point pt);
 void SetSelectedStationToJoin(StationID station_id);
 void ResetSelectedStationToJoin();
+bool IsSelectedToJoin(StationID station_id);
 
 void SetStationHighlightCoverage(Station *station, bool sel);
 bool IsHighlightCoverageStation(const Station *station);

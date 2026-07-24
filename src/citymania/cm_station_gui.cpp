@@ -445,20 +445,41 @@ static TileArea GetStationJoinArea(StationID station_id) {
     return ta;
 }
 
+static void MarkJoinStationSignDirty() {
+    auto mode = std::get_if<StationAction::Join>(&_station_action);
+    if (mode == nullptr) return;
+    auto st = Station::GetIfValid(mode->station);
+    if (st == nullptr) return;
+    st->sign.MarkDirty();
+}
+
 void SetSelectedStationToJoin(StationID station_id) {
     if (station_id == StationID::Invalid()) {
+        MarkJoinStationSignDirty();
         ResetSelectedStationToJoin();
         return;
     }
+    if (auto mode = std::get_if<StationAction::Join>(&_station_action); mode && mode->station == station_id) {
+        // Altready selected, do nothing
+        return;
+    }
+    MarkJoinStationSignDirty();
     _station_action = StationAction::Join{station_id};
     _selected_join_station = station_id;
+    MarkJoinStationSignDirty();
     UpdateActiveTool();
 }
 
 void ResetSelectedStationToJoin() {
+    MarkJoinStationSignDirty();
     _station_action = StationAction::Create{};
     _selected_join_station = StationID::Invalid();
     UpdateActiveTool();
+}
+
+bool IsSelectedToJoin(StationID station_id) {
+    auto mode = std::get_if<StationAction::Join>(&_station_action);
+    return mode && mode->station == station_id;
 }
 
 void SetStationHighlightCoverage(Station *station, bool sel) {
@@ -952,12 +973,8 @@ StationID SelectStationToJoin(TileIndex tile) {
 }
 
 void StationSelectAction::HandleMouseRelease() {
-    _station_action = StationAction::Create{};
-    _selected_join_station = StationID::Invalid();
     auto st = SelectStationToJoin(this->cur_tile);
-    if (st == StationID::Invalid()) return;
-    _station_action = StationAction::Join{st};
-    _selected_join_station = st;
+    SetSelectedStationToJoin(st);
 }
 
 ToolGUIInfo StationSelectAction::GetGUIInfo() {

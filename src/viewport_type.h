@@ -22,6 +22,7 @@ enum class ViewportStringFlag : uint8_t {
 	ColourRect, ///< Draw a colour rect around the sign.
 	TransparentRect, ///< Draw a transparent rect around the sign.
 	TextColour, ///< Draw text in colour.
+	CMHighlighted, ///< CityMania addition for highlighting signs
 };
 using ViewportStringFlags = EnumBitSet<ViewportStringFlag, uint8_t>;
 
