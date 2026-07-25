@@ -52,6 +52,7 @@
 #include "table/strings.h"
 
 #include "citymania/cm_blueprint.hpp"
+#include "citymania/cm_blueprint_gui.hpp"
 #include "citymania/cm_commands.hpp"
 #include "citymania/cm_highlight_type.hpp"
 #include "citymania/cm_hotkeys.hpp"
@@ -722,6 +723,10 @@ struct BuildRailToolbarWindow : Window {
 				this->last_user_action = widget;
 				break;
 
+			case CM_WID_RAT_BLUEPRINT_MANAGE:
+				citymania::ShowBlueprintManagerWindow();
+				break;
+
 			case WID_RAT_REMOVE:
 				BuildRailClick_Remove(this);
 				break;
@@ -1030,6 +1035,7 @@ struct BuildRailToolbarWindow : Window {
 		Hotkey('R', "remove", WID_RAT_REMOVE),
 		Hotkey('C', "convert", WID_RAT_CONVERT_RAIL),
 		Hotkey((uint16)0, "cm_blueprint", CM_WID_RAT_BLUEPRINT),
+		Hotkey((uint16)0, "cm_blueprint_manager", CM_WID_RAT_BLUEPRINT_MANAGE),
 		Hotkey((uint16)0, "cm_blueprint_load_0", HOTKEY_BLUEPRINT_LOAD + 0),
 		Hotkey((uint16)0, "cm_blueprint_load_1", HOTKEY_BLUEPRINT_LOAD + 1),
 		Hotkey((uint16)0, "cm_blueprint_load_2", HOTKEY_BLUEPRINT_LOAD + 2),
@@ -1092,6 +1098,8 @@ static constexpr std::initializer_list<NWidgetPart> _nested_build_rail_widgets =
 						SetFill(0, 1), SetToolbarMinimalSize(1), SetSpriteTip(SPR_IMG_TUNNEL_RAIL, STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TUNNEL),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, CM_WID_RAT_BLUEPRINT),
 						SetFill(0, 1), SetToolbarMinimalSize(1), SetSpriteTip(CM_SPR_RAIL_COPY_PASTE, CM_STR_RAIL_TOOLBAR_TOOLTIP_BLUEPRINT),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, CM_WID_RAT_BLUEPRINT_MANAGE),
+						SetFill(0, 1), SetToolbarMinimalSize(1), SetSpriteTip(SPR_IMG_SETTINGS, CM_STR_TOOLBAR_BLUEPRINT_MANAGER_TOOLTIP),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_RAT_REMOVE),
 						SetFill(0, 1), SetToolbarMinimalSize(1), SetSpriteTip(SPR_IMG_REMOVE, STR_RAIL_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_RAT_CONVERT_RAIL),

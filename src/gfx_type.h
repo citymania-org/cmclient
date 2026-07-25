@@ -93,6 +93,21 @@ enum WindowKeyCodes : uint16_t {
 	WKC_NUM_ENTER   = 142,
 	WKC_NUM_DECIMAL = 143,
 
+	/* CityMania: numpad digits, distinct from the top-row digits (48-57).
+	 * Only produced by the platform layer while NumLock is on; with NumLock
+	 * off the same physical keys are reported as WKC_HOME/END/UP/DOWN/etc
+	 * instead, so hotkeys bound to these are inherently NumLock-gated. */
+	CM_WKC_NUM_0    = 0x710,
+	CM_WKC_NUM_1    = 0x711,
+	CM_WKC_NUM_2    = 0x712,
+	CM_WKC_NUM_3    = 0x713,
+	CM_WKC_NUM_4    = 0x714,
+	CM_WKC_NUM_5    = 0x715,
+	CM_WKC_NUM_6    = 0x716,
+	CM_WKC_NUM_7    = 0x717,
+	CM_WKC_NUM_8    = 0x718,
+	CM_WKC_NUM_9    = 0x719,
+
 	/* Other keys */
 	WKC_SLASH       = 144, ///< / Forward slash
 	WKC_SEMICOLON   = 145, ///< ; Semicolon

@@ -540,6 +540,12 @@ enum WindowClass : uint16_t {
 	WC_CARGOS,
 
 	/**
+	 * CityMania: blueprint manager; %Window numbers:
+	 *   - 0 = #BlueprintManagerWidgets
+	 */
+	WC_BLUEPRINT_MANAGER,
+
+	/**
 	 * Income graph; %Window numbers:
 	 *   - 0 = #CompanyValueWidgets
 	 */
