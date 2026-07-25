@@ -23,6 +23,8 @@ add_files(
     cm_base64.cpp
     cm_blueprint.hpp
     cm_blueprint.cpp
+    cm_blueprint_gui.hpp
+    cm_blueprint_gui.cpp
     cm_cargo_table_gui.hpp
     cm_cargo_table_gui.cpp
     cm_client_list_gui.hpp

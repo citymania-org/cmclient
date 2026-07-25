@@ -99,6 +99,17 @@ static const std::initializer_list<KeycodeNames> _keycode_to_name = {
 	{"EXCLAIM", WKC_EXCLAIM},
 	{"ASTERISK", WKC_ASTERISK},
 
+	{"NUM_0", CM_WKC_NUM_0},
+	{"NUM_1", CM_WKC_NUM_1},
+	{"NUM_2", CM_WKC_NUM_2},
+	{"NUM_3", CM_WKC_NUM_3},
+	{"NUM_4", CM_WKC_NUM_4},
+	{"NUM_5", CM_WKC_NUM_5},
+	{"NUM_6", CM_WKC_NUM_6},
+	{"NUM_7", CM_WKC_NUM_7},
+	{"NUM_8", CM_WKC_NUM_8},
+	{"NUM_9", CM_WKC_NUM_9},
+
 	{"MOUSE_MIDDLE", CM_WKC_MOUSE_MIDDLE},
 	{"MOUSE_4", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 0)},
 	{"MOUSE_5", (WindowKeyCodes)(CM_WKC_MOUSE_OTHER_START + 1)},
