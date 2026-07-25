@@ -823,12 +823,11 @@ static bool ReadItem(FILE *fp, Blueprint::Item &item) {
     }
 }
 
-bool ExportBlueprintSlot(uint slot, const std::string &filename) {
+bool ExportBlueprintSlot(uint slot, const std::string &path) {
     if (slot >= MAX_BLUEPRINT_SLOTS) return false;
     auto &bp = _blueprint_slots[slot].blueprint;
     if (!bp) return false;
 
-    std::string path = GetBlueprintsDir() + filename;
     auto ofp = FileHandle::Open(path, "wb");
     if (!ofp.has_value()) return false;
     FILE *fp = *ofp;
@@ -849,10 +848,9 @@ bool ExportBlueprintSlot(uint slot, const std::string &filename) {
     return true;
 }
 
-bool ImportBlueprintSlot(uint slot, const std::string &filename, std::string &error) {
+bool ImportBlueprintSlot(uint slot, const std::string &path, std::string &error) {
     if (slot >= MAX_BLUEPRINT_SLOTS) { error = "invalid slot"; return false; }
 
-    std::string path = GetBlueprintsDir() + filename;
     auto ofp = FileHandle::Open(path, "rb");
     if (!ofp.has_value()) { error = "could not open file"; return false; }
     FILE *fp = *ofp;

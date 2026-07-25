@@ -6423,7 +6423,7 @@ CM_BUILDING_PREVIEW_COST_ENOUGH                                 :Cost
 
 CM_STR_NO_BLUEPRINT_IN_SLOT                                     :{WHITE}No blueprint in slot {NUM}
 CM_STR_BLUEPRINT_MANAGER_CAPTION                                :{WHITE}Blueprint manager
-CM_STR_BLUEPRINT_MANAGER_SLOT_LINE                              :{NUM}: {STRING}
+CM_STR_BLUEPRINT_MANAGER_SLOT_LINE                              :{NUM}: {RAW_STRING}
 CM_STR_BLUEPRINT_MANAGER_RENAME                                 :{BLACK}Rename
 CM_STR_BLUEPRINT_MANAGER_RENAME_TOOLTIP                         :{BLACK}Rename the selected slot
 CM_STR_BLUEPRINT_MANAGER_RENAME_QUERY                           :{WHITE}Rename blueprint slot
@@ -6435,6 +6435,7 @@ CM_STR_BLUEPRINT_MANAGER_CLEAR                                  :{BLACK}Clear
 CM_STR_BLUEPRINT_MANAGER_CLEAR_TOOLTIP                          :{BLACK}Empty the selected slot
 CM_STR_BLUEPRINT_MANAGER_EXPORT                                 :{BLACK}Export...
 CM_STR_BLUEPRINT_MANAGER_EXPORT_TOOLTIP                         :{BLACK}Save the selected slot to a file
+CM_STR_BLUEPRINT_MANAGER_EXPORT_QUERY                           :{WHITE}Export blueprint as
 CM_STR_BLUEPRINT_MANAGER_IMPORT                                 :{BLACK}Import...
 CM_STR_BLUEPRINT_MANAGER_IMPORT_TOOLTIP                         :{BLACK}Load a blueprint file into the selected slot
 CM_STR_BLUEPRINT_MANAGER_EXPORT_DONE                            :{WHITE}Blueprint exported to {STRING}
