@@ -33,7 +33,7 @@ IniFile *_inilogin = NULL;
 static const int HTTPBUFLEN = 1024;
 static const int MAX_COMMUNITY_STRING_LEN = 128;
 
-static constexpr std::string_view NICE_HTTP_LOGIN          = "http://n-ice.org/openttd/gettoken_md5salt.php?user={}&password={}";
+static constexpr std::string_view NICE_HTTP_LOGIN          = "https://n-ice.org/gettoken_md5salt.php?user={}&password={}";
 static constexpr std::string_view BTPRO_HTTP_LOGIN         = "http://openttd.btpro.nl/gettoken-enc.php?user={}&password={}";
 
 static const std::string CFG_LOGIN_FILE  = "citymania.cfg";
@@ -654,7 +654,7 @@ void AccountLogin(CommunityName community){
 			NetworkClientSendChatToServer(fmt::format("!login {} {}", _inilogindata[NOVAPOLISUSER], _inilogindata[NOVAPOLISPW]));
 			return;
 		case NICE:
-			uri = fmt::format(NICE_HTTP_LOGIN, GetLoginItem(NICE_LOGIN), GetLoginItem(NICE_PW));
+			uri = fmt::format(NICE_HTTP_LOGIN, urlencode(GetLoginItem(NICE_LOGIN)), urlencode(GetLoginItem(NICE_PW)));
 			break;
 		case BTPRO: {
 			uri = fmt::format(BTPRO_HTTP_LOGIN,
