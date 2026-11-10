@@ -825,11 +825,11 @@ ToolGUIInfo PlacementAction::PrepareGUIInfo(std::optional<ObjectHighlight> ohl, 
             }
             if (cargoes[i] > 0) {
                 if(cargoes[i] < 8) {
-                    cargostr.emplace_back(2, GetString(CM_STR_BULID_INFO_OVERLAY_ACCEPTS_CARGO_PARTIAL, 1 << i, cargoes[i]));
+                    cargostr.emplace_back(2, GetString(CM_STR_BULID_INFO_OVERLAY_ACCEPTS_CARGO_PARTIAL, 1ULL << i, cargoes[i]));
                 } else if (HasBit(always_accepted, i)) {
-                    cargostr.emplace_back(1, GetString(CM_STR_BULID_INFO_OVERLAY_ACCEPTS_CARGO_FULL, 1 << i, cargoes[i]));
+                    cargostr.emplace_back(1, GetString(CM_STR_BULID_INFO_OVERLAY_ACCEPTS_CARGO_FULL, 1ULL << i, cargoes[i]));
                 } else {
-                    cargostr.emplace_back(0, GetString(CM_STR_BULID_INFO_OVERLAY_ACCEPTS_CARGO, 1 << i));
+                    cargostr.emplace_back(0, GetString(CM_STR_BULID_INFO_OVERLAY_ACCEPTS_CARGO, 1ULL << i));
                 }
             }
         }
