@@ -25,11 +25,11 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: Setup vcpkg
       id: vcpkg
-      uses: OpenTTD/actions/setup-vcpkg@v6
+      uses: OpenTTD/actions/setup-vcpkg@v7
 
     - name: Install dependencies
       run: |
