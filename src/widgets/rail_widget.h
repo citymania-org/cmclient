@@ -28,6 +28,7 @@ enum RailToolbarWidgets : WidgetID {
 	WID_RAT_BUILD_BRIDGE,   ///< Build a bridge.
 	WID_RAT_BUILD_TUNNEL,   ///< Build a tunnel.
 	CM_WID_RAT_BLUEPRINT,   ///< CityMania rail blueprint tool.
+	CM_WID_RAT_BLUEPRINT_MANAGE, ///< CityMania: open the blueprint manager window.
 	WID_RAT_REMOVE,         ///< Bulldozer to remove rail.
 	WID_RAT_CONVERT_RAIL,   ///< Convert other rail to this type.
 	CM_WID_RAT_BLUEPRINT_PLACE, ///< CityMania rail blueprint tool placement (fake widget).

@@ -6,6 +6,7 @@ add_files(
     bridge_widget.h
     build_vehicle_widget.h
     cheat_widget.h
+    cm_blueprint_widget.h
     company_widget.h
     console_widget.h
     date_widget.h

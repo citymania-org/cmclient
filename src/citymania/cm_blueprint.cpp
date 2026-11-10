@@ -22,8 +22,12 @@
 #include "../tile_map.h"
 #include "../tunnelbridge_map.h"
 #include "../network/network.h"
+#include "../fileio_func.h"
+#include "../fileio_type.h"
 
 #include <map>
+#include <filesystem>
+#include <cstdio>
 
 extern TileHighlightData _thd;
 extern RailType _cur_railtype;
@@ -36,7 +40,17 @@ namespace citymania {
 std::pair<TileIndex, sp<Blueprint>> _active_blueprint = std::make_pair(INVALID_TILE, nullptr);
 const size_t MAX_BLUEPRINT_SLOTS = 16;
 
-sp<Blueprint> _blueprint_slots[16] = {};
+/* CityMania: a slot is a name plus the blueprint stored in it (if any).
+ * The name defaults to empty, in which case the GUI falls back to showing
+ * the slot number. This intentionally stays a fixed-size array (rather
+ * than a dynamic/growable list) so the existing cm_blueprint_save_N /
+ * cm_blueprint_load_N hotkeys keep mapping directly to a slot index. */
+struct BlueprintSlot {
+    std::string name;
+    sp<Blueprint> blueprint;
+};
+
+static BlueprintSlot _blueprint_slots[MAX_BLUEPRINT_SLOTS] = {};
 
 TileIndexDiffC operator+(const TileIndexDiffC &a, const TileIndexDiffC &b) {
     return TileIndexDiffC{(int16)(a.x + b.x), (int16)(a.y + b.y)};
@@ -644,17 +658,236 @@ void BuildActiveBlueprint(TileIndex start) {
 
 void SaveBlueprint(uint slot) {
     if (slot >= MAX_BLUEPRINT_SLOTS) return;
-    _blueprint_slots[slot] = _active_blueprint.second;
+    _blueprint_slots[slot].blueprint = _active_blueprint.second;
     _active_blueprint = {INVALID_TILE, nullptr};
+}
+
+bool HasActiveBlueprint() {
+    return _active_blueprint.second != nullptr;
 }
 
 bool LoadBlueprint(uint slot) {
     if (slot >= MAX_BLUEPRINT_SLOTS) return false;
-    _active_blueprint = {INVALID_TILE, _blueprint_slots[slot]};
+    _active_blueprint = {INVALID_TILE, _blueprint_slots[slot].blueprint};
     if (_active_blueprint.second == nullptr) {
         ShowErrorMessage(GetEncodedString(CM_STR_NO_BLUEPRINT_IN_SLOT, slot), {}, WL_ERROR);
     }
     return _active_blueprint.second != nullptr;
+}
+
+/* CityMania: named slot management ------------------------------------- */
+
+bool IsBlueprintSlotEmpty(uint slot) {
+    if (slot >= MAX_BLUEPRINT_SLOTS) return true;
+    return _blueprint_slots[slot].blueprint == nullptr;
+}
+
+std::string GetBlueprintSlotName(uint slot) {
+    if (slot >= MAX_BLUEPRINT_SLOTS) return {};
+    return _blueprint_slots[slot].name;
+}
+
+void RenameBlueprintSlot(uint slot, const std::string &name) {
+    if (slot >= MAX_BLUEPRINT_SLOTS) return;
+    _blueprint_slots[slot].name = name;
+}
+
+void ClearBlueprintSlot(uint slot) {
+    if (slot >= MAX_BLUEPRINT_SLOTS) return;
+    _blueprint_slots[slot].blueprint = nullptr;
+    _blueprint_slots[slot].name.clear();
+}
+
+/* CityMania: file import/export ----------------------------------------
+ * Custom, deliberately simple binary format - this is local client-side
+ * convenience data, not game state, so it does not go through the
+ * savegame chunk/versioning machinery. Station-related pieces store the
+ * StationID they were copied from; that ID is only meaningful within the
+ * save it came from, so a blueprint imported into a different game may
+ * not attach to a station the way it did originally. Everything else
+ * (track, signals, depots, bridges, tunnels, road stops) is fully
+ * self-contained and round-trips exactly. */
+
+static constexpr char BLUEPRINT_FILE_MAGIC[4] = {'C', 'M', 'B', 'P'};
+static constexpr uint8_t BLUEPRINT_FILE_VERSION = 1;
+
+std::string GetBlueprintsDir() {
+    std::string dir = _personal_dir + "blueprints";
+    AppendPathSeparator(dir);
+    std::error_code ec;
+    std::filesystem::create_directories(OTTD2FS(dir), ec);
+    return dir;
+}
+
+std::vector<std::string> ListBlueprintFiles() {
+    std::vector<std::string> files;
+    std::error_code ec;
+    for (const auto &entry : std::filesystem::directory_iterator(OTTD2FS(GetBlueprintsDir()), ec)) {
+        if (ec) break;
+        if (!entry.is_regular_file()) continue;
+        auto path = FS2OTTD(entry.path().filename().native());
+        if (path.size() > 5 && path.compare(path.size() - 5, 5, ".cmbp") == 0) {
+            files.push_back(path);
+        }
+    }
+    std::sort(files.begin(), files.end());
+    return files;
+}
+
+static bool WriteItem(FILE *fp, const Blueprint::Item &item) {
+    uint8_t type = static_cast<uint8_t>(item.type);
+    if (fwrite(&type, sizeof(type), 1, fp) != 1) return false;
+    if (fwrite(&item.tdiff.x, sizeof(item.tdiff.x), 1, fp) != 1) return false;
+    if (fwrite(&item.tdiff.y, sizeof(item.tdiff.y), 1, fp) != 1) return false;
+
+    switch (item.type) {
+        case Blueprint::Item::Type::RAIL_DEPOT:
+            return fwrite(&item.u.rail.depot.ddir, sizeof(item.u.rail.depot.ddir), 1, fp) == 1;
+        case Blueprint::Item::Type::RAIL_TRACK:
+            return fwrite(&item.u.rail.track.length, sizeof(item.u.rail.track.length), 1, fp) == 1 &&
+                   fwrite(&item.u.rail.track.start_dir, sizeof(item.u.rail.track.start_dir), 1, fp) == 1;
+        case Blueprint::Item::Type::RAIL_STATION:
+            return fwrite(&item.u.rail.station.id, sizeof(item.u.rail.station.id), 1, fp) == 1 &&
+                   fwrite(&item.u.rail.station.has_part, sizeof(item.u.rail.station.has_part), 1, fp) == 1;
+        case Blueprint::Item::Type::RAIL_STATION_PART:
+            return fwrite(&item.u.rail.station_part.axis, sizeof(item.u.rail.station_part.axis), 1, fp) == 1 &&
+                   fwrite(&item.u.rail.station_part.id, sizeof(item.u.rail.station_part.id), 1, fp) == 1 &&
+                   fwrite(&item.u.rail.station_part.numtracks, sizeof(item.u.rail.station_part.numtracks), 1, fp) == 1 &&
+                   fwrite(&item.u.rail.station_part.plat_len, sizeof(item.u.rail.station_part.plat_len), 1, fp) == 1;
+        case Blueprint::Item::Type::RAIL_SIGNAL:
+            return fwrite(&item.u.rail.signal.pos, sizeof(item.u.rail.signal.pos), 1, fp) == 1 &&
+                   fwrite(&item.u.rail.signal.type, sizeof(item.u.rail.signal.type), 1, fp) == 1 &&
+                   fwrite(&item.u.rail.signal.variant, sizeof(item.u.rail.signal.variant), 1, fp) == 1 &&
+                   fwrite(&item.u.rail.signal.twoway, sizeof(item.u.rail.signal.twoway), 1, fp) == 1;
+        case Blueprint::Item::Type::RAIL_BRIDGE:
+            return fwrite(&item.u.rail.bridge.ddir, sizeof(item.u.rail.bridge.ddir), 1, fp) == 1 &&
+                   fwrite(&item.u.rail.bridge.other_end, sizeof(item.u.rail.bridge.other_end), 1, fp) == 1 &&
+                   fwrite(&item.u.rail.bridge.type, sizeof(item.u.rail.bridge.type), 1, fp) == 1;
+        case Blueprint::Item::Type::RAIL_TUNNEL:
+            return fwrite(&item.u.rail.tunnel.ddir, sizeof(item.u.rail.tunnel.ddir), 1, fp) == 1 &&
+                   fwrite(&item.u.rail.tunnel.other_end, sizeof(item.u.rail.tunnel.other_end), 1, fp) == 1;
+        case Blueprint::Item::Type::ROAD_STOP:
+            return fwrite(&item.u.road.stop.ddir, sizeof(item.u.road.stop.ddir), 1, fp) == 1 &&
+                   fwrite(&item.u.road.stop.other_end, sizeof(item.u.road.stop.other_end), 1, fp) == 1;
+        case Blueprint::Item::Type::ROAD_DEPOT:
+            return fwrite(&item.u.road.depot.ddir, sizeof(item.u.road.depot.ddir), 1, fp) == 1;
+        default:
+            return false;
+    }
+}
+
+static bool ReadItem(FILE *fp, Blueprint::Item &item) {
+    uint8_t type;
+    int16 x, y;
+    if (fread(&type, sizeof(type), 1, fp) != 1) return false;
+    if (type >= static_cast<uint8_t>(Blueprint::Item::Type::END)) return false;
+    if (fread(&x, sizeof(x), 1, fp) != 1) return false;
+    if (fread(&y, sizeof(y), 1, fp) != 1) return false;
+
+    item.type = static_cast<Blueprint::Item::Type>(type);
+    item.tdiff = TileIndexDiffC{x, y};
+
+    switch (item.type) {
+        case Blueprint::Item::Type::RAIL_DEPOT:
+            return fread(&item.u.rail.depot.ddir, sizeof(item.u.rail.depot.ddir), 1, fp) == 1;
+        case Blueprint::Item::Type::RAIL_TRACK:
+            return fread(&item.u.rail.track.length, sizeof(item.u.rail.track.length), 1, fp) == 1 &&
+                   fread(&item.u.rail.track.start_dir, sizeof(item.u.rail.track.start_dir), 1, fp) == 1;
+        case Blueprint::Item::Type::RAIL_STATION:
+            return fread(&item.u.rail.station.id, sizeof(item.u.rail.station.id), 1, fp) == 1 &&
+                   fread(&item.u.rail.station.has_part, sizeof(item.u.rail.station.has_part), 1, fp) == 1;
+        case Blueprint::Item::Type::RAIL_STATION_PART:
+            return fread(&item.u.rail.station_part.axis, sizeof(item.u.rail.station_part.axis), 1, fp) == 1 &&
+                   fread(&item.u.rail.station_part.id, sizeof(item.u.rail.station_part.id), 1, fp) == 1 &&
+                   fread(&item.u.rail.station_part.numtracks, sizeof(item.u.rail.station_part.numtracks), 1, fp) == 1 &&
+                   fread(&item.u.rail.station_part.plat_len, sizeof(item.u.rail.station_part.plat_len), 1, fp) == 1;
+        case Blueprint::Item::Type::RAIL_SIGNAL:
+            return fread(&item.u.rail.signal.pos, sizeof(item.u.rail.signal.pos), 1, fp) == 1 &&
+                   fread(&item.u.rail.signal.type, sizeof(item.u.rail.signal.type), 1, fp) == 1 &&
+                   fread(&item.u.rail.signal.variant, sizeof(item.u.rail.signal.variant), 1, fp) == 1 &&
+                   fread(&item.u.rail.signal.twoway, sizeof(item.u.rail.signal.twoway), 1, fp) == 1;
+        case Blueprint::Item::Type::RAIL_BRIDGE:
+            return fread(&item.u.rail.bridge.ddir, sizeof(item.u.rail.bridge.ddir), 1, fp) == 1 &&
+                   fread(&item.u.rail.bridge.other_end, sizeof(item.u.rail.bridge.other_end), 1, fp) == 1 &&
+                   fread(&item.u.rail.bridge.type, sizeof(item.u.rail.bridge.type), 1, fp) == 1;
+        case Blueprint::Item::Type::RAIL_TUNNEL:
+            return fread(&item.u.rail.tunnel.ddir, sizeof(item.u.rail.tunnel.ddir), 1, fp) == 1 &&
+                   fread(&item.u.rail.tunnel.other_end, sizeof(item.u.rail.tunnel.other_end), 1, fp) == 1;
+        case Blueprint::Item::Type::ROAD_STOP:
+            return fread(&item.u.road.stop.ddir, sizeof(item.u.road.stop.ddir), 1, fp) == 1 &&
+                   fread(&item.u.road.stop.other_end, sizeof(item.u.road.stop.other_end), 1, fp) == 1;
+        case Blueprint::Item::Type::ROAD_DEPOT:
+            return fread(&item.u.road.depot.ddir, sizeof(item.u.road.depot.ddir), 1, fp) == 1;
+        default:
+            return false;
+    }
+}
+
+bool ExportBlueprintSlot(uint slot, const std::string &path) {
+    if (slot >= MAX_BLUEPRINT_SLOTS) return false;
+    auto &bp = _blueprint_slots[slot].blueprint;
+    if (!bp) return false;
+
+    auto ofp = FileHandle::Open(path, "wb");
+    if (!ofp.has_value()) return false;
+    FILE *fp = *ofp;
+
+    const std::string &name = _blueprint_slots[slot].name;
+    uint16_t name_len = ClampTo<uint16_t>(name.size());
+    uint32_t item_count = ClampTo<uint32_t>(bp->items.size());
+
+    if (fwrite(BLUEPRINT_FILE_MAGIC, sizeof(BLUEPRINT_FILE_MAGIC), 1, fp) != 1) return false;
+    if (fwrite(&BLUEPRINT_FILE_VERSION, sizeof(BLUEPRINT_FILE_VERSION), 1, fp) != 1) return false;
+    if (fwrite(&name_len, sizeof(name_len), 1, fp) != 1) return false;
+    if (name_len > 0 && fwrite(name.data(), name_len, 1, fp) != 1) return false;
+    if (fwrite(&item_count, sizeof(item_count), 1, fp) != 1) return false;
+
+    for (const auto &item : bp->items) {
+        if (!WriteItem(fp, item)) return false;
+    }
+    return true;
+}
+
+bool ImportBlueprintSlot(uint slot, const std::string &path, std::string &error) {
+    if (slot >= MAX_BLUEPRINT_SLOTS) { error = "invalid slot"; return false; }
+
+    auto ofp = FileHandle::Open(path, "rb");
+    if (!ofp.has_value()) { error = "could not open file"; return false; }
+    FILE *fp = *ofp;
+
+    char magic[4];
+    if (fread(magic, sizeof(magic), 1, fp) != 1 ||
+            memcmp(magic, BLUEPRINT_FILE_MAGIC, sizeof(magic)) != 0) {
+        error = "not a blueprint file";
+        return false;
+    }
+    uint8_t version;
+    if (fread(&version, sizeof(version), 1, fp) != 1 || version != BLUEPRINT_FILE_VERSION) {
+        error = "unsupported blueprint file version";
+        return false;
+    }
+    uint16_t name_len;
+    if (fread(&name_len, sizeof(name_len), 1, fp) != 1) { error = "corrupt file"; return false; }
+    std::string name;
+    if (name_len > 0) {
+        std::vector<char> buf(name_len);
+        if (fread(buf.data(), name_len, 1, fp) != 1) { error = "corrupt file"; return false; }
+        name.assign(buf.data(), name_len);
+    }
+    uint32_t item_count;
+    if (fread(&item_count, sizeof(item_count), 1, fp) != 1) { error = "corrupt file"; return false; }
+
+    auto bp = std::make_shared<Blueprint>();
+    bp->items.reserve(item_count);
+    for (uint32_t i = 0; i < item_count; i++) {
+        Blueprint::Item item(Blueprint::Item::Type::RAIL_TRACK, TileIndexDiffC{0, 0});
+        if (!ReadItem(fp, item)) { error = "corrupt file"; return false; }
+        bp->items.push_back(item);
+    }
+
+    _blueprint_slots[slot].blueprint = bp;
+    _blueprint_slots[slot].name = name;
+    return true;
 }
 
 }  // namespace citymania

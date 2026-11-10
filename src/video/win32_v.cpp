@@ -96,8 +96,14 @@ static const Win32VkMapping _vk_mapping[] = {
 	/* Function keys */
 	AM(VK_F1, VK_F12, WKC_F1, WKC_F12),
 
-	/* Numeric part */
-	AM(VK_NUMPAD0, VK_NUMPAD9, '0', '9'),
+	/* Numeric part.
+	 * CityMania: kept distinct from the top-row digits (instead of aliasing
+	 * to '0'-'9' as vanilla OpenTTD does) so they can be bound separately.
+	 * Windows only ever reports VK_NUMPAD0-9 while NumLock is on; with
+	 * NumLock off the same physical keys arrive as VK_END/VK_DOWN/etc
+	 * instead, which are mapped separately above, so this is inherently
+	 * NumLock-gated for free. */
+	AM(VK_NUMPAD0, VK_NUMPAD9, CM_WKC_NUM_0, CM_WKC_NUM_9),
 	AS(VK_DIVIDE,   WKC_NUM_DIV),
 	AS(VK_MULTIPLY, WKC_NUM_MUL),
 	AS(VK_SUBTRACT, WKC_NUM_MINUS),

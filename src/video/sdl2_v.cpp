@@ -288,17 +288,9 @@ static constexpr SDLVkMapping _vk_mapping[] = {
 	/* Function keys */
 	AM_UP(SDLK_F1, SDLK_F12, WKC_F1, WKC_F12),
 
-	/* Numeric part. */
-	AS(SDLK_KP_1,        '1'),
-	AS(SDLK_KP_2,        '2'),
-	AS(SDLK_KP_3,        '3'),
-	AS(SDLK_KP_4,        '4'),
-	AS(SDLK_KP_5,        '5'),
-	AS(SDLK_KP_6,        '6'),
-	AS(SDLK_KP_7,        '7'),
-	AS(SDLK_KP_8,        '8'),
-	AS(SDLK_KP_9,        '9'),
-	AS(SDLK_KP_0,        '0'),
+	/* Numeric part. Digits 0-9 are handled separately by
+	 * CMTryMapNumpadDigit() below, since they need live NumLock state
+	 * that this static table has no way to express. */
 	AS(SDLK_KP_DIVIDE,   WKC_NUM_DIV),
 	AS(SDLK_KP_MULTIPLY, WKC_NUM_MUL),
 	AS(SDLK_KP_MINUS,    WKC_NUM_MINUS),
@@ -320,12 +312,44 @@ static constexpr SDLVkMapping _vk_mapping[] = {
 	AS(SDLK_PERIOD,  WKC_PERIOD)
 };
 
+/**
+ * CityMania: SDL2 reports the same SDLK_KP_* keysym for the numpad digit
+ * keys regardless of NumLock state (unlike raw Windows VK codes, which
+ * change). To make CM_WKC_NUM_x hotkeys behave as NumLock-gated, this
+ * checks the live modifier state from the event itself rather than the
+ * generic table used for every other key.
+ * Note: SDL's NumLock modifier tracking has known platform quirks (see
+ * libsdl-org/SDL#1776); this is a best-effort mapping, not a guarantee.
+ */
+static bool CMTryMapNumpadDigit(SDL_Keysym *sym, uint *key)
+{
+	static constexpr struct { SDL_Keycode sym; uint16_t wkc; } numpad_digits[] = {
+		{SDLK_KP_0, CM_WKC_NUM_0}, {SDLK_KP_1, CM_WKC_NUM_1},
+		{SDLK_KP_2, CM_WKC_NUM_2}, {SDLK_KP_3, CM_WKC_NUM_3},
+		{SDLK_KP_4, CM_WKC_NUM_4}, {SDLK_KP_5, CM_WKC_NUM_5},
+		{SDLK_KP_6, CM_WKC_NUM_6}, {SDLK_KP_7, CM_WKC_NUM_7},
+		{SDLK_KP_8, CM_WKC_NUM_8}, {SDLK_KP_9, CM_WKC_NUM_9},
+	};
+
+	if (!(sym->mod & KMOD_NUM)) return false;
+
+	for (const auto &nd : numpad_digits) {
+		if (sym->sym == nd.sym) {
+			*key = nd.wkc;
+			return true;
+		}
+	}
+	return false;
+}
+
 static uint ConvertSdlKeyIntoMy(SDL_Keysym *sym, char32_t *character)
 {
 	uint key = 0;
 	bool unprintable = false;
 
-	for (const auto &map : _vk_mapping) {
+	if (CMTryMapNumpadDigit(sym, &key)) {
+		unprintable = true;
+	} else for (const auto &map : _vk_mapping) {
 		if (IsInsideBS(sym->sym, map.vk_from, map.vk_count)) {
 			key = sym->sym - map.vk_from + map.map_to;
 			unprintable = map.unprintable;
