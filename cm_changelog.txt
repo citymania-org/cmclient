@@ -74,6 +74,19 @@ This is usable for any OpenTTD servers
 
 == CHANGELOG ==
 
+*** 15.3 ***
+- With new join allow to join stations by clicking on their signs (especially useful for deleted ones).
+- Highlight joining station when hovering it in picker window.
+- Added simple network identity selector.
+- Fixed automatic advertisement being erronously enabled for some towns.
+- Fixed crash when opening tram station tool (#52).
+- Fixed crash when placing road stops or rail depots on maps without void tiles.
+- Fixed joining nearest station when distant join is disabled (#53).
+- Fixed n-ice server login.
+- Fixed cargo acceptance in station building overlay for newgrfs with a lot of cargoes.
+- Fixed joining adjacent station when distant join is off (#57).
+- Fix: restored button to show industry names on minimap.
+
 *** 15.0 ***
 - Fixed crash when building a station after some got removed (#48).
 - Fixed bulldozing train stations (#50).
